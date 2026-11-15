@@ -1,0 +1,25 @@
+name: Stage 0 Proof Test
+on:
+  workflow_dispatch:
+    inputs:
+      build_key:
+        description: 'Unique build key from BEYOND AI'
+        required: false
+        default: 'stage0-proof'
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create test artifact
+        run: |
+          mkdir -p proof-output
+          echo "BEYOND AI Stage 0 proof" > proof-output/proof.txt
+          echo "build_key=${{ inputs.build_key }}" >> proof-output/proof.txt
+          echo "run_id=${{ github.run_id }}" >> proof-output/proof.txt
+          echo "run_number=${{ github.run_number }}" >> proof-output/proof.txt
+          date -u >> proof-output/proof.txt
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage0-proof-artifact
+          path: proof-output/proof.txt
