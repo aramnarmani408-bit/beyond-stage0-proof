@@ -19,7 +19,8 @@
         .msg.ai { background: #0A0A1F; color: #F1F5F9; align-self: flex-start; }
         #inputArea { display: flex; gap: 10px; padding-top: 10px; }
         #askInput { flex: 1; background: #0A0A1F; color: #F1F5F9; border: 1px solid #00F5FF; border-radius: 8px; padding: 10px; }
-        #sendBtn, #quizRestart, #newChatBtn, #backChat { background: #00F5FF; color: #050510; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
+        #sendBtn, #quizRestart, #newChatBtn, #backChat, #reviseBtn, #modeBtn { background: #00F5FF; color: #050510; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
+        #quizResult { color: #F1F5F9; text-align: center; min-height: 24px; }
         #quizWord { font-size: 28px; color: #00F5FF; text-align: center; padding: 16px; }
         #quizOptions { display: flex; flex-direction: column; gap: 10px; }
         .quiz-opt { background: #0A0A1F; color: #F1F5F9; border: 1px solid #A855F7; border-radius: 8px; padding: 12px; cursor: pointer; font-size: 18px; }
@@ -57,6 +58,9 @@
             <div id="quizOptions"></div>
             <div id="quizFeedback"></div>
             <div>سم: <span id="quizScore">0/6</span></div>
+            <div id="quizResult"></div>
+            <button id="reviseBtn">بیا زده کړه</button>
+            <button id="modeBtn">↔ پښتو ← انګلیسي</button>
             <button id="quizRestart">بیا پیل</button>
         </div>
     </div>
