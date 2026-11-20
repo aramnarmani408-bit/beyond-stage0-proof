@@ -31,8 +31,12 @@ function showToast(text) {
 async function askBeyond(question) {
     setAction("فکر کوم...");
     try {
-        const url = "https://text.pollinations.ai/" + encodeURIComponent(question);
-        const resp = await fetch("https://text.pollinations.ai/" + encodeURIComponent(question));
+        // Pashto-first: tell the model to answer in Pashto. Without this
+        // the free model guesses the language and often answers in Persian
+        // (arman's live test 2026-11-20: plain "سلام" came back in Persian;
+        // with this prefix it answers in Pashto — verified by curl).
+        const prompt = "په پښتو ژبه ځواب ورکړه: " + question;
+        const resp = await fetch("https://text.pollinations.ai/" + encodeURIComponent(prompt));
         if (!resp.ok) throw new Error("Network");
         const data = await resp.text();
         setAction("ځواب ورکوم");
