@@ -8,17 +8,17 @@
         body { margin: 0; font-family: sans-serif; background: #050510; color: #F1F5F9; display: flex; height: 100vh; overflow: hidden; }
         aside { width: 250px; background: #0A0A1F; display: none; flex-direction: column; border-left: 1px solid #00F5FF; }
         aside.open { display: flex; }
-        .tab { padding: 15px; cursor: pointer; border-bottom: 1px solid #0A0A1F; color: #94A3B8; }
         #main { flex: 1; display: flex; flex-direction: column; padding: 20px; }
         #chatPanel { flex: 1; display: flex; flex-direction: column; }
         #schoolPanel { flex: 1; display: none; flex-direction: column; gap: 12px; }
+        #welcome { color: #94A3B8; }
         #chatArea { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg { padding: 10px; border-radius: 8px; max-width: 80%; }
         .msg.user { background: #00F5FF; color: #050510; align-self: flex-end; }
         .msg.ai { background: #0A0A1F; color: #F1F5F9; align-self: flex-start; }
         #inputArea { display: flex; gap: 10px; padding-top: 10px; }
         #askInput { flex: 1; background: #0A0A1F; color: #F1F5F9; border: 1px solid #00F5FF; border-radius: 8px; padding: 10px; }
-        #sendBtn, #quizRestart, #newChatBtn { background: #00F5FF; color: #050510; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
+        #sendBtn, #quizRestart, #newChatBtn, #backChat { background: #00F5FF; color: #050510; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
         #quizWord { font-size: 28px; color: #00F5FF; text-align: center; padding: 16px; }
         #quizOptions { display: flex; flex-direction: column; gap: 10px; }
         .quiz-opt { background: #0A0A1F; color: #F1F5F9; border: 1px solid #A855F7; border-radius: 8px; padding: 12px; cursor: pointer; font-size: 18px; }
@@ -32,13 +32,6 @@
     <aside id="drawer">
         <button id="newChatBtn">نوې خبرې</button>
         <ul id="chatList"><li>خبره ۱</li></ul>
-        <div class="tab" data-tab="chat">خبرې</div>
-        <div class="tab" data-tab="school">ښوونځی</div>
-        <div class="tab" data-tab="islamic">اسلامي</div>
-        <div class="tab" data-tab="textbooks">کتابونه</div>
-        <div class="tab" data-tab="images">انځورونه</div>
-        <div class="tab" data-tab="voice">غږ</div>
-        <div class="tab" data-tab="games">لوبې</div>
     </aside>
     <div id="main">
         <header>
@@ -57,6 +50,7 @@
             </div>
         </div>
         <div id="schoolPanel">
+            <button id="backChat">← خبرې</button>
             <div id="quizWord"></div>
             <div id="quizOptions"></div>
             <div id="quizFeedback"></div>
