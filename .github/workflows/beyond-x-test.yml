@@ -49,6 +49,13 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # v3 fix (run #44722472228 failed in 19s): the action's DEFAULT
+          # packages list ("tools platform-tools") asks sdkmanager for the
+          # legacy "tools" package, which no longer exists in the SDK repo
+          # ("Failed to find package 'tools'", exit 1). Install only
+          # platform-tools; the runner already ships cmdline-tools.
+          packages: platform-tools
 
       - name: Generate launcher + splash icons
         run: |
