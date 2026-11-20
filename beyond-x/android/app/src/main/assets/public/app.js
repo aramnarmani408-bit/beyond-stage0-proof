@@ -28,7 +28,21 @@ function showToast(text) {
     }, 2500);
 }
 
+function isIdentityQuestion(q) {
+    return q.indexOf("چا جوړ") !== -1 || q.indexOf("جوړ کړی") !== -1 || q.indexOf("جوړونکی") !== -1 || q.indexOf("ستا نوم") !== -1 || q.indexOf("څوک یې") !== -1;
+}
+
 async function askBeyond(question) {
+    // Identity is answered LOCALLY, never by the model: the free model
+    // claims OpenAI made it even when instructed otherwise (proven by
+    // curl 2026-11-20 — it answered "زه د OpenAI لخوا ... جوړ شوی یم"
+    // despite the BEYOND X instruction). The app states its own identity.
+    if (isIdentityQuestion(question)) {
+        setAction("ځواب ورکوم");
+        addMessage("زه BEYOND X یم، د BEYOND AI جوړ کړی هوښیار مرستیال یم.", "ai");
+        setAction("چمتو یم");
+        return;
+    }
     setAction("فکر کوم...");
     try {
         // Pashto-first: tell the model to answer in Pashto. Without this
