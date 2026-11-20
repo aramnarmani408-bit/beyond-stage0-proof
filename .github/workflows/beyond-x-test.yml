@@ -1,0 +1,83 @@
+# BEYOND X test — cloud build workflow (v2)
+# Builds the stage-1 Capacitor shell (beyond-x/) into a debug APK.
+# Dispatched by the BEYOND gateway (build_key input declared so the
+# dispatch is accepted). Verified shell files (round 7 run #3556):
+# www/index.html + www/app.js. appId com.beyondx.app.
+# v2: no package-lock.json (npm install, no cache); no binaries pushed —
+# launcher/splash PNGs + the Gradle wrapper are generated in CI below.
+
+name: BEYOND X test (debug APK)
+
+on:
+  push:
+    branches: [beyond-x-test]
+  workflow_dispatch:
+    inputs:
+      build_key:
+        description: "BEYOND build key (idempotency)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        working-directory: beyond-x
+        run: npm install
+
+      - name: Sync web assets into the Android project
+        working-directory: beyond-x
+        run: npx cap sync android
+
+      - name: Set up JDK 17 (required by AGP 8.13.0)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Generate launcher + splash icons
+        run: |
+          cd beyond-x/android/app/src/main/res
+          mkdir -p mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi drawable drawable-land-mdpi drawable-land-hdpi drawable-land-xhdpi drawable-land-xxhdpi drawable-land-xxxhdpi drawable-port-mdpi drawable-port-hdpi drawable-port-xhdpi drawable-port-xxhdpi drawable-port-xxxhdpi
+          command -v convert >/dev/null || { echo "ImageMagick convert not found"; exit 1; }
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do for n in ic_launcher ic_launcher_round ic_launcher_foreground; do convert -size 192x192 xc:#00F5FF mipmap-$d/$n.png; done; done
+          for q in "" -land-mdpi -land-hdpi -land-xhdpi -land-xxhdpi -land-xxxhdpi -port-mdpi -port-hdpi -port-xhdpi -port-xxhdpi -port-xxxhdpi; do convert -size 512x512 xc:#050510 drawable$q/splash.png; done
+          test $(find . -name '*.png' | wc -l) -eq 26
+
+      - name: Generate Gradle wrapper
+        working-directory: beyond-x/android
+        run: |
+          if command -v gradle >/dev/null 2>&1; then
+            gradle wrapper --gradle-version 8.14.3
+          else
+            curl -fsSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew
+            curl -fsSL -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew.bat
+            curl -fsSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradle/wrapper/gradle-wrapper.jar
+          fi
+          ls -la gradlew gradle/wrapper/gradle-wrapper.jar
+
+      - name: Build debug APK
+        working-directory: beyond-x/android
+        run: chmod +x gradlew && ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: beyond-x-test-debug-apk
+          path: beyond-x/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
