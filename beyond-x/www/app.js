@@ -37,6 +37,15 @@ function isIdentityQuestion(q) {
     return q.indexOf("چا جوړ") !== -1 || q.indexOf("جوړ کړی") !== -1 || q.indexOf("جوړونکی") !== -1 || q.indexOf("ستا نوم") !== -1 || q.indexOf("څوک یې") !== -1;
 }
 
+// The school system is HIDDEN until the user asks for school help
+// (arman's correction 2026-11-20: no school tab, no extra systems
+// upfront — BEYOND X shows a system for whoever asks, on the
+// spot). The quiz capability stays in the app; this trigger reveals
+// it. Works offline — the quiz is local.
+function isSchoolRequest(q) {
+    return q.indexOf("ښوونځی") !== -1 || q.indexOf("کوئز") !== -1 || q.indexOf("انګلیسي") !== -1 || q.indexOf("درس") !== -1 || q.indexOf("زده کړم") !== -1 || q.indexOf("زده کړه") !== -1;
+}
+
 async function askBeyond(question) {
     // Identity is answered LOCALLY, never by the model: the free model
     // claims OpenAI made it even when instructed otherwise (proven by
@@ -88,6 +97,10 @@ function sendQuestion() {
     if (!q) return;
     addMessage(q, "user");
     input.value = "";
+    if (isSchoolRequest(q)) {
+        showPanel("school");
+        addMessage("د ښوونځي کوئز دې لپاره جوړ شو — لوبه وکړه!", "ai");
+    }
     askBeyond(q);
 }
 
@@ -164,7 +177,7 @@ const chatArea = document.getElementById("chatArea");
 const sendBtn = document.getElementById("sendBtn");
 const askInput = document.getElementById("askInput");
 const quizRestart = document.getElementById("quizRestart");
-const tabs = document.querySelectorAll(".tab");
+const backChat = document.getElementById("backChat");
 
 if (drawerBtn && drawer) {
     drawerBtn.addEventListener("click", () => drawer.classList.toggle("open"));
@@ -188,17 +201,7 @@ if (askInput) {
 
 if (quizRestart) quizRestart.addEventListener("click", startQuiz);
 
-tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-        if (tab.dataset.tab === "chat") {
-            showPanel("chat");
-        } else if (tab.dataset.tab === "school") {
-            showPanel("school");
-        } else {
-            showToast("په راتلونکي پړاو کې راځي");
-        }
-    });
-});
+if (backChat) backChat.addEventListener("click", () => showPanel("chat"));
 
 startQuiz();
 setAction("چمتو یم");
