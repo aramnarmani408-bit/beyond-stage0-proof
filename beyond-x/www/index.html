@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://text.pollinations.ai">
+    <title>BEYOND X</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; background: #000; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+        aside { width: 250px; background: #111; display: none; flex-direction: column; border-left: 1px solid #333; }
+        aside.open { display: flex; }
+        .tab { padding: 15px; cursor: pointer; border-bottom: 1px solid #222; }
+        #main { flex: 1; display: flex; flex-direction: column; padding: 20px; }
+        #chatArea { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px; border-radius: 8px; max-width: 80%; }
+        .msg.user { background: #222; align-self: flex-end; }
+        .msg.ai { background: #333; align-self: flex-start; }
+        #inputArea { display: flex; gap: 10px; padding-top: 10px; }
+        .status-dot { width: 10px; height: 10px; background: green; border-radius: 50%; animation: pulse 1s infinite; display: inline-block; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        #toast { position: fixed; bottom: 20px; right: 20px; background: #444; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <aside id="drawer">
+        <button id="newChatBtn">نوې خبرې</button>
+        <ul id="chatList">خبره ۱</ul>
+        <div class="tab" data-tab="chat">خبرې</div>
+        <div class="tab" data-tab="school">ښوونځی</div>
+        <div class="tab" data-tab="islamic">اسلامي</div>
+        <div class="tab" data-tab="textbooks">کتابونه</div>
+        <div class="tab" data-tab="images">انځورونه</div>
+        <div class="tab" data-tab="voice">غږ</div>
+        <div class="tab" data-tab="games">لوبې</div>
+    </aside>
+    <div id="main">
+        <header>
+            <button id="drawerBtn">☰</button>
+            <svg id="avatar" width="40" height="40"><circle cx="20" cy="20" r="15" fill="#555"/></svg>
+            <span class="status-dot"></span>
+            <div id="actionLine">چمتو یم</div>
+        </header>
+        <div id="welcome">BEYOND X ته ښه راغلاست! زه ستا مرستیال یم — خپله پوښتنه ولیکئ.</div>
+        <div id="chatArea"></div>
+        <div id="inputArea">
+            <input id="askInput" placeholder="خپله پوښتنه ولیکئ...">
+            <button id="sendBtn">لیږل</button>
+        </div>
+    </div>
+    <div id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
