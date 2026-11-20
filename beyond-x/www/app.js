@@ -4,7 +4,8 @@ const AppState = { messages: [], currentChat: 1 };
 const quizWords = [["father", "پلار"], ["mother", "مور"], ["brother", "ورور"], ["sister", "خور"], ["son", "زوی"], ["daughter", "لور"]];
 
 const quizState = { pos: 0, score: 0, lock: false,
-    queue: [0, 1, 2, 3, 4, 5], weak: [], mode: "en-ps", revising: false };
+    queue: [0, 1, 2, 3, 4, 5], weak: [], mode: "en-ps", revising: false,
+    kind: "word", sentWeak: [] };
 
 // Progress persistence (localStorage, guarded): position, score,
 // weak words and mode survive closing + reopening the app — the
@@ -17,7 +18,8 @@ function saveProgress() {
         localStorage.setItem(SCHOOL_KEY, JSON.stringify({
             pos: quizState.pos, score: quizState.score,
             weak: quizState.weak, mode: quizState.mode,
-            revising: quizState.revising, queue: quizState.queue
+            revising: quizState.revising, queue: quizState.queue,
+            kind: quizState.kind, sentWeak: quizState.sentWeak
         }));
     } catch (e) { /* storage unavailable — the quiz still works */ }
 }
@@ -34,6 +36,8 @@ function loadProgress() {
         quizState.mode = s.mode === "ps-en" ? "ps-en" : "en-ps";
         quizState.revising = s.revising === true;
         quizState.queue = s.queue;
+        quizState.kind = s.kind === "sentence" ? "sentence" : "word";
+        quizState.sentWeak = Array.isArray(s.sentWeak) ? s.sentWeak : [];
         return true;
     } catch (e) { return false; }
 }
@@ -142,8 +146,52 @@ function startQuiz() {
     quizState.lock = false;
     quizState.queue = [0, 1, 2, 3, 4, 5];
     quizState.revising = false;
+    quizState.kind = "word";
     saveProgress();
     showQuizQuestion();
+}
+
+// Sentence-completion quiz data: the 87 textbook words that have a
+// verbatim example sentence (vocab.js, generated from the verified
+// extraction). Guarded — the word quiz works without it.
+function vocabItems() {
+    if (typeof VOCAB === "undefined" || !Array.isArray(VOCAB)) return [];
+    return VOCAB;
+}
+function startSentenceQuiz() {
+    const items = vocabItems();
+    const feedbackEl = document.getElementById("quizFeedback");
+    if (items.length === 0) {
+        if (feedbackEl) feedbackEl.textContent = "د جملو لغتونه نشته";
+        return;
+    }
+    quizState.pos = 0;
+    quizState.score = 0;
+    quizState.lock = false;
+    quizState.queue = items.map(function (it, i) { return i; });
+    quizState.revising = false;
+    quizState.kind = "sentence";
+    saveProgress();
+    showQuizQuestion();
+}
+// Distractors: words from the same chapter first, then others.
+function sentenceOptions(idx) {
+    const items = vocabItems();
+    const correct = items[idx].en;
+    const ch = items[idx].chapter;
+    const pool = [];
+    for (let i = 0; i < items.length; i++) {
+        if (i !== idx && items[i].chapter === ch) pool.push(items[i].en);
+    }
+    for (let i = 0; i < items.length && pool.length < 3; i++) {
+        if (i !== idx && items[i].chapter !== ch) pool.push(items[i].en);
+    }
+    const options = [correct].concat(pool.slice(0, 3));
+    for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = options[i]; options[i] = options[j]; options[j] = t;
+    }
+    return options;
 }
 
 // Revision queue: the words the learner got wrong, re-presented
@@ -151,14 +199,15 @@ function startQuiz() {
 // record — it survives restarts (saved with the progress).
 function startRevision() {
     const feedbackEl = document.getElementById("quizFeedback");
-    if (quizState.weak.length === 0) {
+    const weakList = quizState.kind === "sentence" ? quizState.sentWeak : quizState.weak;
+    if (weakList.length === 0) {
         if (feedbackEl) feedbackEl.textContent = "کمزورې کلمې نشته — ټولې زده شوې!";
         return;
     }
     quizState.pos = 0;
     quizState.score = 0;
     quizState.lock = false;
-    quizState.queue = quizState.weak.slice();
+    quizState.queue = weakList.slice();
     quizState.revising = true;
     saveProgress();
     showQuizQuestion();
@@ -167,6 +216,7 @@ function startRevision() {
 // Direction toggle: English→Pashto (default) or Pashto→English
 // (the reverse exercise — the same real words, the other way).
 function toggleMode() {
+    if (quizState.kind !== "word") return; // direction is for the word quiz only
     quizState.mode = quizState.mode === "en-ps" ? "ps-en" : "en-ps";
     const modeBtn = document.getElementById("modeBtn");
     if (modeBtn) modeBtn.textContent = quizState.mode === "en-ps" ? "↔ پښتو ← انګلیسي" : "↔ انګلیسي ← پښتو";
@@ -190,8 +240,12 @@ function showQuizQuestion() {
         if (feedbackEl) feedbackEl.textContent = quizState.score + "/" + total;
         if (resultEl) {
             let r = "پایله: " + pct + "%";
-            if (quizState.weak.length > 0) {
-                r += " — کمزورې کلمې: " + quizState.weak.map(function (i) { return quizWords[i][0]; }).join("، ");
+            const weakList = quizState.kind === "sentence" ? quizState.sentWeak : quizState.weak;
+            if (weakList.length > 0) {
+                const names = weakList.map(function (i) {
+                    return quizState.kind === "sentence" ? vocabItems()[i].en : quizWords[i][0];
+                });
+                r += " — کمزورې کلمې: " + names.join("، ");
             } else {
                 r += " — ټولې کلمې زده شوې!";
             }
@@ -202,24 +256,38 @@ function showQuizQuestion() {
         return;
     }
     quizState.lock = false;
+    const modeBtn = document.getElementById("modeBtn");
+    if (modeBtn) modeBtn.style.display = quizState.kind === "sentence" ? "none" : "";
     const idx = quizState.queue[quizState.pos];
-    const pair = quizWords[idx];
-    const promptCol = quizState.mode === "en-ps" ? 0 : 1;
-    const answerCol = 1 - promptCol;
-    wordEl.textContent = pair[promptCol];
+    let prompt, options;
+    if (quizState.kind === "sentence") {
+        // Sentence completion: the verbatim example with the word
+        // blanked out; the learner picks the missing word.
+        const item = vocabItems()[idx];
+        prompt = item.example.replace(new RegExp(item.en, "i"), "___");
+        wordEl.style.fontSize = "18px";
+        options = sentenceOptions(idx);
+    } else {
+        const pair = quizWords[idx];
+        const promptCol = quizState.mode === "en-ps" ? 0 : 1;
+        const answerCol = 1 - promptCol;
+        prompt = pair[promptCol];
+        wordEl.style.fontSize = "";
+        const correct = pair[answerCol];
+        options = [correct];
+        for (let i = 1; i <= 3; i++) {
+            options.push(quizWords[(idx + i) % quizWords.length][answerCol]);
+        }
+        // Randomized option order (ChatGPT stage-2 acceptance): the
+        // correct answer is not in a predictable position.
+        for (let i = options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const t = options[i]; options[i] = options[j]; options[j] = t;
+        }
+    }
+    wordEl.textContent = prompt;
     while (optionsEl.firstChild) optionsEl.removeChild(optionsEl.firstChild);
-    const correct = pair[answerCol];
-    const options = [correct];
-    for (let i = 1; i <= 3; i++) {
-        options.push(quizWords[(idx + i) % quizWords.length][answerCol]);
-    }
-    // Randomized option order (ChatGPT stage-2 acceptance): the
-    // correct answer is not in a predictable position.
-    for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        const t = options[i]; options[i] = options[j]; options[j] = t;
-    }
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < options.length; i++) {
         const opt = options[i];
         const btn = document.createElement("button");
         btn.className = "quiz-opt";
@@ -233,19 +301,25 @@ function answerQuiz(chosen) {
     if (quizState.lock) return;
     quizState.lock = true;
     const idx = quizState.queue[quizState.pos];
-    const answerCol = quizState.mode === "en-ps" ? 1 : 0;
-    const correct = quizWords[idx][answerCol];
+    let correct;
+    if (quizState.kind === "sentence") {
+        correct = vocabItems()[idx].en;
+    } else {
+        const answerCol = quizState.mode === "en-ps" ? 1 : 0;
+        correct = quizWords[idx][answerCol];
+    }
+    const weakList = quizState.kind === "sentence" ? quizState.sentWeak : quizState.weak;
     const feedbackEl = document.getElementById("quizFeedback");
     const scoreEl = document.getElementById("quizScore");
     if (chosen === correct) {
         quizState.score += 1;
         if (feedbackEl) feedbackEl.textContent = "سم دی ✓";
         // A weak word answered right is no longer weak.
-        const w = quizState.weak.indexOf(idx);
-        if (w !== -1) quizState.weak.splice(w, 1);
+        const w = weakList.indexOf(idx);
+        if (w !== -1) weakList.splice(w, 1);
     } else {
         if (feedbackEl) feedbackEl.textContent = "غلط دی — سم ځواب: " + correct;
-        if (quizState.weak.indexOf(idx) === -1) quizState.weak.push(idx);
+        if (weakList.indexOf(idx) === -1) weakList.push(idx);
     }
     if (scoreEl) scoreEl.textContent = quizState.score + "/" + quizState.queue.length;
     quizState.pos += 1;
@@ -262,6 +336,8 @@ const askInput = document.getElementById("askInput");
 const quizRestart = document.getElementById("quizRestart");
 const reviseBtn = document.getElementById("reviseBtn");
 const modeBtn = document.getElementById("modeBtn");
+const wordBtn = document.getElementById("wordBtn");
+const sentBtn = document.getElementById("sentBtn");
 const backChat = document.getElementById("backChat");
 
 if (drawerBtn && drawer) {
@@ -290,9 +366,17 @@ if (reviseBtn) reviseBtn.addEventListener("click", startRevision);
 
 if (modeBtn) modeBtn.addEventListener("click", toggleMode);
 
+if (wordBtn) wordBtn.addEventListener("click", startQuiz);
+
+if (sentBtn) {
+    sentBtn.addEventListener("click", startSentenceQuiz);
+    if (vocabItems().length === 0) sentBtn.style.display = "none";
+}
+
 if (backChat) backChat.addEventListener("click", () => showPanel("chat"));
 
 // Resume saved progress if there is any; otherwise start fresh.
 if (!loadProgress()) startQuiz();
+else if (quizState.kind === "sentence" && vocabItems().length === 0) startQuiz();
 else showQuizQuestion();
 setAction("چمتو یم");
