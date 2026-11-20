@@ -50,16 +50,30 @@ async function askBeyond(question) {
     }
     setAction("فکر کوم...");
     try {
-        // Pashto-first: tell the model to answer in Pashto. Without this
-        // the free model guesses the language and often answers in Persian
-        // (arman's live test 2026-11-20: plain "سلام" came back in Persian;
-        // with this prefix it answers in Pashto — verified by curl).
-        const prompt = "په پښتو ژبه ځواب ورکړه: " + question;
-        const resp = await fetch("https://text.pollinations.ai/" + encodeURIComponent(prompt));
+        // The app NEVER calls a model directly. It talks to BEYOND's
+        // gateway, which holds the keys server-side, routes through
+        // BEYOND's Safety Net lanes in BEYOND's order, enforces
+        // Pashto-first + the BEYOND X identity, and validates every
+        // answer. The gateway applies its own system prompt — the app
+        // sends the raw question, no prefix. (Pollinations was the
+        // interim backend; the gateway switch landed 2026-11-20.)
+        const resp = await fetch("https://beyond-build-gateway.aramnarmani408.workers.dev/api/v1/x/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: { text: question },
+                preferences: { language: "ps", response_language: "ps", stream: false },
+                context: { workspace: "chat" } })
+        });
         if (!resp.ok) throw new Error("Network");
-        const data = await resp.text();
+        const data = await resp.json();
+        // Presentation layer: never render raw provider text. The
+        // answer is shown ONLY if the gateway contract validates.
+        if (!data || data.status !== "success" || !data.response
+            || data.response.identity !== "beyondx"
+            || typeof data.response.text !== "string"
+            || data.response.text.length === 0) throw new Error("Bad response");
         setAction("ځواب ورکوم");
-        addMessage(data, "ai");
+        addMessage(data.response.text, "ai");
     } catch (e) {
         addMessage("انټرنیټ نشته یا ځواب ونه رسېد — بیا هڅه وکړه", "ai");
     } finally {
@@ -165,6 +179,7 @@ if (newChatBtn && chatArea) {
     });
 }
 
+if (sendBtn) sendQuestion;
 if (sendBtn) sendBtn.addEventListener("click", sendQuestion);
 if (askInput) {
     askInput.addEventListener("keydown", e => {
