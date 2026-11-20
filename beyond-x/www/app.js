@@ -179,7 +179,6 @@ if (newChatBtn && chatArea) {
     });
 }
 
-if (sendBtn) sendQuestion;
 if (sendBtn) sendBtn.addEventListener("click", sendQuestion);
 if (askInput) {
     askInput.addEventListener("keydown", e => {
