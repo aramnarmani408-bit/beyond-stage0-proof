@@ -5,6 +5,9 @@
 # www/index.html + www/app.js. appId com.beyondx.app.
 # v2: no package-lock.json (npm install, no cache); no binaries pushed —
 # launcher/splash PNGs + the Gradle wrapper are generated in CI below.
+# v3: SDK setup installs platform-tools only (legacy "tools" is gone).
+# v4: icons via dependency-free Node (zlib) — ImageMagick is NOT on
+# ubuntu-26.04 runners (run #44723211977 failed on "convert not found").
 
 name: BEYOND X test (debug APK)
 
@@ -61,9 +64,22 @@ jobs:
         run: |
           cd beyond-x/android/app/src/main/res
           mkdir -p mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi drawable drawable-land-mdpi drawable-land-hdpi drawable-land-xhdpi drawable-land-xxhdpi drawable-land-xxxhdpi drawable-port-mdpi drawable-port-hdpi drawable-port-xhdpi drawable-port-xxhdpi drawable-port-xxxhdpi
-          command -v convert >/dev/null || { echo "ImageMagick convert not found"; exit 1; }
-          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do for n in ic_launcher ic_launcher_round ic_launcher_foreground; do convert -size 192x192 xc:#00F5FF mipmap-$d/$n.png; done; done
-          for q in "" -land-mdpi -land-hdpi -land-xhdpi -land-xxhdpi -land-xxxhdpi -port-mdpi -port-hdpi -port-xhdpi -port-xxhdpi -port-xxxhdpi; do convert -size 512x512 xc:#050510 drawable$q/splash.png; done
+          # v4 fix (run #44723211977 failed in 16s): ImageMagick "convert"
+          # is NOT installed on ubuntu-26.04 runners. Generate the 26
+          # solid-color PNGs with dependency-free Node (zlib) instead —
+          # verified locally: 26/26 valid PNGs, correct sizes + colors.
+          cat > /tmp/gen-icons.js <<'EOF'
+          const fs = require('fs'), zlib = require('zlib');
+          const T = new Int32Array(256);
+          for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; T[n] = c; }
+          const crc = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = T[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+          const chk = (t, d) => { const l = Buffer.alloc(4); l.writeUInt32BE(d.length); const b = Buffer.from(t), r = Buffer.alloc(4); r.writeUInt32BE(crc(Buffer.concat([b, d]))); return Buffer.concat([l, b, d, r]); };
+          const png = (s, r, g, b) => { const row = Buffer.alloc(1 + s * 3); for (let x = 0; x < s; x++) { row[1 + x * 3] = r; row[2 + x * 3] = g; row[3 + x * 3] = b; } const raw = Buffer.concat(Array(s).fill(row)); const h = Buffer.alloc(13); h.writeUInt32BE(s, 0); h.writeUInt32BE(s, 4); h[8] = 8; h[9] = 2; return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chk('IHDR', h), chk('IDAT', zlib.deflateSync(raw)), chk('IEND', Buffer.alloc(0))]); };
+          const A = png(192, 0, 245, 255), B = png(512, 5, 5, 16);
+          for (const d of ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']) for (const n of ['ic_launcher', 'ic_launcher_round', 'ic_launcher_foreground']) fs.writeFileSync(`mipmap-${d}/${n}.png`, A);
+          for (const q of ['', '-land-mdpi', '-land-hdpi', '-land-xhdpi', '-land-xxhdpi', '-land-xxxhdpi', '-port-mdpi', '-port-hdpi', '-port-xhdpi', '-port-xxhdpi', '-port-xxxhdpi']) fs.writeFileSync(`drawable${q}/splash.png`, B);
+          EOF
+          node /tmp/gen-icons.js
           test $(find . -name '*.png' | wc -l) -eq 26
 
       - name: Generate Gradle wrapper
