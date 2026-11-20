@@ -1,5 +1,10 @@
 const AppState = { messages: [], currentChat: 1 };
 
+// Real content: family words from textbook answer #277 (Grade 4 English).
+const quizWords = [["father", "پلار"], ["mother", "مور"], ["brother", "ورور"], ["sister", "خور"], ["son", "زوی"], ["daughter", "لور"]];
+
+const quizState = { pos: 0, score: 0, lock: false };
+
 function setAction(text) {
     const el = document.getElementById("actionLine");
     if (el) el.textContent = text;
@@ -72,40 +77,114 @@ function sendQuestion() {
     askBeyond(q);
 }
 
-    const drawerBtn = document.getElementById("drawerBtn");
-    const drawer = document.getElementById("drawer");
-    const newChatBtn = document.getElementById("newChatBtn");
-    const chatArea = document.getElementById("chatArea");
-    const sendBtn = document.getElementById("sendBtn");
-    const askInput = document.getElementById("askInput");
-    const tabs = document.querySelectorAll(".tab");
+function showPanel(name) {
+    const chatPanel = document.getElementById("chatPanel");
+    const schoolPanel = document.getElementById("schoolPanel");
+    if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
+    if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
+}
 
-    if (drawerBtn && drawer) {
-        drawerBtn.addEventListener("click", () => drawer.classList.toggle("open"));
+function startQuiz() {
+    quizState.pos = 0;
+    quizState.score = 0;
+    quizState.lock = false;
+    showQuizQuestion();
+}
+
+function showQuizQuestion() {
+    const wordEl = document.getElementById("quizWord");
+    const optionsEl = document.getElementById("quizOptions");
+    const feedbackEl = document.getElementById("quizFeedback");
+    const scoreEl = document.getElementById("quizScore");
+    if (!wordEl || !optionsEl) return;
+    if (feedbackEl) feedbackEl.textContent = "";
+    if (scoreEl) scoreEl.textContent = quizState.score + "/" + quizWords.length;
+    if (quizState.pos >= quizWords.length) {
+        wordEl.textContent = "بشپړ شو!";
+        if (feedbackEl) feedbackEl.textContent = quizState.score + "/" + quizWords.length;
+        while (optionsEl.firstChild) optionsEl.removeChild(optionsEl.firstChild);
+        return;
     }
-
-    if (newChatBtn && chatArea) {
-        newChatBtn.addEventListener("click", () => {
-            while (chatArea.firstChild) chatArea.removeChild(chatArea.firstChild);
-            AppState.messages = [];
-            AppState.currentChat++;
-            setAction("چمتو یم");
-        });
+    quizState.lock = false;
+    wordEl.textContent = quizWords[quizState.pos][0];
+    while (optionsEl.firstChild) optionsEl.removeChild(optionsEl.firstChild);
+    const correct = quizWords[quizState.pos][1];
+    const options = [correct];
+    for (let i = 1; i <= 3; i++) {
+        options.push(quizWords[(quizState.pos + i) % quizWords.length][1]);
     }
-
-    if (sendBtn) sendBtn.addEventListener("click", sendQuestion);
-    if (askInput) {
-        askInput.addEventListener("keydown", e => {
-            if (e.key === "Enter") sendQuestion();
-        });
+    // Deterministic rotation: the correct answer sits at a different
+    // position each question (pos % 4) — varied, no randomness.
+    const rot = quizState.pos % 4;
+    for (let i = 0; i < 4; i++) {
+        const opt = options[(i + rot) % 4];
+        const btn = document.createElement("button");
+        btn.className = "quiz-opt";
+        btn.textContent = opt;
+        btn.addEventListener("click", function () { answerQuiz(opt); });
+        optionsEl.appendChild(btn);
     }
+}
 
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            if (tab.dataset.tab !== "chat") {
-                showToast("په راتلونکي پړاو کې راځي");
-            }
-        });
+function answerQuiz(chosen) {
+    if (quizState.lock) return;
+    quizState.lock = true;
+    const correct = quizWords[quizState.pos][1];
+    const feedbackEl = document.getElementById("quizFeedback");
+    const scoreEl = document.getElementById("quizScore");
+    if (chosen === correct) {
+        quizState.score += 1;
+        if (feedbackEl) feedbackEl.textContent = "سم دی ✓";
+    } else {
+        if (feedbackEl) feedbackEl.textContent = "غلط دی — سم ځواب: " + correct;
+    }
+    if (scoreEl) scoreEl.textContent = quizState.score + "/" + quizWords.length;
+    quizState.pos += 1;
+    setTimeout(showQuizQuestion, 1200);
+}
+
+const drawerBtn = document.getElementById("drawerBtn");
+const drawer = document.getElementById("drawer");
+const newChatBtn = document.getElementById("newChatBtn");
+const chatArea = document.getElementById("chatArea");
+const sendBtn = document.getElementById("sendBtn");
+const askInput = document.getElementById("askInput");
+const quizRestart = document.getElementById("quizRestart");
+const tabs = document.querySelectorAll(".tab");
+
+if (drawerBtn && drawer) {
+    drawerBtn.addEventListener("click", () => drawer.classList.toggle("open"));
+}
+
+if (newChatBtn && chatArea) {
+    newChatBtn.addEventListener("click", () => {
+        while (chatArea.firstChild) chatArea.removeChild(chatArea.firstChild);
+        AppState.messages = [];
+        AppState.currentChat++;
+        setAction("چمتو یم");
     });
+}
 
-    setAction("چمتو یم");
+if (sendBtn) sendBtn.addEventListener("click", sendQuestion);
+if (askInput) {
+    askInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") sendQuestion();
+    });
+}
+
+if (quizRestart) quizRestart.addEventListener("click", startQuiz);
+
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        if (tab.dataset.tab === "chat") {
+            showPanel("chat");
+        } else if (tab.dataset.tab === "school") {
+            showPanel("school");
+        } else {
+            showToast("په راتلونکي پړاو کې راځي");
+        }
+    });
+});
+
+startQuiz();
+setAction("چمتو یم");
