@@ -37,11 +37,8 @@ function isIdentityQuestion(q) {
     return q.indexOf("چا جوړ") !== -1 || q.indexOf("جوړ کړی") !== -1 || q.indexOf("جوړونکی") !== -1 || q.indexOf("ستا نوم") !== -1 || q.indexOf("څوک یې") !== -1;
 }
 
-// The school system is HIDDEN until the user asks for school help
-// (arman's correction 2026-11-20: no school tab, no extra systems
-// upfront — BEYOND X shows a system for whoever asks, on the
-// spot). The quiz capability stays in the app; this trigger reveals
-// it. Works offline — the quiz is local.
+// School is HIDDEN until asked (arman correction 2026-11-20):
+// this trigger reveals the quiz on a school question. Offline OK.
 function isSchoolRequest(q) {
     return q.indexOf("ښوونځی") !== -1 || q.indexOf("کوئز") !== -1 || q.indexOf("انګلیسي") !== -1 || q.indexOf("درس") !== -1 || q.indexOf("زده کړم") !== -1 || q.indexOf("زده کړه") !== -1;
 }
