@@ -1,8 +1,7 @@
 // BEYOND X module 4/31: intent2 — workspace detectors moved out of
 // intent.js (its push was full) + the language detector (stage 8).
-// An image QUESTION ("انځور څه شی دی؟") is chat, not the
-// workspace — the question-word guard below would catch it, but
-// the images trigger runs first, so it excludes questions itself.
+// An image QUESTION is chat, not the workspace — the
+// images trigger runs first, so it excludes questions itself.
 function isImagesRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("انځور") !== -1 || q.indexOf("عکس") !== -1;
@@ -15,8 +14,8 @@ function isVoiceRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1;
 }
-// A games QUESTION ("لوبه څه شی دی؟") is chat, not the
-// workspace — same question-word guard as images/voice.
+// A games QUESTION is chat, not the workspace — same
+// question-word guard as images/voice.
 function isGamesRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("لوبې") !== -1 || q.indexOf("ګېم") !== -1 || q.indexOf("لوبه") !== -1;
@@ -29,6 +28,18 @@ function isLanguageRequest(q) {
     return q.indexOf("ترجمه") !== -1 || q.indexOf("ژباړه") !== -1 || q.indexOf("ګرامر") !== -1
         || q.indexOf("لغت") !== -1 || q.indexOf("تلفظ") !== -1 || q.indexOf("معنا") !== -1
         || q.indexOf("سمه کړه") !== -1 || q.toLowerCase().indexOf("translate") !== -1;
+}
+// A programming QUESTION is chat, not the workspace —
+// same question-word guard as images/voice/games.
+function isProgrammingRequest(q) {
+    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
+    return q.indexOf("کوډ") !== -1 || q.indexOf("پروګرام") !== -1 || q.indexOf("اپلیکیشن") !== -1
+        || q.toLowerCase().indexOf("code") !== -1;
+}
+// Strip trigger words; the rest prefills the generate input.
+function codePromptFrom(q) {
+    var drop = ["کوډ", "پروګرام", "کولو", "اپلیکیشن", "کارځای", "سیستم", "جوړ", "جوړه", "کړه", "راکړه", "غواړم", "یو", "یوه", "د", "مې", "را", "مه", "code", "Code"];
+    return q.split(/\s+/).filter(function (w) { return w && drop.indexOf(w) === -1; }).join(" ");
 }
 // Language detection (deterministic, client-side): script by
 // Unicode range, then Pashto markers + common-word lists. It
