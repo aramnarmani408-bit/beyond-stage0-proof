@@ -8,6 +8,8 @@ public class MainActivity extends BridgeActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     registerPlugin(BeyondXBridge.class);
+    registerPlugin(BeyondXControl.class);
+    registerPlugin(BeyondXActions.class);
     super.onCreate(savedInstanceState);
   }
 }
