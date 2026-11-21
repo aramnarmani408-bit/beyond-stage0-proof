@@ -1,4 +1,4 @@
-// BEYOND X module 36/37: mobilegen — assistant leg + actions + audit.
+// BEYOND X module 36/38: mobilegen — assistant leg + actions + audit.
 var MOBILE_KEY = "beyondx-mobile-v1";
 var mobileWakeSentinel = null;
 var NPR = "not required";
