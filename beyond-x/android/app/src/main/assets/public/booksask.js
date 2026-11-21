@@ -1,4 +1,3 @@
-// BEYOND X module 17/18: booksask — Books gateway calls (Bearer session, 60 s abort, identity checked).
 async function xBooks(path, token, body) {
     var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, CHAT_TIMEOUT_MS);
