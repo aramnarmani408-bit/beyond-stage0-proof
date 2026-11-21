@@ -43,6 +43,12 @@ function isVoiceRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1;
 }
+// A games QUESTION ("لوبه څه شی دی؟") is chat, not the
+// workspace — same question-word guard as images/voice.
+function isGamesRequest(q) {
+    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
+    return q.indexOf("لوبې") !== -1 || q.indexOf("ګېم") !== -1 || q.indexOf("لوبه") !== -1;
+}
 // Intent → {capability, mode}. A question (ځواب/څه دی/ووایه) is
 // chat, not a build request — EXCEPT an Islamic question, which
 // goes to the source-grounded pipeline, and a books question,
@@ -55,6 +61,7 @@ function analyzeIntent(q) {
     if (isBooksRequest(q)) return { capability: "books", mode: "temporary" };
     if (isImagesRequest(q)) return { capability: "images", mode: "temporary" };
     if (isVoiceRequest(q)) return { capability: "voice", mode: "temporary" };
+    if (isGamesRequest(q)) return { capability: "games", mode: "temporary" };
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return { capability: "chat", mode: "inline" };
     if (isBuildWord(q)) {
         if (q.indexOf("لوب") !== -1) return { capability: "games", mode: "temporary" };
