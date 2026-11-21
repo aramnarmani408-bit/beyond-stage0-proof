@@ -1,17 +1,11 @@
-// BEYOND X module 1/13: core — app state, quiz data, progress, capability registry
 const AppState = { messages: [], currentChat: 1, lastError: null, convId: null };
 
-// Real content: family words from textbook answer #277 (Grade 4 English).
 const quizWords = [["father", "پلار"], ["mother", "مور"], ["brother", "ورور"], ["sister", "خور"], ["son", "زوی"], ["daughter", "لور"]];
 
 const quizState = { pos: 0, score: 0, lock: false,
     queue: [0, 1, 2, 3, 4, 5], weak: [], mode: "en-ps", revising: false,
     kind: "word", sentWeak: [] };
 
-// Progress persistence (localStorage, guarded): position, score,
-// weak words and mode survive closing + reopening the app — the
-// WebView persists localStorage across restarts. If storage is
-// unavailable the quiz still works, just without persistence.
 const SCHOOL_KEY = "beyondx-school-v1";
 function saveProgress() {
     try {
@@ -43,9 +37,6 @@ function loadProgress() {
     } catch (e) { return false; }
 }
 
-// ---------- Dynamic Workspace Engine v1 ----------
-// Capability registry: what exists (verified) vs what is
-// planned (with its stage). Planned systems are NEVER claimed.
 const CAPABILITIES = {
     chat: { name: "خبرې", status: "available", stage: 1 },
     school: { name: "ښوونځی", status: "available", stage: 2 },
@@ -60,7 +51,6 @@ const CAPABILITIES = {
     neon: { name: "NEON", status: "planned", stage: 11 }
 };
 
-// Lifecycle statuses (Pashto labels shown in the UI).
 const WS_LABELS = {
     requested: "غوښتل شوی", analyzing: "تحلیلېږي",
     building: "جوړېږي", activating: "فعالېږي",
