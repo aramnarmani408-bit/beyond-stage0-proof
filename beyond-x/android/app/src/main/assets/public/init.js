@@ -1,4 +1,4 @@
-// BEYOND X module 13/13: init — element wiring + resume + polling (LAST)
+// BEYOND X module 15/15: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -67,9 +67,10 @@ else showQuizQuestion();
 // bounded polling (every 60s, skipped while the tab is hidden).
 if (!AppState.convId) AppState.convId = "conv-" + Date.now();
 loadChat();
-if (loadWorkspace() && workspaceState.capability === "school" && workspaceState.status === "ready") {
+if (loadWorkspace() && workspaceState.status === "ready") {
     setWorkspaceStatus("ready");
-    showPanel("school");
+    if (workspaceState.capability === "school") showPanel("school");
+    else if (workspaceState.capability === "islamic") { buildIslamicPanel(); showPanel("islamic"); }
 }
 checkGateway();
 if (typeof setInterval !== "undefined") {
