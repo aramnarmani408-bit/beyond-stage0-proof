@@ -1,4 +1,3 @@
-// BEYOND X module 33/34: codegen — Code gateway calls.
 var codePollTimer = null, codePollCount = 0;
 var CODE_POLL_MS = 10000, CODE_MAX_POLLS = 30;
 function codeFail(r) { return new Error("Failed: " + (r.reason || "نامعلومه ستونزه")); }
@@ -54,7 +53,6 @@ async function codePollStatus(jobId) {
 async function codeLanguages() {
   return codeCall("/code/languages");
 }
-// Generate/explain/fix/convert share one panel flow.
 async function codePanelTask(kind) {
   var isGen = kind === "generate";
   var input = isGen ? codeGenIn.value.trim() : codeEditor.value.trim();
