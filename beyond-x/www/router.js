@@ -110,3 +110,4 @@ function sendQuestion() {
     input.value = "";
     handleRequest(q);
 }
+
