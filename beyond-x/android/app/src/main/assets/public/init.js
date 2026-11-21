@@ -1,4 +1,4 @@
-// BEYOND X module 41/41: init — element wiring + resume + polling (LAST)
+// BEYOND X module 44/44: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -59,6 +59,8 @@ if (sentBtn) {
 
 if (backChat) backChat.addEventListener("click", () => showPanel("chat"));
 
+if (typeof buildNeon === "function") buildNeon();
+
 if (!loadProgress()) startQuiz();
 else if (quizState.kind === "sentence" && vocabItems().length === 0) startQuiz();
 else showQuizQuestion();
@@ -89,3 +91,4 @@ if (typeof document !== "undefined" && typeof document.addEventListener === "fun
     });
 }
 setAction("چمتو یم");
+if (typeof neonFirstOpen === "function") neonFirstOpen();
