@@ -1,4 +1,3 @@
-// BEYOND X module 19/21: images — panel + rendering.
 var imagesPanelEl = null;
 var imagesPromptEl = null;
 var imagesResultEl = null;
