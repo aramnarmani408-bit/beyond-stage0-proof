@@ -1,10 +1,9 @@
-// BEYOND X module 35/38: mobilelib — registry + diagnostics + permissions.
 var NR = "not reported";
 var MOBILE_CAPS = ["battery", "network", "storage-estimate", "ram-estimate",
   "vibration", "clipboard", "share", "geolocation", "notifications",
   "camera", "microphone", "wake-lock", "deep-links", "settings-intents",
   "app-inventory", "app-launch", "usage-stats", "screen-capture",
-  "accessibility", "file-access", "automation"];
+  "accessibility", "file-access", "automation", "tap", "swipe", "notif", "notif-reply", "notif-dismiss", "sms", "install", "uninstall"];
 var MOBILE_NATIVE = MOBILE_CAPS.slice(14);
 function mobileHasBridge() { return typeof Capacitor !== "undefined"; }
 function mobileNav() { return typeof navigator === "undefined" ? null : navigator; }
@@ -33,9 +32,9 @@ function mobileRegistry() {
 }
 async function mobileRead(fn, keys) {
   var o = {};
-  keys.forEach(k => o[k] = NR);
+  keys.forEach(k=>o[k]=NR);
   try { var v = await fn();
-    keys.forEach(k => o[k] = mobilePick(v, k));
+    keys.forEach(k=>o[k]=mobilePick(v,k));
   } catch (e) { }
   return o;
 }
@@ -49,7 +48,7 @@ async function mobileStorage() {
   var o = await mobileRead(function () { return n.storage.estimate(); }, ["quota", "usage"]);
   o.percent = NR;
   if (typeof o.quota === "number" && typeof o.usage === "number" && o.quota > 0)
-    o.percent = Math.round(o.usage / o.quota * 100);
+    o.percent=Math.round(o.usage/o.quota*100);
   return o;
 }
 async function mobileLatency() {
@@ -59,7 +58,7 @@ async function mobileLatency() {
     try { await fetch(HEALTH_URL); t.push(Date.now() - t0); } catch (e) { }
   }
   if (!t.length) return NR;
-  t.sort((a, b) => a - b);
+  t.sort((a,b)=>a-b);
   return t[Math.floor(t.length / 2)];
 }
 async function mobileNetwork() {
@@ -77,7 +76,7 @@ function mobileDiagnose(s) {
   var m = (typeof st.percent === "number") + (typeof b.level === "number")
     + (typeof nw.latencyMs === "number") + (typeof nw.rtt === "number");
   var f = [], a = [];
-  function rule(ok, fi, ac) { if (ok) { f.push(fi); a.push(ac); } }
+  function rule(ok,fi,ac){if(ok){f.push(fi);a.push(ac);}}
   rule(st.percent >= 90, "حافظه نږدې ډکه ده", "ځای خالي کړه");
   rule(st.percent >= 75 && st.percent < 90, "حافظه ډکېږي", "ځای خالي کړه");
   rule(b.level <= 0.2 && b.charging !== true, "بیټرۍ کمه ده", "موبایل چارج کړه");
