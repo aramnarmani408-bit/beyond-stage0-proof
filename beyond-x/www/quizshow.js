@@ -1,4 +1,3 @@
-// BEYOND X module 11/13: quizshow — question rendering + results
 function showQuizQuestion() {
     const wordEl = document.getElementById("quizWord");
     const optionsEl = document.getElementById("quizOptions");
@@ -37,8 +36,6 @@ function showQuizQuestion() {
     const idx = quizState.queue[quizState.pos];
     let prompt, options;
     if (quizState.kind === "sentence") {
-        // Sentence completion: the verbatim example with the word
-        // blanked out; the learner picks the missing word.
         const item = vocabItems()[idx];
         prompt = item.example.replace(new RegExp(item.en, "i"), "___");
         wordEl.style.fontSize = "18px";
@@ -54,8 +51,6 @@ function showQuizQuestion() {
         for (let i = 1; i <= 3; i++) {
             options.push(quizWords[(idx + i) % quizWords.length][answerCol]);
         }
-        // Randomized option order (ChatGPT stage-2 acceptance): the
-        // correct answer is not in a predictable position.
         for (let i = options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             const t = options[i]; options[i] = options[j]; options[j] = t;
