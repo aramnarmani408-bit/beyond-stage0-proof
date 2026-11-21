@@ -41,7 +41,7 @@ function handleRequest(q) {
         if (activateWorkspace("images", intent.mode)) {
             buildImagesPanel();
             showPanel("images");
-            addMessage("د انځورونو کارځای دې لپاره جوړ کړه او وپوهېږه.", "ai");
+            addMessage("د انځورونو کارځای دې لپاره جوړ شو — انځور جوړ کړه او وپوهېږه.", "ai");
         }
         // The message usually IS the prompt: strip the trigger
         // words and generate from the rest; a bare trigger just
