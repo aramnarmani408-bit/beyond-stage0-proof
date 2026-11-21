@@ -1,4 +1,3 @@
-// BEYOND X module 30/31: languagegen — Language gateway calls.
 var langLastTranslation;
 var LANG_NAMES = { ps: "پښتو", en: "انګلیسي", fa: "فارسي", ar: "عربي", ur: "اردو" };
 async function xLanguage(path, token, body) {
@@ -36,7 +35,6 @@ async function languageTranslate(text, from, to) {
   var r = await langCall("/language/translate", { text: text, from: f, to: to });
   if (!r.translation) throw new Error("Failed: " + (r.reason || "نامعلومه ستونزه"));
   langLastTranslation = r.translation;
-  // Auto-detection shows what it found (design: detection display).
   langShow(langTrOut, from === "auto" ? ["ژبه: " + (LANG_NAMES[f] || f), r.translation] : [r.translation]);
   return r;
 }
