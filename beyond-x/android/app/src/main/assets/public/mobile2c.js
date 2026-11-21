@@ -11,7 +11,7 @@ if (!q) return null;
 if (/څنګه|څه دی|څه شی دی|ووایه/.test(q) || /(^| )ولې( |$|؟)/.test(q)) return null;
 if (q.indexOf("ځواب") !== -1 && q.indexOf("ځواب ورکړه") === -1) return null;
 for (var i = 0; i < M2BP.length; i++) if (q.indexOf(M2BP[i][0]) !== -1) return m2bTask(M2BP[i], q);
-return null;
+return helpParse(q);
 }
 function m2bTask(t, q) {
 var k = t[1], w, n, b;
@@ -46,3 +46,4 @@ if (!l.ok) return { status: l.status, verification: l.error || l.status };
 if (!l.data.notifications.length) return { status: "UNSUPPORTED", verification: "خبرتیا نشته" };
 return { key: l.data.notifications[0].key };
 }
+var HELP_FLOWS = [["netslow", "ورو انټرنیټ", "انټرنیټ ورو|نېټ ورو", "latency", "ave", "m", "s"], ["slow", "ورو", "ورو|کند", "ram", "hkgr", "m", ""], ["storage", "حافظه", "حافظه ډکه|ځای نشته", "storage", "dkm", "m", ""], ["battery", "بیټرۍ", "بیټرۍ|چارج ژر", "battery", "blo", "m", ""], ["hot", "ګرم", "ګرم|ګرمېږي", "none", "h1", "u", "t"], ["nointernet", "انټرنیټ نشته", "انټرنیټ نشته|نېټ نشته", "online", "aiyer", "m", ""], ["crash", "بندېږي", "بندېږي|کریش", "none", "k2h", "u", ""], ["install", "نصب", "نصب نه|انسټال نه|نه نصبېږي", "storage", "gk", "m", ""], ["charge", "چارج", "چارج نه|چارج ورو", "charge", "twp", "m", "h"], ["frozen", "کنګل", "کنګل", "none", "x", "u", ""], ["sound", "غږ", "غږ نشته|اواز نشته|سپیکر", "bt", "zqjr", "u", ""], ["camera", "کامره", "کامره|کیمره", "cam", "7hrp", "u", "h"], ["bluetooth", "بلوتوت", "بلوتوت نه نښلي|بلوتوت نه وصل", "bt", "3", "u", ""], ["notif", "خبرتیاوې", "خبرتیاوې|نوټیفیکیشن", "notif", "4", "u", ""], ["malware", "شکمن", "شکمن|ویروس|مالویر", "apps", "5", "u", "v"], ["lock", "پټنوم", "پټنوم|پټرن", "none", "6f", "u", "l"], ["radio", "وای فای", "وای فای|وایفای|هاټ سپاټ|بلوتوت نه چالانېږي", "radio", "ranscufp", "u", "w"]];
