@@ -54,7 +54,7 @@ const CAPABILITIES = {
     images: { name: "انځورونه", status: "available", stage: 5 },
     voice: { name: "غږ", status: "available", stage: 6 },
     games: { name: "لوبې", status: "available", stage: 7 },
-    polyglot: { name: "ژبې", status: "planned", stage: 8 },
+    polyglot: { name: "ژبې", status: "available", stage: 8 },
     programming: { name: "پروګرام کول", status: "planned", stage: 9 },
     mobile: { name: "موبایل کنټرول", status: "planned", stage: 10 },
     neon: { name: "NEON", status: "planned", stage: 11 }
