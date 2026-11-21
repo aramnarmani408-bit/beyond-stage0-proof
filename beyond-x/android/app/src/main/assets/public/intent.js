@@ -35,7 +35,14 @@ function isImagesRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("انځور") !== -1 || q.indexOf("عکس") !== -1;
 }
-// "حج" is NOT a trigger: it false-positives on "حجره" (room).
+// Action words first: "ځواب واوره" (hear the answer) is a
+// voice request even though it contains "ځواب". A voice
+// QUESTION ("غږ څه شی دی؟") is chat, not the workspace.
+function isVoiceRequest(q) {
+    if (q.indexOf("واوره") !== -1 || q.indexOf("ثبت کړه") !== -1) return true;
+    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
+    return q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1;
+}
 // Intent → {capability, mode}. A question (ځواب/څه دی/ووایه) is
 // chat, not a build request — EXCEPT an Islamic question, which
 // goes to the source-grounded pipeline, and a books question,
@@ -47,9 +54,9 @@ function analyzeIntent(q) {
     if (isIslamicRequest(q)) return { capability: "islamic", mode: "temporary" };
     if (isBooksRequest(q)) return { capability: "books", mode: "temporary" };
     if (isImagesRequest(q)) return { capability: "images", mode: "temporary" };
+    if (isVoiceRequest(q)) return { capability: "voice", mode: "temporary" };
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return { capability: "chat", mode: "inline" };
     if (isBuildWord(q)) {
-        if (q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1) return { capability: "voice", mode: "temporary" };
         if (q.indexOf("لوب") !== -1) return { capability: "games", mode: "temporary" };
         if (q.indexOf("کوډ") !== -1 || q.indexOf("پروګرام") !== -1 || q.indexOf("اپلیکیشن") !== -1) return { capability: "programming", mode: "full" };
         if (q.indexOf("موبایل") !== -1 || q.indexOf("تلیفون") !== -1) return { capability: "mobile", mode: "temporary" };
