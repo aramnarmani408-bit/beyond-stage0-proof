@@ -2,6 +2,9 @@ package com.beyondx.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.bluetooth.BluetoothAdapter;
+import android.net.wifi.WifiManager;
+import android.provider.Settings;
 import android.view.accessibility.AccessibilityManager;
 import android.accessibilityservice.AccessibilityServiceInfo;
 
@@ -83,5 +86,15 @@ public class BeyondXBridge extends Plugin {
       r.put("id", BeyondXTasks.schedule(getContext(), title, text, mins));
       call.resolve(r);
     } catch (Exception e) { call.reject("schedule_failed", e.getMessage()); }
+  }
+
+  // Radio states (Phase 3 help): each read try/caught, null on failure.
+  @PluginMethod
+  public void radioStates(PluginCall call) {
+    JSObject r = new JSObject();
+    try { WifiManager w = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE); r.put("wifi", w != null && w.isWifiEnabled()); } catch (Exception e) { r.put("wifi", JSObject.NULL); }
+    try { BluetoothAdapter b = BluetoothAdapter.getDefaultAdapter(); r.put("bluetooth", b != null && b.isEnabled()); } catch (Exception e) { r.put("bluetooth", JSObject.NULL); }
+    try { r.put("airplane", Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 1); } catch (Exception e) { r.put("airplane", JSObject.NULL); }
+    call.resolve(r);
   }
 }
