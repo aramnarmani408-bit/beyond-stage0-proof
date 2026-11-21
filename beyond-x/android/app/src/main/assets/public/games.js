@@ -1,4 +1,3 @@
-// BEYOND X module 24/27: games — panel + rendering.
 var gamesPanelEl = null;
 var gamesInputEl = null;
 var gamesStatusEl = null;
@@ -59,17 +58,14 @@ function buildGamesPanel() {
 function showGamesPanel(show) {
     if (gamesPanelEl) gamesPanelEl.style.display = show ? "flex" : "none";
 }
-// Strip trigger words; the rest is the description (here so gameslib fits).
 function gamesPromptFrom(q) {
     var drop = ["لوبې", "لوبو", "لوبه", "ګېم", "سیستم", "جوړ", "جوړه", "کړه", "راکړه", "غواړم", "یو", "یوه", "د", "مې", "را", "مه"];
     return q.split(/\s+/).filter(function (w) { return w && drop.indexOf(w) === -1; }).join(" ");
 }
-// A games QUESTION is chat, not the workspace.
 function isGamesRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("لوبې") !== -1 || q.indexOf("ګېم") !== -1 || q.indexOf("لوبه") !== -1;
 }
-// Games router branch (moved from router.js).
 function routeGames(q) {
     if (activateWorkspace("games", "temporary")) {
         buildGamesPanel();
@@ -79,7 +75,6 @@ function routeGames(q) {
     var g = gamesPromptFrom(q);
     if (g && gamesInputEl) gamesInputEl.value = g;
 }
-// Saved-games list (here so gameslib fits the publish limit).
 function gamesAddSaved(id, description, playUrl, apkUrl) {
     gamesSaved.unshift({ id: id, description: description, playUrl: playUrl, apkUrl: apkUrl });
     if (gamesSaved.length > 10) gamesSaved.length = 10;
