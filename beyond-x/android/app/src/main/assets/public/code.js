@@ -1,7 +1,3 @@
-// BEYOND X module 31/34: code — panel (stage 9).
-// Children: [0] back [1] title [2] lang [3] generate input
-// [4] editor [5] buttons [6] output [7] preview [8] history;
-// buttons [0] run [1] generate [2] explain [3] fix [4] convert.
 var codePanel = null, codeLangSel = null, codeGenIn = null,
   codeEditor = null, codeOutEl = null, codePreviewEl = null,
   codeHistEl = null;
@@ -71,16 +67,12 @@ function buildCodePanel() {
 function showCodePanel(show) {
   if (codePanel) codePanel.style.display = show ? "flex" : "none";
 }
-// Real run output: stdout, stderr and the exit code — the run
-// is only real when its evidence is shown.
 function codeShowOutput(stdout, stderr, exitCode) {
   codeClear(codeOutEl);
   codeAdd(stdout, codeOutEl);
   if (stderr) codeAdd("تېروتنه: " + stderr, codeOutEl);
   codeAdd("وتلو کوډ: " + exitCode, codeOutEl);
 }
-// Web preview: sandboxed iframe, HTML/JS only — never
-// allow-same-origin (the preview must not reach the app).
 function codeShowPreview(html) {
   codeClear(codePreviewEl);
   var f = document.createElement("iframe");
@@ -90,8 +82,6 @@ function codeShowPreview(html) {
   f.style.height = "400px";
   codePreviewEl.appendChild(f);
 }
-// Panel error + button handlers live here (same split as
-// games.js) so codegen.js fits its push limit.
 function codePanelError(e, outEl) {
   var o = outEl || codeOutEl;
   if (!o) return;
