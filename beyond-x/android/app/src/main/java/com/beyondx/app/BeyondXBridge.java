@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.view.accessibility.AccessibilityManager;
-import android.view.accessibility.AccessibilityServiceInfo;
+import android.accessibilityservice.AccessibilityServiceInfo;
 
-import com.getcapacitor.ActivityResult;
+import androidx.activity.result.ActivityResult;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
