@@ -1,4 +1,3 @@
-// BEYOND X module 2/13: workspace — Dynamic Workspace Engine lifecycle + persistence
 const workspaceState = { capability: null, mode: null, status: null, startedAt: 0, verified: false };
 const WS_KEY = "beyondx-workspaces-v1";
 function saveWorkspace() {
@@ -37,15 +36,11 @@ function setWorkspaceStatus(status) {
 }
 function verifyCapability(cap) {
     if (cap === "school") {
-        // The word quiz needs the 6 verified pairs (local data).
         if (!quizWords || quizWords.length === 0) return { ok: false, missing: "quizWords" };
         return { ok: true, missing: null };
     }
     var names = ["islamic", "books", "images", "voice", "games", "polyglot", "programming", "mobile"];
     if (names.indexOf(cap) === -1) return { ok: false, missing: "unknown" };
-    // The table is built INSIDE the function, so the panel
-    // scripts have loaded by the time it is read; a missing
-    // script throws ReferenceError → verification fails.
     try {
         var table = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel, mobile: buildMobilePanel };
         if (typeof table[cap] === "function") return { ok: true, missing: null };
@@ -72,7 +67,6 @@ function activateWorkspace(cap, mode) {
     return true;
 }
 function closeWorkspace() {
-    // Explicit intent only. School PROGRESS (its own key) is kept.
     workspaceState.capability = null;
     workspaceState.mode = null;
     workspaceState.status = null;
