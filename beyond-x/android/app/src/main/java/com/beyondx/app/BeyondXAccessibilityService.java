@@ -8,20 +8,31 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
-// READ-ONLY screen understanding. Reports the current screen's text +
-// element labels to the bridge. The user must enable this service in
-// Settings > Accessibility; BEYOND X can never enable it. Screen text
-// is kept in memory only, never logged, never stored, never sent.
-// No taps, no gestures in 2A (Phase 2B, with the confirmation pipeline).
+// Screen understanding (2A read-only text collection, unchanged).
+// Taps/gestures live in BeyondXGestures (2B) — the file would exceed
+// the push limit otherwise. The service is DISABLED until the user
+// enables it in Settings > Accessibility; BEYOND X can never enable
+// it. Screen text is kept in memory only, never logged, never stored,
+// never sent.
 public class BeyondXAccessibilityService extends AccessibilityService {
+  private static volatile BeyondXAccessibilityService instance = null;
   private static volatile String lastText = "";
   private static volatile long lastTime = 0;
 
   public static String getLastText() { return lastText; }
   public static long getLastTime() { return lastTime; }
+  public static boolean isRunning() { return instance != null; }
+  public static BeyondXAccessibilityService getInstance() { return instance; }
+
+  @Override
+  protected void onServiceConnected() { instance = this; }
+
+  @Override
+  public void onDestroy() { if (instance == this) instance = null; super.onDestroy(); }
 
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
+    if (instance == null) instance = this;
     int t = event.getEventType();
     if (t != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
         && t != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) return;
