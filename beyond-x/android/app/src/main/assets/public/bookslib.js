@@ -1,4 +1,3 @@
-// BEYOND X module 16/18: bookslib — library state + paging + bookmarks + notes (localStorage).
 var BOOKS_KEY = "beyondx-books-v1";
 var booksLib = { books: {}, current: null };
 function booksKey(ia, file) { return ia + "|" + file; }
