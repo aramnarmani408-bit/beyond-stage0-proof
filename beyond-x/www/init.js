@@ -1,4 +1,4 @@
-// BEYOND X module 38/38: init — element wiring + resume + polling (LAST)
+// BEYOND X module 41/41: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -59,12 +59,9 @@ if (sentBtn) {
 
 if (backChat) backChat.addEventListener("click", () => showPanel("chat"));
 
-// Resume saved progress if there is any; otherwise start fresh.
 if (!loadProgress()) startQuiz();
 else if (quizState.kind === "sentence" && vocabItems().length === 0) startQuiz();
 else showQuizQuestion();
-// Engine init: restore chat + workspace + gateway state; then
-// bounded polling (every 60s, skipped while the tab is hidden).
 if (!AppState.convId) AppState.convId = "conv-" + Date.now();
 loadChat();
 if (loadWorkspace() && workspaceState.status === "ready") {
