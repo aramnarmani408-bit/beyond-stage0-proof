@@ -1,4 +1,3 @@
-// BEYOND X module 23/24: voicelib — recorder + playback + device voices.
 var voiceRecorder = null;
 var voiceChunks = [];
 var voiceRecording = false;
