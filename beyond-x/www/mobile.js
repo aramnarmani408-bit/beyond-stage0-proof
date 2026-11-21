@@ -1,6 +1,5 @@
-// BEYOND X module 34/37: mobile — panel (stage 10).
-// Children: [0] back [1] title [2] overview [3] diag [4] diagnose
-// [5] diagnosis [6] ask [7] ask btn [8] actions [9] perms [10] audit.
+// BEYOND X module 34/38: mobile — panel (stage 10).
+// Kids: [0]back [1]title [2]over [3]diag [4]btn [5]dgn [6]ask [7]askbtn [8]acts [9]perms [10]audit [11..13]bridge.
 var mPanel = null, mOver = null, mDiag = null, mDgn = null, mAsk = null,
   mActs = null, mPerm = null, mAudit = null, mLastDiag = "";
 var MLBL = { none: "نشه", low: "ټیټ", high: "لوړ", ok: "سم دی", warning: "خبرداری", critical: "خطرناک" };
@@ -75,6 +74,7 @@ function buildMobilePanel() {
   mActs = div();
   mPerm = div();
   mAudit = div();
+  if (typeof mBridgeSection === "function") mBridgeSection(panel);
   document.getElementById("main").appendChild(panel);
   mPanel = panel;
   var acts = [["وایبرېټ", () => mobileVibrate(200)],
