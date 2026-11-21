@@ -1,19 +1,14 @@
 package com.beyondx.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.projection.MediaProjectionManager;
-import android.os.Build;
 import android.view.accessibility.AccessibilityManager;
 import android.accessibilityservice.AccessibilityServiceInfo;
 
-import androidx.activity.result.ActivityResult;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
-import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 // BEYOND X native bridge (Phase 2A). JS side: mobilebridge.js.
@@ -74,23 +69,6 @@ public class BeyondXBridge extends Plugin {
     r.put("text", BeyondXAccessibilityService.getLastText());
     r.put("time", BeyondXAccessibilityService.getLastTime());
     call.resolve(r);
-  }
-
-  @PluginMethod
-  public void captureScreen(PluginCall call) {
-    if (Build.VERSION.SDK_INT >= 34) { call.reject("unsupported_api", "Screen capture needs a foreground service on Android 14+ (Phase 2B)"); return; }
-    MediaProjectionManager mpm = (MediaProjectionManager) getContext().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-    call.setKeepAlive(true);
-    startActivityForResult(call, mpm.createScreenCaptureIntent(), "onCaptureResult");
-  }
-
-  @ActivityCallback
-  private void onCaptureResult(PluginCall call, ActivityResult result) {
-    if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null) {
-      call.reject("consent_denied", "Screen capture consent was not given");
-      return;
-    }
-    BeyondXCapture.run(this, call, result.getResultCode(), result.getData());
   }
 
   @PluginMethod
