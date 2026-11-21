@@ -1,3 +1,4 @@
+var NEON_T0 = Date.now();
 const AppState = { messages: [], currentChat: 1, lastError: null, convId: null };
 
 const quizWords = [["father", "پلار"], ["mother", "مور"], ["brother", "ورور"], ["sister", "خور"], ["son", "زوی"], ["daughter", "لور"]];
