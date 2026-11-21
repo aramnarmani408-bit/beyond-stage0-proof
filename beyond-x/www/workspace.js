@@ -41,37 +41,16 @@ function verifyCapability(cap) {
         if (!quizWords || quizWords.length === 0) return { ok: false, missing: "quizWords" };
         return { ok: true, missing: null };
     }
-    if (cap === "islamic") {
-        // Panel built by JS; the gateway serves the sources.
-        if (typeof buildIslamicPanel !== "function") return { ok: false, missing: "islamic" };
-        return { ok: true, missing: null };
-    }
-    if (cap === "books") {
-        // Panel built by JS; the gateway serves the books.
-        if (typeof buildBooksPanel !== "function") return { ok: false, missing: "books" };
-        return { ok: true, missing: null };
-    }
-    if (cap === "images") {
-        // Panel built by JS; the gateway serves the images.
-        if (typeof buildImagesPanel !== "function") return { ok: false, missing: "images" };
-        return { ok: true, missing: null };
-    }
-    if (cap === "voice") {
-        // Panel built by JS; the gateway serves the voice.
-        if (typeof buildVoicePanel !== "function") return { ok: false, missing: "voice" };
-        return { ok: true, missing: null };
-    }
-    if (cap === "games") {
-        // Panel built by JS; the gateway builds the games.
-        if (typeof buildGamesPanel !== "function") return { ok: false, missing: "games" };
-        return { ok: true, missing: null };
-    }
-    if (cap === "polyglot") {
-        // Panel built by JS; the gateway serves the language.
-        if (typeof buildLanguagePanel !== "function") return { ok: false, missing: "language" };
-        return { ok: true, missing: null };
-    }
-    return { ok: false, missing: "unknown" };
+    var names = ["islamic", "books", "images", "voice", "games", "polyglot", "programming"];
+    if (names.indexOf(cap) === -1) return { ok: false, missing: "unknown" };
+    // The table is built INSIDE the function, so the panel
+    // scripts have loaded by the time it is read; a missing
+    // script throws ReferenceError → verification fails.
+    try {
+        var table = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel };
+        if (typeof table[cap] === "function") return { ok: true, missing: null };
+    } catch (e) { /* missing panel script — fall through */ }
+    return { ok: false, missing: cap === "polyglot" ? "language" : cap };
 }
 function activateWorkspace(cap, mode) {
     workspaceState.capability = cap;
