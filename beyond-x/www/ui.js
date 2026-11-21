@@ -65,5 +65,6 @@ function showPanel(name) {
     showGamesPanel(name === "games");
     showLanguagePanel(name === "language");
     showCodePanel(name === "code");
+    showMobilePanel(name === "mobile");
 }
 
