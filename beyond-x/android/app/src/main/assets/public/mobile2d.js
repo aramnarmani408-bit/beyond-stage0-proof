@@ -7,7 +7,7 @@ if (k === "vibrate") { var r = await mobileVibrate(200); if (r.status === "SUCCE
 if (k === "share") { var r = await mobileShare("BEYOND X", mLastDiag || "BEYOND X"); if (r.status === "SUCCESS") r.verification = "شریک شو"; return r; }
 if (k === "locate") { var n = mobileNav(); if (!(n && n.geolocation)) return mobileNoApi("geolocation"); return new Promise(ok => { n.geolocation.getCurrentPosition(pos => ok({ status: "SUCCESS", verification: "ځای: " + pos.coords.latitude + "," + pos.coords.longitude }), e => ok({ status: e.code === 1 ? PR : "FAILED", verification: e.message || "failed" })); }); }
 if (k === "listApps") return m2bEnv(listApps, d => "اپونه: " + d.apps.length + " — " + d.apps.slice(0, 10).map(a => a.label).join("، "));
-if (k === "appUsage") return m2bEnv(() => appUsage(7), d => d.apps.sort((x, y) => y.minutes - x.minutes).slice(0, 5).map(a => a.label + ": " + a.minutes).join(", "));
+if (k === "appUsage") return m2bEnv(() => appUsage(7), d => d.apps.sort((x, y) => y.minutes - x.minutes).slice(0, 5).map(a => a.label + ": " + a.minutes).join("، "));
 if (k === "launchApp") return m2bEnv(() => launchApp(a.pkg), () => "خلاص شو: " + a.pkg);
 if (k === "readScreen") return m2bEnv(readScreen, d => d.text ? d.text.slice(0, 500) : "سکرین خالي دی");
 if (k === "captureScreen") return m2bEnv(captureScreen, () => "سکرین شاټ واخیستل شو");
