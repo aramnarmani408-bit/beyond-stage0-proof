@@ -3,7 +3,7 @@
 // for available systems, honest "planned" answers for the rest.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل). په راتلونکو پړاوونو کې راځي: انځورونه (۵م)، غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل). په راتلونکو پړاوونو کې راځي: غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -38,6 +38,22 @@ function handleRequest(q) {
         else askBeyond(q);
         return;
     }
+    if (intent.capability === "images") {
+        if (activateWorkspace("images", intent.mode)) {
+            buildImagesPanel();
+            showPanel("images");
+            addMessage("د انځورونو کارځای دې لپاره جوړ شو — انځور جوړ کړه او وپوهېږه.", "ai");
+        }
+        // The message usually IS the prompt: strip the trigger
+        // words and generate from the rest; a bare trigger just
+        // opens the panel.
+        var p = imagesPromptFrom(q);
+        if (p && imagesPromptEl) {
+            imagesPromptEl.value = p;
+            imagesGeneratePrompt(p, null);
+        }
+        return;
+    }
     if (cap.status === "planned") {
         addMessage("د " + cap.name + " سیستم لا نه دی جوړ شوی — په " + pashtoDigits(cap.stage) + "م پړاو کې راځي. اوس زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز.", "ai");
         return;
@@ -62,5 +78,6 @@ function showPanel(name) {
     if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
     showIslamicPanel(name === "islamic");
     showBooksPanel(name === "books");
+    showImagesPanel(name === "images");
 }
 
