@@ -66,6 +66,11 @@ function verifyCapability(cap) {
         if (typeof buildGamesPanel !== "function") return { ok: false, missing: "games" };
         return { ok: true, missing: null };
     }
+    if (cap === "polyglot") {
+        // Panel built by JS; the gateway serves the language.
+        if (typeof buildLanguagePanel !== "function") return { ok: false, missing: "language" };
+        return { ok: true, missing: null };
+    }
     return { ok: false, missing: "unknown" };
 }
 function activateWorkspace(cap, mode) {
