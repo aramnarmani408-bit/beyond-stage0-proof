@@ -3,7 +3,7 @@
 // for available systems, honest "planned" answers for the rest.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث). په راتلونکو پړاوونو کې راځي: کتابونه (۴م)، انځورونه (۵م)، غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل). په راتلونکو پړاوونو کې راځي: انځورونه (۵م)، غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -23,6 +23,19 @@ function handleRequest(q) {
             addMessage("اسلامي کارځای دې لپاره جوړ شو — د قرآن او حدیث څخه ځواب درکوم.", "ai");
         }
         islamicAsk(q);
+        return;
+    }
+    if (intent.capability === "books") {
+        if (activateWorkspace("books", intent.mode)) {
+            buildBooksPanel();
+            showPanel("books");
+            addMessage("د کتابونو کارځای دې لپاره جوړ شو — کتاب ولټوه او ولوله.", "ai");
+        }
+        // A question about the open book goes to the grounded
+        // pipeline; anything else gets a generic chat answer (the
+        // grounded answer needs an open book — a v1 limit).
+        if (booksCurrentEntry() && isBookQuestion(q)) booksAsk(q);
+        else askBeyond(q);
         return;
     }
     if (cap.status === "planned") {
@@ -48,5 +61,6 @@ function showPanel(name) {
     if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
     if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
     showIslamicPanel(name === "islamic");
+    showBooksPanel(name === "books");
 }
 
