@@ -74,6 +74,8 @@ if (loadWorkspace() && workspaceState.status === "ready") {
     else if (workspaceState.capability === "books") { buildBooksPanel(); showPanel("books"); }
     else if (workspaceState.capability === "images") { buildImagesPanel(); showPanel("images"); }
     else if (workspaceState.capability === "voice") { buildVoicePanel(); showPanel("voice"); }
+    else if (workspaceState.capability === "games") { buildGamesPanel(); showPanel("games"); }
+    else if (workspaceState.capability === "polyglot") { buildLanguagePanel(); showPanel("language"); }
     else if (workspaceState.capability === "programming") { buildCodePanel(); showPanel("code"); }
     else if (workspaceState.capability === "mobile") { buildMobilePanel(); showPanel("mobile"); }
 }
