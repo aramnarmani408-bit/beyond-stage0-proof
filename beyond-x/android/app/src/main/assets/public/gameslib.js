@@ -1,4 +1,3 @@
-// BEYOND X module 25/27: gameslib — instant games + saved state.
 var GAMES_KEY = "beyondx-games-v1";
 var GAMES_LETTERS = "ابپتټثجچحخدډذرړزژسشصضطظعغفقکګلمنوهیېۍئ";
 var gamesLetters = { round: 0, score: 0, best: 0, target: "", options: [] };
