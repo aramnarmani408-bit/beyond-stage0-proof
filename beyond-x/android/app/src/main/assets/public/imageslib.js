@@ -1,4 +1,3 @@
-// BEYOND X module 20/21: imageslib — history + upload.
 var IMAGES_KEY = "beyondx-images-v1";
 var imagesLib = { items: [] };
 var NOUP = "پورته کول په دې وسیله کې نشته.";
