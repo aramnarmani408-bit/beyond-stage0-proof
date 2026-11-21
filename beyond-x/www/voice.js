@@ -1,4 +1,3 @@
-// BEYOND X module 22/24: voice — panel + rendering.
 var voicePanelEl = null;
 var voiceTranscriptEl = null;
 var voiceStatusEl = null;
