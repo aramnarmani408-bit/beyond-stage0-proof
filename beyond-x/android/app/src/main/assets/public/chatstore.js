@@ -1,6 +1,3 @@
-// BEYOND X module 4/13: chatstore — chat persistence + conversation title
-// Chat persistence (bounded: last 50 messages) + conversation
-// id + auto-title from the first user message.
 const CHAT_KEY = "beyondx-chat-v1";
 const CHAT_MAX = 50;
 function saveChat() {
@@ -20,7 +17,6 @@ function loadChat() {
         AppState.convId = s.id || null;
         AppState.messages = s.messages.slice(-CHAT_MAX);
         const chatArea = document.getElementById("chatArea");
-        // Render only into an empty area — never duplicate.
         if (chatArea && chatArea.children.length === 0) {
             for (let i = 0; i < AppState.messages.length; i++) {
                 const m = AppState.messages[i];
