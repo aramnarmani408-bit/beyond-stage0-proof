@@ -70,3 +70,4 @@ const WS_LABELS = {
     "gateway-unavailable": "ګیټوې نشته",
     "verification-failed": "تایید ناکام شو"
 };
+
