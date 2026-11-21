@@ -52,7 +52,7 @@ const CAPABILITIES = {
     islamic: { name: "اسلامي", status: "available", stage: 3 },
     books: { name: "کتابونه", status: "available", stage: 4 },
     images: { name: "انځورونه", status: "available", stage: 5 },
-    voice: { name: "غږ", status: "planned", stage: 6 },
+    voice: { name: "غږ", status: "available", stage: 6 },
     games: { name: "لوبې", status: "planned", stage: 7 },
     polyglot: { name: "ژبې", status: "planned", stage: 8 },
     programming: { name: "پروګرام کول", status: "planned", stage: 9 },
