@@ -29,8 +29,8 @@ async function xChat(question, token) {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
             body: JSON.stringify({ message: { text: question },
-                preferences: { language: "ps", response_language: "ps", stream: false },
-                context: { workspace: "chat" } }),
+                preferences: { language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), response_language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), stream: false },
+                context: { workspace: "chat", depth: (typeof neonPrefs !== "undefined" ? neonPrefs.depth : "full"), style: (typeof neonPrefs !== "undefined" ? neonPrefs.style : "teacher") } }),
             signal: ctrl ? ctrl.signal : undefined
         });
         const resp = await Promise.race([call, timeout]);
