@@ -1,4 +1,3 @@
-// BEYOND X module 12/13: answer — answerQuiz (scoring + weak words)
 function answerQuiz(chosen) {
     if (quizState.lock) return;
     quizState.lock = true;
@@ -16,7 +15,6 @@ function answerQuiz(chosen) {
     if (chosen === correct) {
         quizState.score += 1;
         if (feedbackEl) feedbackEl.textContent = "سم دی ✓";
-        // A weak word answered right is no longer weak.
         const w = weakList.indexOf(idx);
         if (w !== -1) weakList.splice(w, 1);
     } else {
