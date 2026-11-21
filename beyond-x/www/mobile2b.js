@@ -8,9 +8,10 @@ function dismissNotification(k) { return bridgeCall(BA, "dismissNotification", {
 function sendSms(n, b) { return bridgeCall(BA, "sendSms", { number: n, body: b }); }
 function installApk(p) { return bridgeCall(BA, "installApk", { path: p }); }
 function uninstallApp(p) { return bridgeCall(BA, "uninstallApp", { package: p }); }
-var BeyondXNative = { version: 2, deviceInfo, listApps, launchApp, appUsage, listFiles,
+function radioStates() { return bridgeCall(BB, "radioStates"); }
+var BeyondXNative = { version: 3, deviceInfo, listApps, launchApp, appUsage, listFiles,
   readScreen, captureScreen, scheduleTask, tapScreen, swipeScreen, tapText,
-  listNotifications, replyNotification, dismissNotification, sendSms, installApk, uninstallApp };
+  listNotifications, replyNotification, dismissNotification, sendSms, installApk, uninstallApp, radioStates };
 var m2bOut = null, m2bTxt = null, m2bNum = null;
 async function m2bVerify(f, v) {
   var b = "";
