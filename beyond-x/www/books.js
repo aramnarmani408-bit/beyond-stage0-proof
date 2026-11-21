@@ -1,4 +1,3 @@
-// BEYOND X module 15/18: books — reader panel + rendering (gateway text shown verbatim; display whitespace normalized).
 var booksPanelEl = null;
 var booksSearchEl = null;
 var booksResultEl = null;
@@ -29,8 +28,6 @@ function booksAdd(text) {
 function booksClear() {
     while (booksResultEl.firstChild) booksResultEl.removeChild(booksResultEl.firstChild);
 }
-// Display-only: OCR text has double spaces + broken lines; the
-// gateway text stays byte-identical, the reader just shows it clean.
 function booksNormalize(text) {
     return text.replace(/[ \t]{2,}/g, " ").replace(/\n{3,}/g, "\n\n");
 }
