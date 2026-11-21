@@ -3,7 +3,7 @@
 // for available systems, honest "planned" answers for the rest.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل). په راتلونکو پړاوونو کې راځي: غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل). په راتلونکو پړاوونو کې راځي: لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -54,6 +54,17 @@ function handleRequest(q) {
         }
         return;
     }
+    if (intent.capability === "voice") {
+        if (activateWorkspace("voice", intent.mode)) {
+            buildVoicePanel();
+            showPanel("voice");
+            addMessage("د غږ کارځای دې لپاره جوړ شو — په پښتو وغږېږه او واوره.", "ai");
+            // "واوره" (listen) speaks the last answer; anything
+            // else just opens the panel — recording needs a tap.
+            if (q.indexOf("واوره") !== -1) voiceSpeakLast();
+        }
+        return;
+    }
     if (cap.status === "planned") {
         addMessage("د " + cap.name + " سیستم لا نه دی جوړ شوی — په " + pashtoDigits(cap.stage) + "م پړاو کې راځي. اوس زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز.", "ai");
         return;
@@ -79,5 +90,6 @@ function showPanel(name) {
     showIslamicPanel(name === "islamic");
     showBooksPanel(name === "books");
     showImagesPanel(name === "images");
+    showVoicePanel(name === "voice");
 }
 
