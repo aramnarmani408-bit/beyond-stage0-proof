@@ -1,9 +1,8 @@
 // BEYOND X module 9/13: router — handleRequest + sendQuestion + panels
-// The Engine's request router: discovery through chat, activation
-// for available systems, honest "planned" answers for the rest.
+// Request router: discovery, activation, honest planned answers.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه). په راتلونکو پړاوونو کې راځي: پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه) او پروګرام کول (کوډ ولیکه او وچلوه). په راتلونکو پړاوونو کې راځي: موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -77,15 +76,16 @@ function handleRequest(q) {
         if (g && gamesInputEl) gamesInputEl.value = g;
         return;
     }
-    if (intent.capability === "polyglot") {
-        if (activateWorkspace("polyglot", intent.mode)) {
-            buildLanguagePanel();
-            showPanel("language");
-            addMessage("د ژبو کارځای دې لپاره جوړ شو — ژبه وژباړه، زده کړه او تمرین وکړه.", "ai");
+    if (intent.capability === "polyglot") { routeLanguage(q); return; }
+    if (intent.capability === "programming") {
+        if (activateWorkspace("programming", intent.mode)) {
+            buildCodePanel();
+            showPanel("code");
+            addMessage("د پروګرام کولو کارځای دې لپاره جوړ شو — کوډ ولیکه، وچلوه او وګوره.", "ai");
         }
-        // Prefill only — translating needs the user's tap.
-        var l = languagePromptFrom(q);
-        if (l && langTrIn) langTrIn.value = l;
+        // Prefill only — generating needs the user's tap.
+        var c = codePromptFrom(q);
+        if (c && codeGenIn) codeGenIn.value = c;
         return;
     }
     if (cap.status === "planned") {
