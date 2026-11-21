@@ -1,6 +1,3 @@
-// BEYOND X module 29/31: languagelib — core words, lesson,
-// quiz, progress (stage 8). Detection lives in intent2.js.
-// Core words: 25 Wiktionary-verified; ";" splits ("food, meal").
 var LANG_CORE = "کور|house;اوبه|water;کتاب|book;مینه|love;ښوونځی|school;مور|mother;پلار|father;ورور|brother;خور|sister;زوی|son;لور|daughter;سړی|man;ښځه|woman;لمر|sun;سپوږمۍ|moon;ستوری|star;ځمکه|earth;اسمان|sky;ونه|tree;ګل|flower;سپی|dog;غوا|cow;ډوډۍ|food, meal;اور|fire;باران|rain".split(";").map(function (s) { return s.split("|"); });
 var LANG_KEY = "beyondx-language-v1";
 var languageProgress = { learned: [], weak: [], streak: 0, day: "" };
@@ -20,7 +17,6 @@ function languageLoadState() {
     return true;
   } catch (e) { return false; }
 }
-// Lesson: 5 earliest unlearned words, then a 5-question quiz.
 var languageLesson = { active: false, quiz: false, done: false };
 function languageStartLesson() {
   var L = languageLesson, learned = languageProgress.learned;
