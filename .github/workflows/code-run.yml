@@ -1,0 +1,96 @@
+# BEYOND X stage 9: run one user program on the runner and
+# publish its output (stdout/stderr/exit code) as a pre-release
+# asset. Dispatch-only — the gateway dispatches it from the
+# /api/v1/x/code/run route with a gateway-derived command (the
+# client never supplies a shell command). The workflow validates
+# the command shape again before running it (defense in depth).
+# The run step NEVER fails the workflow: the program's exit code
+# is captured into run-output.json, which is the result.
+name: Code run
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Code job id under beyond-x/code-runs/
+        required: true
+        type: string
+      language:
+        description: python or javascript (v1)
+        required: true
+        type: string
+      command:
+        description: Gateway-derived run command (python3|node + entry file)
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      JOB_DIR: beyond-x/code-runs/${{ inputs.job_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate inputs
+        run: |
+          case "${{ inputs.job_id }}" in
+            c[0-9a-z]*) ;;
+            *) echo "bad job_id"; exit 2;;
+          esac
+          case "${{ inputs.language }}" in
+            python|javascript) ;;
+            *) echo "bad language"; exit 2;;
+          esac
+          case "${{ inputs.command }}" in
+            "python3 "[A-Za-z0-9_./-]*|"node "[A-Za-z0-9_./-]*) ;;
+            *) echo "bad command"; exit 2;;
+          esac
+          case "${{ inputs.command }}" in
+            *".."*|*";"*|*"|"*|*"`"*|*"$"*|*"&"*|*"<"*|*">"*|*"("*|*")"*|*"'"*|*'"'*) echo "command has metacharacters"; exit 2;;
+          esac
+      - name: Run code
+        run: |
+          set +e
+          if [ ! -d "$JOB_DIR" ]; then
+            echo "job dir not found: $JOB_DIR" > /tmp/code-err.txt
+            echo 2 > /tmp/code-exit.txt
+            : > /tmp/code-out.txt
+            exit 0
+          fi
+          cd "$JOB_DIR"
+          timeout 120 ${{ inputs.command }} > /tmp/code-out.txt 2> /tmp/code-err.txt
+          echo $? > /tmp/code-exit.txt
+      - name: Build output JSON
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          LANGUAGE: ${{ inputs.language }}
+        run: |
+          python3 - <<'PYEOF'
+          import json, os
+          def read(path, cap=65536):
+              try:
+                  with open(path, "rb") as f:
+                      data = f.read(cap + 1)
+                  return data[:cap].decode("utf-8", "replace")
+              except FileNotFoundError:
+                  return ""
+          try:
+              exit_code = int(open("/tmp/code-exit.txt").read().strip() or "2")
+          except (FileNotFoundError, ValueError):
+              exit_code = 2
+          out = {"job_id": os.environ["JOB_ID"],
+                 "language": os.environ["LANGUAGE"],
+                 "exit_code": exit_code,
+                 "stdout": read("/tmp/code-out.txt"),
+                 "stderr": read("/tmp/code-err.txt")}
+          with open("/tmp/run-output.json", "w") as f:
+              json.dump(out, f)
+          print("exit_code:", exit_code,
+                "stdout bytes:", len(out["stdout"]),
+                "stderr bytes:", len(out["stderr"]))
+          PYEOF
+      - name: Publish run pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create code-run-${{ inputs.job_id }} --prerelease --title "Code run ${{ inputs.job_id }}" --notes "Exit code + logs for BEYOND X code run ${{ inputs.job_id }}." /tmp/run-output.json
