@@ -1,4 +1,4 @@
-// BEYOND X module 19/21: images — panel + rendering (gateway images shown as data URLs; CSP allows data: for img).
+// BEYOND X module 19/21: images — panel + rendering.
 var imagesPanelEl = null;
 var imagesPromptEl = null;
 var imagesResultEl = null;
@@ -73,13 +73,13 @@ function showGeneratedImage(r) {
     img.src = "data:" + r.mimeType + ";base64," + r.image;
     img.style.maxWidth = "100%";
     imagesResultEl.appendChild(img);
-    imagesAdd(r.prompt + (r.provider === "flux" ? " — دا انځور اوس ښکته کړه، وروسته نه خوندي کېږي." : " — کوچنۍ نښه لري."));
+    imagesAdd(r.prompt + (r.watermark ? " — دا انځور د Pollinations نښه لري" : r.provider === "flux" ? " — دا انځور اوس ښکته کړه، وروسته نه خوندي کېږي." : ""));
     var dl = document.createElement("a");
     dl.textContent = "خوندي کړه";
     dl.href = img.src;
     dl.download = "beyondx-image.jpg";
     imagesResultEl.appendChild(dl);
-    imagesResultEl.appendChild(imagesBtn("بل چمتو کوونکی هڅه وکړه", function () { imagesGenerateRetry(r.provider === "flux" ? null : "flux"); }));
+    imagesResultEl.appendChild(imagesBtn("بل چمتو کوونکی هڅه وکړه", function () { imagesGenerateRetry(r.provider); }));
 }
 function showImageAnalysis(text) {
     imagesAnalyzeEl.appendChild(imagesEl("div", text));
