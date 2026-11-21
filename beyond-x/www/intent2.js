@@ -14,11 +14,13 @@ function isVoiceRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
     return q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1;
 }
-// A games QUESTION is chat, not the workspace — same
-// question-word guard as images/voice.
-function isGamesRequest(q) {
+// A mobile QUESTION is chat; a problem word must accompany
+// the device word (or بیټرۍ/حافظه/انټرنیټ).
+function isMobileRequest(q) {
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
-    return q.indexOf("لوبې") !== -1 || q.indexOf("ګېم") !== -1 || q.indexOf("لوبه") !== -1;
+    var has = ws => ws.some(w => q.indexOf(w) !== -1);
+    var prob = has(["ورو", "ډک", "ګرم", "بیټرۍ", "انټرنیټ", "تشخیص", "ستونزه", "کنټرول"]);
+    return (has(["موبایل", "تلیفون"]) || has(["بیټرۍ", "حافظه", "انټرنیټ"])) && prob;
 }
 // A language QUESTION ("ګرامر څه شی دی؟") is chat, not the
 // workspace — same question-word guard as images/voice/games.
