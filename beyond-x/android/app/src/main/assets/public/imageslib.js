@@ -1,8 +1,7 @@
-// BEYOND X module 20/21: imageslib — history + upload + downscale.
+// BEYOND X module 20/21: imageslib — history + upload.
 var IMAGES_KEY = "beyondx-images-v1";
 var imagesLib = { items: [] };
-var IMAGES_MAX_STORED = 150000;
-var IMAGES_HISTORY_MAX = 10;
+var NOUP = "پورته کول په دې وسیله کې نشته.";
 function saveImages() {
     try {
         if (typeof localStorage === "undefined") return;
@@ -21,9 +20,9 @@ function loadImages() {
     } catch (e) { return false; }
 }
 function imagesAddHistory(r) {
-    var data = (r.image && r.image.length <= IMAGES_MAX_STORED) ? "data:" + r.mimeType + ";base64," + r.image : null;
+    var data = (r.image && r.image.length <= 150000) ? "data:" + r.mimeType + ";base64," + r.image : null;
     imagesLib.items.unshift({ prompt: r.prompt, promptEn: r.promptEn, provider: r.provider, seed: r.seed, data: data });
-    if (imagesLib.items.length > IMAGES_HISTORY_MAX) imagesLib.items.length = IMAGES_HISTORY_MAX;
+    if (imagesLib.items.length > 10) imagesLib.items.length = 10;
     saveImages();
 }
 function showImagesHistory() {
@@ -52,7 +51,6 @@ function imagesPanelError(e) {
     else if (m === "TooBig") imagesAdd("انځور ډېر لوی دی — تر ۲ میګابایټ پورې.");
     else imagesAdd("انټرنیټ نشته یا ځواب ونه رسېد — بیا هڅه وکړه");
 }
-// Downscale math (pure): fit inside 1024 on the long side.
 function imagesScaleSize(w, h) {
     if (w <= 1024 && h <= 1024) return { w: w, h: h };
     var s = 1024 / Math.max(w, h);
@@ -61,25 +59,29 @@ function imagesScaleSize(w, h) {
 function imagesTooBig(b64) { return b64.length > 2800000; }
 function imagesUpload(file) {
     if (!file) return;
-    if (typeof FileReader === "undefined") { imagesAdd("پورته کول په دې وسیله کې نشته."); return; }
+    if (typeof FileReader === "undefined") { imagesAdd(NOUP); return; }
     var reader = new FileReader();
     reader.onload = function () { imagesDownscale(reader.result); };
     reader.readAsDataURL(file);
 }
 function imagesDownscale(dataUrl) {
-    if (typeof Image === "undefined" || typeof document === "undefined") { imagesAdd("پورته کول په دې وسیله کې نشته."); return; }
+    if (typeof Image === "undefined" || typeof document === "undefined") { imagesAdd(NOUP); return; }
     var im = new Image();
     im.onload = function () {
         var s = imagesScaleSize(im.width, im.height);
         var cv = document.createElement("canvas");
         cv.width = s.w; cv.height = s.h;
         var ctx = cv.getContext("2d");
-        if (!ctx) { imagesAdd("پورته کول په دې وسیله کې نشته."); return; }
+        if (!ctx) { imagesAdd(NOUP); return; }
         ctx.drawImage(im, 0, 0, s.w, s.h);
         var b64 = (cv.toDataURL("image/jpeg", 0.8).split(",")[1]) || "";
         if (imagesTooBig(b64)) { imagesPanelError(new Error("TooBig")); return; }
         imagesAnalyze(b64, "image/jpeg", "");
     };
     im.src = dataUrl;
+}
+function imagesPromptFrom(q) {
+    var drop = ["انځورونه", "انځورونو", "انځور", "عکسونه", "عکس", "سیستم", "جوړ", "کړه", "راکړه", "غواړم", "یو", "یوه", "د", "مې", "را", "مه"];
+    return q.split(/\s+/).filter(function (w) { return w && drop.indexOf(w) === -1; }).join(" ");
 }
 loadImages();
