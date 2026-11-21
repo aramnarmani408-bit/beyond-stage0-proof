@@ -2,7 +2,7 @@
 // Request router: discovery, activation, honest planned answers.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه) او پروګرام کول (کوډ ولیکه او وچلوه). په راتلونکو پړاوونو کې راځي: موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه) او پروګرام کول (کوډ ولیکه او وچلوه) او موبایل کنټرول (موبایل وپېژنه او کنټرول یې کړه). په راتلونکو پړاوونو کې راځي: NEON (۱۱م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -41,7 +41,7 @@ function handleRequest(q) {
         if (activateWorkspace("images", intent.mode)) {
             buildImagesPanel();
             showPanel("images");
-            addMessage("د انځورونو کارځای دې لپاره جوړ شو — انځور جوړ کړه او وپوهېږه.", "ai");
+            addMessage("د انځورونو کارځای دې لپاره جوړ کړه او وپوهېږه.", "ai");
         }
         // The message usually IS the prompt: strip the trigger
         // words and generate from the rest; a bare trigger just
@@ -64,18 +64,7 @@ function handleRequest(q) {
         }
         return;
     }
-    if (intent.capability === "games") {
-        if (activateWorkspace("games", intent.mode)) {
-            buildGamesPanel();
-            showPanel("games");
-            addMessage("د لوبو کارځای دې لپاره جوړ شو — لوبه وکړه او نوې لوبه جوړه کړه.", "ai");
-        }
-        // A description after the trigger words prefills the
-        // input; a cloud build needs the user's tap to start.
-        var g = gamesPromptFrom(q);
-        if (g && gamesInputEl) gamesInputEl.value = g;
-        return;
-    }
+    if (intent.capability === "games") { routeGames(q); return; }
     if (intent.capability === "polyglot") { routeLanguage(q); return; }
     if (intent.capability === "programming") {
         if (activateWorkspace("programming", intent.mode)) {
@@ -86,6 +75,14 @@ function handleRequest(q) {
         // Prefill only — generating needs the user's tap.
         var c = codePromptFrom(q);
         if (c && codeGenIn) codeGenIn.value = c;
+        return;
+    }
+    if (intent.capability === "mobile") {
+        if (activateWorkspace("mobile", intent.mode)) {
+            buildMobilePanel();
+            showPanel("mobile");
+            addMessage("د موبایل کارځای دې لپاره جوړ شو — خپل موبایل وپېژنه، تشخیص کړه او کنټرول یې کړه.", "ai");
+        }
         return;
     }
     if (cap.status === "planned") {
