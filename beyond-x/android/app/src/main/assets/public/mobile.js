@@ -74,6 +74,7 @@ function buildMobilePanel() {
   mAudit = div();
   if (typeof mBridgeSection === "function") mBridgeSection(panel);
   if (typeof m2bSection === "function") m2bSection(panel);
+  if (typeof mHelpSection === "function") mHelpSection(panel);
   document.getElementById("main").appendChild(panel);
   mPanel = panel;
   var acts = [["وایبرېټ", () => mobileVibrate(200)],
