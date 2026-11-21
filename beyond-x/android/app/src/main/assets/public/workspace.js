@@ -51,6 +51,11 @@ function verifyCapability(cap) {
         if (typeof buildBooksPanel !== "function") return { ok: false, missing: "books" };
         return { ok: true, missing: null };
     }
+    if (cap === "images") {
+        // Panel built by JS; the gateway serves the images.
+        if (typeof buildImagesPanel !== "function") return { ok: false, missing: "images" };
+        return { ok: true, missing: null };
+    }
     return { ok: false, missing: "unknown" };
 }
 function activateWorkspace(cap, mode) {
