@@ -1,6 +1,3 @@
-// BEYOND X module 6/13: ui — messages, toasts, errors, identity/school triggers
-// Human error layer: the user sees Pashto; technical details
-// (kind, status, timestamp) live behind the button only.
 function recordError(kind, status) {
     AppState.lastError = { kind: kind, status: status || 0, time: new Date().toISOString() };
     const btn = document.getElementById("errDetailsBtn");
@@ -46,13 +43,10 @@ function isIdentityQuestion(q) {
     return q.indexOf("چا جوړ") !== -1 || q.indexOf("جوړ کړی") !== -1 || q.indexOf("جوړونکی") !== -1 || q.indexOf("ستا نوم") !== -1 || q.indexOf("څوک یې") !== -1;
 }
 
-// School is HIDDEN until asked (arman correction 2026-11-20):
-// this trigger reveals the quiz on a school question. Offline OK.
 function isSchoolRequest(q) {
     return q.indexOf("ښوونځی") !== -1 || q.indexOf("کوئز") !== -1 || q.indexOf("انګلیسي") !== -1 || q.indexOf("درس") !== -1 || q.indexOf("زده کړم") !== -1 || q.indexOf("زده کړه") !== -1;
 }
 
-// Panel switching (moved from router.js — its push was full).
 function showPanel(name) {
     const chatPanel = document.getElementById("chatPanel");
     const schoolPanel = document.getElementById("schoolPanel");
