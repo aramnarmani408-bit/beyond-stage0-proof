@@ -12,6 +12,7 @@ function showErrorDetails() {
 function setAction(text) {
     const el = document.getElementById("actionLine");
     if (el) el.textContent = text;
+    if (typeof renderNeon === "function") renderNeon();
 }
 
 function addMessage(text, who) {
@@ -50,8 +51,10 @@ function isSchoolRequest(q) {
 function showPanel(name) {
     const chatPanel = document.getElementById("chatPanel");
     const schoolPanel = document.getElementById("schoolPanel");
+    const profilePanel = document.getElementById("profilePanel");
     if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
     if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
+    if (profilePanel) profilePanel.style.display = name === "profile" ? "flex" : "none";
     showIslamicPanel(name === "islamic");
     showBooksPanel(name === "books");
     showImagesPanel(name === "images");
