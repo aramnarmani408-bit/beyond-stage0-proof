@@ -1,5 +1,14 @@
-// BEYOND X module 9/13: router — handleRequest + sendQuestion + panels
-// Request router: discovery, activation, honest planned answers.
+function deviceReadingGuard(q) {
+    var hasDevice = q.indexOf("سکرین") !== -1 || q.indexOf("موبایل") !== -1 || q.indexOf("تلیفون") !== -1;
+    if (!hasDevice) return null;
+    if (q.indexOf("ولوله") === -1 && q.indexOf("ولولئ") === -1 && q.indexOf("لوستل") === -1) return null;
+    if (q.indexOf("کتاب") !== -1) return null;
+    if (q.indexOf("عکس") !== -1 || q.indexOf("انځور") !== -1) return null;
+    var r = q.split("په موبایل کې").join("").split("په تلیفون کې").join("").split("په سکرین کې").join("");
+    if (r.indexOf("سکرین") !== -1 || r.indexOf("موبایل") !== -1 || r.indexOf("تلیفون") !== -1) return "mobile";
+    if (q.indexOf("متن") !== -1) return "mobile";
+    return "ask";
+}
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
         addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه) او پروګرام کول (کوډ ولیکه او وچلوه) او موبایل کنټرول (موبایل وپېژنه او کنټرول یې کړه). په راتلونکو پړاوونو کې راځي: NEON (۱۱م).", "ai");
@@ -24,15 +33,20 @@ function handleRequest(q) {
         islamicAsk(q);
         return;
     }
+    if (intent.capability === "books" && typeof deviceReadingGuard === "function") {
+        var dg = deviceReadingGuard(q);
+        if (dg === "mobile") intent.capability = "mobile";
+        else if (dg === "ask") {
+            addMessage("سکرین ولولم که بل څه؟ مهرباني وکړه روښانه یې کړه.", "ai");
+            return;
+        }
+    }
     if (intent.capability === "books") {
         if (activateWorkspace("books", intent.mode)) {
             buildBooksPanel();
             showPanel("books");
             addMessage("د کتابونو کارځای دې لپاره جوړ شو — کتاب ولټوه او ولوله.", "ai");
         }
-        // A question about the open book goes to the grounded
-        // pipeline; anything else gets a generic chat answer (the
-        // grounded answer needs an open book — a v1 limit).
         if (booksCurrentEntry() && isBookQuestion(q)) booksAsk(q);
         else askBeyond(q);
         return;
@@ -43,9 +57,6 @@ function handleRequest(q) {
             showPanel("images");
             addMessage("د انځورونو کارځای دې لپاره جوړ شو — انځور جوړ کړه او وپوهېږه.", "ai");
         }
-        // The message usually IS the prompt: strip the trigger
-        // words and generate from the rest; a bare trigger just
-        // opens the panel.
         var p = imagesPromptFrom(q);
         if (p && imagesPromptEl) {
             imagesPromptEl.value = p;
@@ -58,8 +69,6 @@ function handleRequest(q) {
             buildVoicePanel();
             showPanel("voice");
             addMessage("د غږ کارځای دې لپاره جوړ شو — په پښتو وغږېږه او واوره.", "ai");
-            // "واوره" (listen) speaks the last answer; anything
-            // else just opens the panel — recording needs a tap.
             if (q.indexOf("واوره") !== -1) voiceSpeakLast();
         }
         return;
@@ -72,7 +81,6 @@ function handleRequest(q) {
             showPanel("code");
             addMessage("د پروګرام کولو کارځای دې لپاره جوړ شو — کوډ ولیکه، وچلوه او وګوره.", "ai");
         }
-        // Prefill only — generating needs the user's tap.
         var c = codePromptFrom(q);
         if (c && codeGenIn) codeGenIn.value = c;
         return;
@@ -83,6 +91,7 @@ function handleRequest(q) {
             showPanel("mobile");
             addMessage("د موبایل کارځای دې لپاره جوړ شو — خپل موبایل وپېژنه، تشخیص کړه او کنټرول یې کړه.", "ai");
         }
+        var t = typeof m2bParse === "function" && m2bParse(q); if (t) m2bRunChat(t);
         return;
     }
     if (cap.status === "planned") {
