@@ -1,8 +1,4 @@
-// BEYOND X module 8/13: ask — askBeyond (local identity, 401 retry, errors)
 async function askBeyond(question) {
-    // Identity is answered LOCALLY, never by the model: the free model
-    // claims OpenAI made it even when instructed otherwise (proven
-    // 2026-11-20). The app states its own identity.
     if (isIdentityQuestion(question)) {
         setAction("ځواب ورکوم");
         addMessage("زه BEYOND X یم، د BEYOND AI جوړ کړی هوښیار مرستیال یم.", "ai");
@@ -13,16 +9,11 @@ async function askBeyond(question) {
     chatState.status = "busy";
     renderXcore();
     try {
-        // The app NEVER calls a model directly. It talks to BEYOND's
-        // gateway (keys server-side, Safety Net lanes, identity +
-        // Pashto enforced, every answer validated). Raw question,
-        // no prefix — the gateway applies its own system prompt.
         let token = await ensureSession();
         let text;
         try {
             text = await xChat(question, token);
         } catch (e) {
-            // One refresh + one retry on 401, then the honest message.
             if (e.message !== "Unauthorized") throw e;
             sessionToken = null;
             sessionExpiry = 0;
