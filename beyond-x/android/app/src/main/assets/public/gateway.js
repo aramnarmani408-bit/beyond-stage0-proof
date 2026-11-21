@@ -1,9 +1,3 @@
-// BEYOND X module 7/13: gateway — guest session + X chat route (bounded)
-// Guest session (gateway v5): the chat route needs a short-lived
-// server-issued token (30 min). Fetched once, cached in memory
-// (never in localStorage — a token must not outlive its session),
-// refreshed on expiry or 401. NO secret lives in the app — the
-// token comes from the gateway itself.
 var sessionToken = null;
 var sessionExpiry = 0;
 async function ensureSession() {
@@ -22,7 +16,6 @@ async function ensureSession() {
     return sessionToken;
 }
 async function xChat(question, token) {
-    // Bounded wait: the race rejects on timeout even if fetch hangs.
     let timer = null;
     try {
         const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
@@ -46,7 +39,6 @@ async function xChat(question, token) {
         if (resp.status === 401) throw new Error("Unauthorized");
         if (!resp.ok) throw new Error("Network");
         const data = await resp.json();
-        // Never render raw provider text: show ONLY a contract-valid answer.
         if (!data || data.status !== "success" || !data.response
             || data.response.identity !== "beyondx"
             || typeof data.response.text !== "string"
