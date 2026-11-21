@@ -41,13 +41,13 @@ function verifyCapability(cap) {
         if (!quizWords || quizWords.length === 0) return { ok: false, missing: "quizWords" };
         return { ok: true, missing: null };
     }
-    var names = ["islamic", "books", "images", "voice", "games", "polyglot", "programming"];
+    var names = ["islamic", "books", "images", "voice", "games", "polyglot", "programming", "mobile"];
     if (names.indexOf(cap) === -1) return { ok: false, missing: "unknown" };
     // The table is built INSIDE the function, so the panel
     // scripts have loaded by the time it is read; a missing
     // script throws ReferenceError → verification fails.
     try {
-        var table = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel };
+        var table = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel, mobile: buildMobilePanel };
         if (typeof table[cap] === "function") return { ok: true, missing: null };
     } catch (e) { /* missing panel script — fall through */ }
     return { ok: false, missing: cap === "polyglot" ? "language" : cap };
