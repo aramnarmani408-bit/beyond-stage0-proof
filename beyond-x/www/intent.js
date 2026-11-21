@@ -18,17 +18,29 @@ function isIslamicRequest(q) {
         || q.indexOf("روژه") !== -1 || q.indexOf("زکات") !== -1
         || q.indexOf("فتوا") !== -1;
 }
+function isBooksRequest(q) {
+    return q.indexOf("کتاب") !== -1 || q.indexOf("ولوله") !== -1
+        || q.indexOf("لوستل") !== -1;
+}
+function isBookQuestion(q) {
+    var l = q.toLowerCase();
+    var words = ["څه", "څوک", "ولې", "څنګه", "؟", "?", "who", "what", "why", "how"];
+    for (var i = 0; i < words.length; i++) if (q.indexOf(words[i]) !== -1 || l.indexOf(words[i]) !== -1) return true;
+    return false;
+}
 // "حج" is NOT a trigger: it false-positives on "حجره" (room).
 // Intent → {capability, mode}. A question (ځواب/څه دی/ووایه) is
 // chat, not a build request — EXCEPT an Islamic question, which
-// goes to the source-grounded pipeline, not generic chat.
+// goes to the source-grounded pipeline, and a books question,
+// which goes to the reader (or the book's grounded pipeline when
+// a book is open), not generic chat.
 // Planned systems answer honestly; only available ones activate.
 function analyzeIntent(q) {
     if (isSchoolRequest(q)) return { capability: "school", mode: "temporary" };
     if (isIslamicRequest(q)) return { capability: "islamic", mode: "temporary" };
+    if (isBooksRequest(q)) return { capability: "books", mode: "temporary" };
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return { capability: "chat", mode: "inline" };
     if (isBuildWord(q)) {
-        if (q.indexOf("کتاب") !== -1) return { capability: "books", mode: "temporary" };
         if (q.indexOf("انځور") !== -1 || q.indexOf("عکس") !== -1) return { capability: "images", mode: "temporary" };
         if (q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1) return { capability: "voice", mode: "temporary" };
         if (q.indexOf("لوب") !== -1) return { capability: "games", mode: "temporary" };
