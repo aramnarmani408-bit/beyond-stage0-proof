@@ -28,27 +28,8 @@ function isBookQuestion(q) {
     for (var i = 0; i < words.length; i++) if (q.indexOf(words[i]) !== -1 || l.indexOf(words[i]) !== -1) return true;
     return false;
 }
-// An image QUESTION ("انځور څه شی دی؟") is chat, not the
-// workspace — the question-word guard below would catch it, but
-// the images trigger runs first, so it excludes questions itself.
-function isImagesRequest(q) {
-    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
-    return q.indexOf("انځور") !== -1 || q.indexOf("عکس") !== -1;
-}
-// Action words first: "ځواب واوره" (hear the answer) is a
-// voice request even though it contains "ځواب". A voice
-// QUESTION ("غږ څه شی دی؟") is chat, not the workspace.
-function isVoiceRequest(q) {
-    if (q.indexOf("واوره") !== -1 || q.indexOf("ثبت کړه") !== -1) return true;
-    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
-    return q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1;
-}
-// A games QUESTION ("لوبه څه شی دی؟") is chat, not the
-// workspace — same question-word guard as images/voice.
-function isGamesRequest(q) {
-    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
-    return q.indexOf("لوبې") !== -1 || q.indexOf("ګېم") !== -1 || q.indexOf("لوبه") !== -1;
-}
+// (isImagesRequest/isVoiceRequest/isGamesRequest + the language
+// detector live in intent2.js — this file's push was full.)
 // Intent → {capability, mode}. A question (ځواب/څه دی/ووایه) is
 // chat, not a build request — EXCEPT an Islamic question, which
 // goes to the source-grounded pipeline, and a books question,
@@ -57,6 +38,7 @@ function isGamesRequest(q) {
 // Planned systems answer honestly; only available ones activate.
 function analyzeIntent(q) {
     if (isSchoolRequest(q)) return { capability: "school", mode: "temporary" };
+    if (isLanguageRequest(q)) return { capability: "polyglot", mode: "temporary" };
     if (isIslamicRequest(q)) return { capability: "islamic", mode: "temporary" };
     if (isBooksRequest(q)) return { capability: "books", mode: "temporary" };
     if (isImagesRequest(q)) return { capability: "images", mode: "temporary" };
