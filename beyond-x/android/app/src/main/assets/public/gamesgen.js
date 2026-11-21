@@ -1,4 +1,3 @@
-// BEYOND X module 26/27: gamesgen — Games gateway calls.
 var gamesPollTimer = null;
 var gamesPollCount = 0;
 var gamesPendingDesc = "";
