@@ -1,4 +1,3 @@
-// BEYOND X module 3/13: intent — request analysis (capability + mode)
 function pashtoDigits(n) {
     const map = { "0": "۰", "1": "۱", "2": "۲", "3": "۳", "4": "۴", "5": "۵", "6": "۶", "7": "۷", "8": "۸", "9": "۹" };
     return String(n).split("").map(function (c) { return map[c] || c; }).join("");
@@ -28,15 +27,6 @@ function isBookQuestion(q) {
     for (var i = 0; i < words.length; i++) if (q.indexOf(words[i]) !== -1 || l.indexOf(words[i]) !== -1) return true;
     return false;
 }
-// (isImagesRequest/isVoiceRequest + the language detector live
-// in intent2.js; isGamesRequest lives in games.js — this
-// file's push was full.)
-// Intent → {capability, mode}. A question (ځواب/څه دی/ووایه) is
-// chat, not a build request — EXCEPT an Islamic question, which
-// goes to the source-grounded pipeline, and a books question,
-// which goes to the reader (or the book's grounded pipeline when
-// a book is open), not generic chat.
-// Planned systems answer honestly; only available ones activate.
 function analyzeIntent(q) {
     if (isSchoolRequest(q)) return { capability: "school", mode: "temporary" };
     if (isLanguageRequest(q)) return { capability: "polyglot", mode: "temporary" };
