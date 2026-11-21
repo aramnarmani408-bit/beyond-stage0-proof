@@ -49,7 +49,7 @@ function loadProgress() {
 const CAPABILITIES = {
     chat: { name: "خبرې", status: "available", stage: 1 },
     school: { name: "ښوونځی", status: "available", stage: 2 },
-    islamic: { name: "اسلامي", status: "planned", stage: 3 },
+    islamic: { name: "اسلامي", status: "available", stage: 3 },
     books: { name: "کتابونه", status: "planned", stage: 4 },
     images: { name: "انځورونه", status: "planned", stage: 5 },
     voice: { name: "غږ", status: "planned", stage: 6 },
