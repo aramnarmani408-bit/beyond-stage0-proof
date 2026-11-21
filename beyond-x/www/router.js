@@ -3,7 +3,7 @@
 // for available systems, honest "planned" answers for the rest.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول). په راتلونکو پړاوونو کې راځي: ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه). په راتلونکو پړاوونو کې راځي: پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -77,6 +77,17 @@ function handleRequest(q) {
         if (g && gamesInputEl) gamesInputEl.value = g;
         return;
     }
+    if (intent.capability === "polyglot") {
+        if (activateWorkspace("polyglot", intent.mode)) {
+            buildLanguagePanel();
+            showPanel("language");
+            addMessage("د ژبو کارځای دې لپاره جوړ شو — ژبه وژباړه، زده کړه او تمرین وکړه.", "ai");
+        }
+        // Prefill only — translating needs the user's tap.
+        var l = languagePromptFrom(q);
+        if (l && langTrIn) langTrIn.value = l;
+        return;
+    }
     if (cap.status === "planned") {
         addMessage("د " + cap.name + " سیستم لا نه دی جوړ شوی — په " + pashtoDigits(cap.stage) + "م پړاو کې راځي. اوس زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز.", "ai");
         return;
@@ -92,17 +103,5 @@ function sendQuestion() {
     addMessage(q, "user");
     input.value = "";
     handleRequest(q);
-}
-
-function showPanel(name) {
-    const chatPanel = document.getElementById("chatPanel");
-    const schoolPanel = document.getElementById("schoolPanel");
-    if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
-    if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
-    showIslamicPanel(name === "islamic");
-    showBooksPanel(name === "books");
-    showImagesPanel(name === "images");
-    showVoicePanel(name === "voice");
-    showGamesPanel(name === "games");
 }
 
