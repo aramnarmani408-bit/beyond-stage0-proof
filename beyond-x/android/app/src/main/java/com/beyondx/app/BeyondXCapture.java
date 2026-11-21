@@ -25,8 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 // One-shot screen capture (MediaProjection). Android shows its own
 // consent dialog every time; one frame is taken, then everything is
-// released. No continuous capture, no recording. Android 14+ is
-// refused by the plugin (needs a foreground service — Phase 2B).
+// released. No continuous capture, no recording. API 34+ runs through
+// the foreground service (BeyondXCaptureService, 2B); older Android
+// uses the direct path below.
 public class BeyondXCapture {
   public static void run(final Plugin plugin, final PluginCall call, int code, Intent data) {
     final Context ctx = plugin.getContext();
@@ -35,6 +36,13 @@ public class BeyondXCapture {
     try {
       proj = mpm.getMediaProjection(code, data);
     } catch (Exception e) { call.reject("projection_failed", e.getMessage()); return; }
+    captureFromProjection(ctx, proj, call, null);
+  }
+
+  // Shared core: one frame from an already-created projection, then
+  // release everything. onDone runs after cleanup (the foreground
+  // service uses it to stop itself); may be null.
+  public static void captureFromProjection(final Context ctx, final MediaProjection proj, final PluginCall call, final Runnable onDone) {
     DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
     int w = dm.widthPixels, h = dm.heightPixels;
     if (w > 720) { h = h * 720 / w; w = 720; }
@@ -52,6 +60,7 @@ public class BeyondXCapture {
         try { proj.stop(); } catch (Exception e) { }
         try { reader.close(); } catch (Exception e) { }
         thread.quitSafely();
+        if (onDone != null) onDone.run();
       }
     };
     handler.postDelayed(new Runnable() {
