@@ -1,74 +1,62 @@
 <!DOCTYPE html>
 <html lang="ps" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://beyond-build-gateway.aramnarmani408.workers.dev">
-    <title>BEYOND X</title>
-    <style>
-        body { margin: 0; font-family: sans-serif; background: #050510; color: #F1F5F9; display: flex; height: 100vh; overflow: hidden; }
-        aside { width: 250px; background: #0A0A1F; display: none; flex-direction: column; border-left: 1px solid #00F5FF; }
-        aside.open { display: flex; }
-        #main { flex: 1; display: flex; flex-direction: column; padding: 20px; }
-        #chatPanel { flex: 1; display: flex; flex-direction: column; }
-        #schoolPanel { flex: 1; display: none; flex-direction: column; gap: 12px; }
-        #welcome { color: #94A3B8; }
-        #slogan { color: #94A3B8; font-size: 13px; }
-        #chatArea { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px; border-radius: 8px; max-width: 80%; }
-        .msg.user { background: #00F5FF; color: #050510; align-self: flex-end; }
-        .msg.ai { background: #0A0A1F; color: #F1F5F9; align-self: flex-start; }
-        #inputArea { display: flex; gap: 10px; padding-top: 10px; }
-        #askInput { flex: 1; background: #0A0A1F; color: #F1F5F9; border: 1px solid #00F5FF; border-radius: 8px; padding: 10px; }
-        #sendBtn, #quizRestart, #newChatBtn, #backChat, #reviseBtn, #modeBtn, #wordBtn, #sentBtn { background: #00F5FF; color: #050510; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
-        #quizResult { color: #F1F5F9; text-align: center; min-height: 24px; }
-        #quizWord { font-size: 28px; color: #00F5FF; text-align: center; padding: 16px; }
-        #quizOptions { display: flex; flex-direction: column; gap: 10px; }
-        .quiz-opt { background: #0A0A1F; color: #F1F5F9; border: 1px solid #A855F7; border-radius: 8px; padding: 12px; cursor: pointer; font-size: 18px; }
-        #quizFeedback { color: #00FF88; text-align: center; min-height: 24px; }
-        .status-dot { width: 10px; height: 10px; background: #00FF88; border-radius: 50%; animation: pulse 1s infinite; display: inline-block; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        #toast { position: fixed; bottom: 20px; right: 20px; background: #0A0A1F; color: #F1F5F9; border: 1px solid #00F5FF; padding: 10px; border-radius: 5px; }
-    </style>
-</head>
-<body>
-    <aside id="drawer">
-        <button id="newChatBtn">نوې خبرې</button>
-        <ul id="chatList"><li>خبره ۱</li></ul>
-    </aside>
-    <div id="main">
-        <header>
-            <button id="drawerBtn">☰</button>
-            <svg id="avatar" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#0A0A1F" stroke="#00F5FF" stroke-width="2"/><circle cx="20" cy="20" r="10" fill="#A855F7"/></svg>
-            <span class="status-dot"></span>
-            <span>BEYOND X</span>
-            <div id="slogan">موږ به نړۍ بدلوو</div>
-            <div id="actionLine">چمتو یم</div>
-        </header>
-        <div id="chatPanel">
-            <div id="welcome">BEYOND X ته ښه راغلاست! زه ستا مرستیال یم — خپله پوښتنه ولیکئ.</div>
-            <div id="chatArea"></div>
-            <div id="inputArea">
-                <input id="askInput" placeholder="خپله پوښتنه ولیکئ...">
-                <button id="sendBtn">لیږل</button>
-            </div>
-        </div>
-        <div id="schoolPanel">
-            <button id="backChat">← خبرې</button>
-            <div id="quizWord"></div>
-            <div id="quizOptions"></div>
-            <div id="quizFeedback"></div>
-            <div>سم: <span id="quizScore">0/6</span></div>
-            <div id="quizResult"></div>
-            <button id="wordBtn">لغتونه</button>
-            <button id="sentBtn">جملې</button>
-            <button id="reviseBtn">بیا زده کړه</button>
-            <button id="modeBtn">↔ پښتو ← انګلیسي</button>
-            <button id="quizRestart">بیا پیل</button>
-        </div>
-    </div>
-    <div id="toast"></div>
-
-    <script src="vocab.js"></script>
-    <script src="app.js"></script>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://beyond-build-gateway.aramnarmani408.workers.dev">
+<title>BEYOND X</title><style>
+body{margin:0;font-family:sans-serif;background:#050510;color:#F1F5F9;display:flex;height:100vh;overflow:hidden;}
+aside{width:250px;background:#0A0A1F;display:none;flex-direction:column;border-left:1px solid #00F5FF;}
+aside.open{display:flex;}
+#main{flex:1;display:flex;flex-direction:column;padding:20px;}
+#chatPanel{flex:1;display:flex;flex-direction:column;}
+#schoolPanel { flex: 1; display: none; flex-direction:column;gap:12px;}
+#welcome{color:#94A3B8;}
+#slogan{color:#94A3B8;font-size:13px;}
+#chatArea{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.msg{padding:10px;border-radius:8px;max-width:80%;}
+.msg.user{background:#00F5FF;color:#050510;align-self:flex-end;}
+.msg.ai{background:#0A0A1F;color:#F1F5F9;align-self:flex-start;}
+#inputArea{display:flex;gap:10px;padding-top:10px;}
+#askInput{flex:1;background:#0A0A1F;color:#F1F5F9;border:1px solid #00F5FF;border-radius:8px;padding:10px;}
+#sendBtn,#quizRestart,#newChatBtn,#backChat,#reviseBtn,#modeBtn,#wordBtn,#sentBtn,#closeWorkspaceBtn,#errDetailsBtn{background:#00F5FF;color:#050510;border:none;border-radius:8px;padding:10px 16px;cursor:pointer;}
+#xcoreLine{color:#94A3B8;font-size:13px;}
+#workspaceStatus{color:#00FF88;font-size:13px;min-height:18px;}
+#quizResult{color:#F1F5F9;text-align:center;min-height:24px;}
+#quizWord{font-size:28px;color:#00F5FF;text-align:center;padding:16px;}
+#quizOptions{display:flex;flex-direction:column;gap:10px;}
+.quiz-opt{background:#0A0A1F;color:#F1F5F9;border:1px solid #A855F7;border-radius:8px;padding:12px;cursor:pointer;font-size:18px;}
+#quizFeedback{color:#00FF88;text-align:center;min-height:24px;}
+.status-dot{width:10px;height:10px;background:#00FF88;border-radius:50%;animation:pulse 1s infinite;display:inline-block;}
+@keyframes pulse{0%{opacity:1;}50%{opacity:0.5;}100%{opacity:1;}}
+#toast{position:fixed;bottom:20px;right:20px;background:#0A0A1F;color:#F1F5F9;border:1px solid #00F5FF;padding:10px;border-radius:5px;}
+</style>
+</head><body>
+<aside id="drawer">
+<button id="newChatBtn">نوې خبرې</button><ul id="chatList"><li>خبره ۱</li></ul>
+</aside>
+<div id="main">
+<header>
+<button id="drawerBtn">☰</button>
+<svg id="avatar" width="40" height="40"><circle cx="20" cy="20" r="18" fill="#0A0A1F" stroke="#00F5FF" stroke-width="2"/><circle cx="20" cy="20" r="10" fill="#A855F7"/></svg>
+<span class="status-dot" id="statusDot"></span><span>BEYOND X</span>
+<div id="slogan">موږ به نړۍ بدلوو</div><div id="actionLine">چمتو یم</div><div id="xcoreLine">ګیټوې: نښلول کېږي • چټ: چمتو</div>
+<button id="errDetailsBtn" style="display:none">تخنیکي جزیات</button>
+</header>
+<div id="workspaceStatus"></div>
+<div id="chatPanel">
+<div id="welcome">BEYOND X ته ښه راغلاست! زه ستا مرستیال یم — خپله پوښتنه ولیکئ.</div>
+<div id="chatArea"></div>
+<div id="inputArea">
+<input id="askInput" placeholder="خپله پوښتنه ولیکئ..."><button id="sendBtn">لیږل</button>
+</div>
+</div>
+<div id="schoolPanel">
+<button id="backChat">← خبرې</button><button id="closeWorkspaceBtn">کارځای بند کړه</button>
+<div id="quizWord"></div><div id="quizOptions"></div><div id="quizFeedback"></div>
+<div>سم: <span id="quizScore">0/6</span></div><div id="quizResult"></div><button id="wordBtn">لغتونه</button><button id="sentBtn">جملې</button><button id="reviseBtn">بیا زده کړه</button><button id="modeBtn">↔ پښتو ← انګلیسي</button><button id="quizRestart">بیا پیل</button>
+</div>
+</div>
+<div id="toast"></div>
+<script src="vocab.js"></script><script src="core.js"></script><script src="workspace.js"></script><script src="intent.js"></script><script src="chatstore.js"></script><script src="xcore.js"></script><script src="ui.js"></script><script src="gateway.js"></script><script src="ask.js"></script><script src="router.js"></script><script src="quiz1.js"></script><script src="quizshow.js"></script><script src="answer.js"></script><script src="init.js"></script>
 </body>
 </html>
