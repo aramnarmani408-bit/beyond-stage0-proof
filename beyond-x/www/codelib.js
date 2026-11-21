@@ -1,4 +1,3 @@
-// BEYOND X module 32/34: codelib — project model + history (stage 9).
 var CODE_KEY = "beyondx-code-v1";
 var codeProject = { files: [{ name: "main.py", content: "" }], lang: "python", active: "main.py" };
 var codeHistory = [];
@@ -32,8 +31,6 @@ function codeGetFile(name) {
   codeProject.files.forEach(function (f) { if (f.name === name) out = f.content; });
   return out;
 }
-// A patch snapshots the OLD content first (cap 10, newest
-// first) — the narrow fix never loses the working version.
 function codeApplyPatch(name, patch) {
   codeHistory.unshift({ name: name, content: codeGetFile(name) });
   if (codeHistory.length > 10) codeHistory.length = 10;
@@ -42,8 +39,6 @@ function codeApplyPatch(name, patch) {
 }
 function codeSnapshots() { return codeHistory; }
 function codeLastGood() { return codeHistory.length ? codeHistory[0] : null; }
-// Client copy of the 21-language registry (stage 9 v1: only
-// Python + JavaScript run; HTML/CSS preview in the browser).
 var CODE_LANGS = "c:C,cpp:C++,rust:Rust,go:Go,zig:Zig,java:Java,kotlin:Kotlin,csharp:C#,swift:Swift,dart:Dart,javascript:JavaScript,typescript:TypeScript,html:HTML,css:CSS,php:PHP,python:Python,ruby:Ruby,bash:Bash,powershell:PowerShell,sql:SQL,graphql:GraphQL".split(",").map(function (p) {
   var kv = p.split(":");
   return { id: kv[0], name: kv[1], runnable: kv[0] === "python" || kv[0] === "javascript" };
