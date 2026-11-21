@@ -46,6 +46,11 @@ function verifyCapability(cap) {
         if (typeof buildIslamicPanel !== "function") return { ok: false, missing: "islamic" };
         return { ok: true, missing: null };
     }
+    if (cap === "books") {
+        // Panel built by JS; the gateway serves the books.
+        if (typeof buildBooksPanel !== "function") return { ok: false, missing: "books" };
+        return { ok: true, missing: null };
+    }
     return { ok: false, missing: "unknown" };
 }
 function activateWorkspace(cap, mode) {
