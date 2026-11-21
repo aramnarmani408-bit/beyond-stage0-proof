@@ -1,8 +1,3 @@
-// BEYOND X module 28/31: language — panel (stage 8).
-// Children: [0] back [1] title [2] tabs [3] translate [4] grammar
-// [5] word [6] lesson [7] pronounce [8] attribution. Prompt strip
-// lives in intent2.js, panel error in languagegen.js, so this
-// file fits.
 var langPanel = null, langTrIn = null, langFrom = null, langTo = null,
   langTrOut = null, langGrIn = null, langGrOut = null,
   langWdIn = null, langWdOut = null, langLesson = null, langSecs = [];
@@ -96,15 +91,12 @@ function buildLanguagePanel() {
 function showLanguagePanel(show) {
   if (langPanel) langPanel.style.display = show ? "flex" : "none";
 }
-// Polyglot router branch (moved from router.js); mode is
-// always "temporary" for polyglot.
 function routeLanguage(q) {
   if (activateWorkspace("polyglot", "temporary")) {
     buildLanguagePanel();
     showPanel("language");
     addMessage("د ژبو کارځای دې لپاره جوړ شو — ژبه وژباړه، زده کړه او تمرین وکړه.", "ai");
   }
-  // Prefill only — translating needs the user's tap.
   var l = languagePromptFrom(q);
   if (l && langTrIn) langTrIn.value = l;
 }
