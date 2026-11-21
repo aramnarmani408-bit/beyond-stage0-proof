@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">BEYOND X</string>
-    <string name="title_activity_main">BEYOND Day 7 Proof</string>
+    <string name="title_activity_main">BEYOND X</string>
     <string name="package_name">com.beyondx.app</string>
     <string name="custom_url_scheme">com.beyondx.app</string>
+    <string name="accessibility_service_description">BEYOND X reads the current screen text to help you understand and control your phone. Read-only: it never taps or types. Enable it only if you want this help.</string>
 </resources>
