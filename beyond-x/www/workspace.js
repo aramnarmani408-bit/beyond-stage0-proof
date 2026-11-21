@@ -56,6 +56,11 @@ function verifyCapability(cap) {
         if (typeof buildImagesPanel !== "function") return { ok: false, missing: "images" };
         return { ok: true, missing: null };
     }
+    if (cap === "voice") {
+        // Panel built by JS; the gateway serves the voice.
+        if (typeof buildVoicePanel !== "function") return { ok: false, missing: "voice" };
+        return { ok: true, missing: null };
+    }
     return { ok: false, missing: "unknown" };
 }
 function activateWorkspace(cap, mode) {
