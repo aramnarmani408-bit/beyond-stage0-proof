@@ -44,6 +44,7 @@ function analyzeIntent(q) {
     if (isImagesRequest(q)) return { capability: "images", mode: "temporary" };
     if (isVoiceRequest(q)) return { capability: "voice", mode: "temporary" };
     if (isGamesRequest(q)) return { capability: "games", mode: "temporary" };
+    if (isProgrammingRequest(q)) return { capability: "programming", mode: "full" };
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return { capability: "chat", mode: "inline" };
     if (isBuildWord(q)) {
         if (q.indexOf("لوب") !== -1) return { capability: "games", mode: "temporary" };
