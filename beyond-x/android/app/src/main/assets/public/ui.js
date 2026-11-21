@@ -52,3 +52,17 @@ function isSchoolRequest(q) {
     return q.indexOf("ښوونځی") !== -1 || q.indexOf("کوئز") !== -1 || q.indexOf("انګلیسي") !== -1 || q.indexOf("درس") !== -1 || q.indexOf("زده کړم") !== -1 || q.indexOf("زده کړه") !== -1;
 }
 
+// Panel switching (moved from router.js — its push was full).
+function showPanel(name) {
+    const chatPanel = document.getElementById("chatPanel");
+    const schoolPanel = document.getElementById("schoolPanel");
+    if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
+    if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
+    showIslamicPanel(name === "islamic");
+    showBooksPanel(name === "books");
+    showImagesPanel(name === "images");
+    showVoicePanel(name === "voice");
+    showGamesPanel(name === "games");
+    showLanguagePanel(name === "language");
+}
+
