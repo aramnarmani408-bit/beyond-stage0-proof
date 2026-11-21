@@ -51,7 +51,7 @@ const CAPABILITIES = {
     school: { name: "ښوونځی", status: "available", stage: 2 },
     islamic: { name: "اسلامي", status: "available", stage: 3 },
     books: { name: "کتابونه", status: "available", stage: 4 },
-    images: { name: "انځورونه", status: "planned", stage: 5 },
+    images: { name: "انځورونه", status: "available", stage: 5 },
     voice: { name: "غږ", status: "planned", stage: 6 },
     games: { name: "لوبې", status: "planned", stage: 7 },
     polyglot: { name: "ژبې", status: "planned", stage: 8 },
