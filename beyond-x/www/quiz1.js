@@ -1,4 +1,3 @@
-// BEYOND X module 10/13: quiz1 — quiz start, sentence quiz, revision, mode
 function startQuiz() {
     quizState.pos = 0;
     quizState.score = 0;
@@ -10,9 +9,6 @@ function startQuiz() {
     showQuizQuestion();
 }
 
-// Sentence-completion quiz data: the 87 textbook words that have a
-// verbatim example sentence (vocab.js, generated from the verified
-// extraction). Guarded — the word quiz works without it.
 function vocabItems() {
     if (typeof VOCAB === "undefined" || !Array.isArray(VOCAB)) return [];
     return VOCAB;
@@ -33,7 +29,6 @@ function startSentenceQuiz() {
     saveProgress();
     showQuizQuestion();
 }
-// Distractors: words from the same chapter first, then others.
 function sentenceOptions(idx) {
     const items = vocabItems();
     const correct = items[idx].en;
@@ -53,9 +48,6 @@ function sentenceOptions(idx) {
     return options;
 }
 
-// Revision queue: the words the learner got wrong, re-presented
-// until they answer them right. The weak list is the mastery
-// record — it survives restarts (saved with the progress).
 function startRevision() {
     const feedbackEl = document.getElementById("quizFeedback");
     const weakList = quizState.kind === "sentence" ? quizState.sentWeak : quizState.weak;
@@ -72,8 +64,6 @@ function startRevision() {
     showQuizQuestion();
 }
 
-// Direction toggle: English→Pashto (default) or Pashto→English
-// (the reverse exercise — the same real words, the other way).
 function toggleMode() {
     if (quizState.kind !== "word") return; // direction is for the word quiz only
     quizState.mode = quizState.mode === "en-ps" ? "ps-en" : "en-ps";
