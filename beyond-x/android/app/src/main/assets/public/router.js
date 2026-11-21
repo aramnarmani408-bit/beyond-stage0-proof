@@ -3,7 +3,7 @@
 // for available systems, honest "planned" answers for the rest.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل). په راتلونکو پړاوونو کې راځي: لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول). په راتلونکو پړاوونو کې راځي: ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -65,6 +65,18 @@ function handleRequest(q) {
         }
         return;
     }
+    if (intent.capability === "games") {
+        if (activateWorkspace("games", intent.mode)) {
+            buildGamesPanel();
+            showPanel("games");
+            addMessage("د لوبو کارځای دې لپاره جوړ شو — لوبه وکړه او نوې لوبه جوړه کړه.", "ai");
+        }
+        // A description after the trigger words prefills the
+        // input; a cloud build needs the user's tap to start.
+        var g = gamesPromptFrom(q);
+        if (g && gamesInputEl) gamesInputEl.value = g;
+        return;
+    }
     if (cap.status === "planned") {
         addMessage("د " + cap.name + " سیستم لا نه دی جوړ شوی — په " + pashtoDigits(cap.stage) + "م پړاو کې راځي. اوس زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز.", "ai");
         return;
@@ -91,5 +103,6 @@ function showPanel(name) {
     showBooksPanel(name === "books");
     showImagesPanel(name === "images");
     showVoicePanel(name === "voice");
+    showGamesPanel(name === "games");
 }
 
