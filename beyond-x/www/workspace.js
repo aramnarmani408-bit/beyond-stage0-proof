@@ -61,6 +61,11 @@ function verifyCapability(cap) {
         if (typeof buildVoicePanel !== "function") return { ok: false, missing: "voice" };
         return { ok: true, missing: null };
     }
+    if (cap === "games") {
+        // Panel built by JS; the gateway builds the games.
+        if (typeof buildGamesPanel !== "function") return { ok: false, missing: "games" };
+        return { ok: true, missing: null };
+    }
     return { ok: false, missing: "unknown" };
 }
 function activateWorkspace(cap, mode) {
