@@ -56,6 +56,7 @@ function isSchoolRequest(q) {
 function showPanel(name) {
     const chatPanel = document.getElementById("chatPanel");
     const schoolPanel = document.getElementById("schoolPanel");
+    if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
     if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
     showIslamicPanel(name === "islamic");
     showBooksPanel(name === "books");
