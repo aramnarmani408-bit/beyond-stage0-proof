@@ -28,6 +28,13 @@ function isBookQuestion(q) {
     for (var i = 0; i < words.length; i++) if (q.indexOf(words[i]) !== -1 || l.indexOf(words[i]) !== -1) return true;
     return false;
 }
+// An image QUESTION ("انځور څه شی دی؟") is chat, not the
+// workspace — the question-word guard below would catch it, but
+// the images trigger runs first, so it excludes questions itself.
+function isImagesRequest(q) {
+    if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return false;
+    return q.indexOf("انځور") !== -1 || q.indexOf("عکس") !== -1;
+}
 // "حج" is NOT a trigger: it false-positives on "حجره" (room).
 // Intent → {capability, mode}. A question (ځواب/څه دی/ووایه) is
 // chat, not a build request — EXCEPT an Islamic question, which
@@ -39,9 +46,9 @@ function analyzeIntent(q) {
     if (isSchoolRequest(q)) return { capability: "school", mode: "temporary" };
     if (isIslamicRequest(q)) return { capability: "islamic", mode: "temporary" };
     if (isBooksRequest(q)) return { capability: "books", mode: "temporary" };
+    if (isImagesRequest(q)) return { capability: "images", mode: "temporary" };
     if (q.indexOf("ځواب") !== -1 || q.indexOf("څه شی دی") !== -1 || q.indexOf("څه دی") !== -1 || q.indexOf("ووایه") !== -1) return { capability: "chat", mode: "inline" };
     if (isBuildWord(q)) {
-        if (q.indexOf("انځور") !== -1 || q.indexOf("عکس") !== -1) return { capability: "images", mode: "temporary" };
         if (q.indexOf("غږ") !== -1 || q.indexOf("اواز") !== -1) return { capability: "voice", mode: "temporary" };
         if (q.indexOf("لوب") !== -1) return { capability: "games", mode: "temporary" };
         if (q.indexOf("کوډ") !== -1 || q.indexOf("پروګرام") !== -1 || q.indexOf("اپلیکیشن") !== -1) return { capability: "programming", mode: "full" };
