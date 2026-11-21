@@ -1,0 +1,89 @@
+# BEYOND X stage 9: probe all 21 programming-language toolchains
+# on the runner and publish the report as a pre-release asset.
+# Dispatch-only (the coordinator dispatches it ONCE at build;
+# the gateway stores the report in D1 as the __probe__ row).
+# The build_key input exists because the gateway's /v1/builds
+# dispatch sends inputs.build_key — GitHub 422s on undeclared
+# inputs, so it is declared here (unused by the steps).
+name: Code toolchain probe
+on:
+  workflow_dispatch:
+    inputs:
+      build_key:
+        description: Build key from the gateway dispatch (unused)
+        required: false
+        type: string
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe toolchains
+        run: |
+          python3 - <<'PYEOF'
+          import json, shutil, subprocess
+          # (registry id, binary, version args, note)
+          CHECKS = [
+            ("c", "gcc", ["--version"], ""),
+            ("cpp", "g++", ["--version"], ""),
+            ("rust", "rustc", ["--version"], ""),
+            ("go", "go", ["version"], ""),
+            ("zig", "zig", ["version"], ""),
+            ("java", "java", ["-version"], ""),
+            ("kotlin", "kotlinc", ["-version"], ""),
+            ("csharp", "dotnet", ["--version"], ""),
+            ("swift", "swift", ["--version"], ""),
+            ("dart", "dart", ["--version"], ""),
+            ("javascript", "node", ["--version"], ""),
+            ("typescript", "tsc", ["--version"], "global tsc only; npx not probed"),
+            ("html", None, [], "preview only, no compiler"),
+            ("css", None, [], "preview only, no compiler"),
+            ("php", "php", ["--version"], ""),
+            ("python", "python3", ["--version"], ""),
+            ("ruby", "ruby", ["--version"], ""),
+            ("bash", "bash", ["--version"], ""),
+            ("powershell", "pwsh", ["--version"], ""),
+            ("sql", "sqlite3", ["--version"], "sqlite3 is the representative SQL toolchain"),
+            ("graphql", None, [], "library-only, no standalone CLI on the runner"),
+          ]
+          report = {}
+          for lang, binary, args, note in CHECKS:
+            if binary is None:
+              # HTML/CSS are preview-only (the browser is the
+              # toolchain); GraphQL has no CLI at all.
+              found = lang in ("html", "css")
+              report[lang] = {"found": found,
+                "version": "browser preview" if found else None,
+                "note": note}
+              continue
+            path = shutil.which(binary)
+            if not path:
+              report[lang] = {"found": False, "version": None,
+                "note": note}
+              continue
+            try:
+              r = subprocess.run([binary] + args, capture_output=True,
+                text=True, timeout=30)
+              out = (r.stdout + r.stderr).strip().split("\n")[0][:80]
+              report[lang] = {"found": True, "version": out or None,
+                "note": note}
+            except Exception as e:
+              report[lang] = {"found": True, "version": None,
+                "note": "version probe failed: " + str(e)[:60]}
+          import datetime, os
+          report["_meta"] = {
+            "run": os.environ.get("GITHUB_RUN_NUMBER", ""),
+            "date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "runner": "ubuntu-latest",
+          }
+          with open("probe-report.json", "w") as f:
+            json.dump(report, f, indent=2)
+          print(json.dumps(report, indent=2))
+          PYEOF
+      - name: Publish probe pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create code-probe-run-${{ github.run_number }} --prerelease --title "Code probe run ${{ github.run_number }}" --notes "21-language toolchain probe for BEYOND X stage 9." probe-report.json
