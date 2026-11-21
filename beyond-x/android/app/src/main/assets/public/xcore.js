@@ -1,6 +1,3 @@
-// BEYOND X module 5/13: xcore — gateway health + chat readiness (X-CORE)
-// X-CORE real-state contract: gateway health and chat readiness
-// are SEPARATE. Gateway Live ≠ Chat Ready.
 const gatewayState = { status: "connecting", checkedAt: 0 };
 const chatState = { status: "ready" };
 const HEALTH_URL = "https://beyond-build-gateway.aramnarmani408.workers.dev/health";
@@ -30,7 +27,6 @@ async function checkGateway() {
         const resp = await fetch(HEALTH_URL);
         const data = await resp.json();
         gatewayState.checkedAt = Date.now();
-        // The real /health returns {ok:true, service, time}.
         gatewayState.status = (resp.ok && data && (data.ok === true || data.status === "ok")) ? "online" : "degraded";
     } catch (e) {
         gatewayState.checkedAt = Date.now();
