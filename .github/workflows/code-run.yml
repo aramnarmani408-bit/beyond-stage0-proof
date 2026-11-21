@@ -46,7 +46,7 @@ jobs:
             *) echo "bad command"; exit 2;;
           esac
           case "${{ inputs.command }}" in
-            *".."*|*";"*|*"|"*|*"`"*|*"$"*|*"&"*|*"<"*|*">"*|*"("*|*")"*|*"'"*|*'"'*) echo "command has metacharacters"; exit 2;;
+            *".."*|*";"*|*"|"*|*"\`"*|*"\$"*|*"&"*|*"<"*|*">"*|*"("*|*")"*|*"'"*|*'"'*) echo "command has metacharacters"; exit 2;;
           esac
       - name: Run code
         run: |
