@@ -1,4 +1,3 @@
-// BEYOND X module 13/15: islamic — Quran + Hadith panel (renders gateway text verbatim).
 var islamicPanelEl = null;
 var islamicSearchEl = null;
 var islamicResultEl = null;
