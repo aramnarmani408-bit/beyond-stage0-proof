@@ -33,6 +33,7 @@ function setWorkspaceStatus(status) {
         }
     }
     saveWorkspace();
+    if (typeof renderNeon === "function") renderNeon();
 }
 function verifyCapability(cap) {
     if (cap === "school") {
