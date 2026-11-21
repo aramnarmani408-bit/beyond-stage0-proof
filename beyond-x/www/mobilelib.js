@@ -1,5 +1,4 @@
-// BEYOND X module 35/37: mobilelib — registry + diagnostics + permissions.
-// Missing values are "not reported", never invented.
+// BEYOND X module 35/38: mobilelib — registry + diagnostics + permissions.
 var NR = "not reported";
 var MOBILE_CAPS = ["battery", "network", "storage-estimate", "ram-estimate",
   "vibration", "clipboard", "share", "geolocation", "notifications",
@@ -11,6 +10,8 @@ function mobileHasBridge() { return typeof Capacitor !== "undefined"; }
 function mobileNav() { return typeof navigator === "undefined" ? null : navigator; }
 function mobilePick(o, k) { return o && o[k] != null ? o[k] : NR; }
 function mobileStatus(id) {
+  var bs = typeof mobileBridgeStatus === "function" && mobileBridgeStatus(id);
+  if (bs) return bs;
   if (MOBILE_NATIVE.indexOf(id) !== -1) return "NEEDS_APP";
   if (id === "deep-links" || id === "settings-intents") return "SUPPORTED";
   var n = mobileNav();
@@ -32,10 +33,10 @@ function mobileRegistry() {
 }
 async function mobileRead(fn, keys) {
   var o = {};
-  keys.forEach(function (k) { o[k] = NR; });
+  keys.forEach(k => o[k] = NR);
   try { var v = await fn();
-    keys.forEach(function (k) { o[k] = mobilePick(v, k); });
-  } catch (e) { /* stays NR */ }
+    keys.forEach(k => o[k] = mobilePick(v, k));
+  } catch (e) { }
   return o;
 }
 async function mobileBattery() {
@@ -55,10 +56,10 @@ async function mobileLatency() {
   var t = [];
   for (var i = 0; i < 3; i++) {
     var t0 = Date.now();
-    try { await fetch(HEALTH_URL); t.push(Date.now() - t0); } catch (e) { /* dropped */ }
+    try { await fetch(HEALTH_URL); t.push(Date.now() - t0); } catch (e) { }
   }
   if (!t.length) return NR;
-  t.sort(function (a, b) { return a - b; });
+  t.sort((a, b) => a - b);
   return t[Math.floor(t.length / 2)];
 }
 async function mobileNetwork() {
