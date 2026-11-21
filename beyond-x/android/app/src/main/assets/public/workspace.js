@@ -41,6 +41,11 @@ function verifyCapability(cap) {
         if (!quizWords || quizWords.length === 0) return { ok: false, missing: "quizWords" };
         return { ok: true, missing: null };
     }
+    if (cap === "islamic") {
+        // Panel built by JS; the gateway serves the sources.
+        if (typeof buildIslamicPanel !== "function") return { ok: false, missing: "islamic" };
+        return { ok: true, missing: null };
+    }
     return { ok: false, missing: "unknown" };
 }
 function activateWorkspace(cap, mode) {
