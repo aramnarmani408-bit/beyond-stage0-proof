@@ -19,6 +19,7 @@ function renderXcore() {
     else if (!isChatReady()) chatLabel = chatState.status === "failed" ? "ناکام شو" : "نشته";
     if (line) line.textContent = "ګیټوې: " + gwLabel + " • چټ: " + chatLabel;
     if (dot) dot.style.background = gw === "online" ? "#00FF88" : gw === "degraded" ? "#FFC107" : gw === "connecting" ? "#00F5FF" : "#FF4444";
+    if (typeof renderNeon === "function") renderNeon();
 }
 async function checkGateway() {
     gatewayState.status = "connecting";
