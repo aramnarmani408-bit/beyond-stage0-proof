@@ -1,4 +1,3 @@
-// BEYOND X module 21/21: imagesgen — Images gateway calls.
 async function xImages(path, token, body) {
     var ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, CHAT_TIMEOUT_MS);
@@ -24,7 +23,6 @@ async function xImages(path, token, body) {
         || data.response.identity !== "beyondx") throw new Error("Bad response");
     return data.response;
 }
-// Mark GENERATED images with BEYOND X (canvas, bottom-right).
 function imagesWatermark(dataUrl, done) {
     if (typeof Image === "undefined") return done(dataUrl);
     var im = new Image();
