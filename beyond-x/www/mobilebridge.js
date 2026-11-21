@@ -1,19 +1,20 @@
-// BEYOND X module 37/38: mobilebridge — native bridge JS wrapper (2A).
-// BeyondXNative v1 (JS side; native Java in the APK). listFiles: app dirs
-// only — user-picked folders via SAF are a LATER item.
+// listFiles: app dirs only — SAF folders are a LATER item.
 var BB = "BeyondXBridge";
 var MOBILE_PERM_WHY = { "app-inventory": "اپونه وښيي", "app-launch": "اپ پرانیزي",
   "usage-stats": "کارول ښيي", "screen-capture": "سکرین شاټ",
   "accessibility": "سکرین لولي", "file-access": "فایلونه وښيي",
   "automation": "یادونې جوړوي", location: "ځای ښيي",
-  notifications: "خبرتیا لېږي", files: "فایلونه لولي" };
+  notifications: "خبرتیا لېږي", files: "فایلونه لولي",
+  tap: "ټپ کوي", swipe: "کش کوي", notif: "خبرتیاوې",
+  "notif-reply": "ځواب", "notif-dismiss": "لرې کوي", sms: "SMS",
+  install: "نصب", uninstall: "لرې" };
 function bridgeNo() { return { ok: false, status: "UNSUPPORTED", error: "no native bridge" }; }
 function bridgeMap(e) {
   var c = (e && e.code) || "";
   var m = "" + ((e && e.message) || e || "error");
   var t = c + " " + m;
   var s = "UNSUPPORTED";
-  if (/usage_access_required|accessibility_disabled|consent_denied/.test(t)) s = "USER_ACTION_REQUIRED";
+  if (/usage_access_required|accessibility_disabled|consent_denied|notification_disabled/.test(t)) s = "USER_ACTION_REQUIRED";
   else if (/unsupported_api/.test(t)) s = "BLOCKED_BY_ANDROID";
   else if (/ermission|denied/.test(t)) s = "PERMISSION_REQUIRED";
   return { ok: false, status: s, error: m };
@@ -36,7 +37,7 @@ function launchApp(pkg) { return bridgeCall(BB, "launchApp", { package: pkg }); 
 function appUsage(days) { return bridgeCall(BB, "appUsage", { days: days || 7 }); }
 function listFiles(p) { return bridgeCall("Filesystem", "readdir", { path: p || "", directory: "Data" }); }
 function readScreen() { return bridgeCall(BB, "readScreen"); }
-function captureScreen() { return bridgeCall(BB, "captureScreen"); }
+function captureScreen() { return bridgeCall(BC, "captureScreen"); }
 function scheduleTask(t) { return bridgeCall(BB, "scheduleTask", t); }
 var BeyondXNative = { version: 1, deviceInfo: deviceInfo, listApps: listApps,
   launchApp: launchApp, appUsage: appUsage, listFiles: listFiles,
@@ -45,6 +46,8 @@ function mobileBridgeStatus(id) {
   if (typeof Capacitor === "undefined") return null;
   if (/^(app-inventory|app-launch|file-access|automation)$/.test(id)) return "SUPPORTED";
   if (/^(usage-stats|screen-capture|accessibility)$/.test(id)) return "USER_ACTION_REQUIRED";
+  if (/^(tap|swipe|notif|notif-reply|notif-dismiss)$/.test(id)) return "USER_ACTION_REQUIRED";
+  if (/^(sms|install|uninstall)$/.test(id)) return "SUPPORTED";
   return null;
 }
 var mBOut = null;
