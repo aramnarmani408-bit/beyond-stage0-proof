@@ -3,7 +3,7 @@
 // for available systems, honest "planned" answers for the rest.
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې). په راتلونکو پړاوونو کې راځي: اسلامي (۳م پړاو)، کتابونه (۴م)، انځورونه (۵م)، غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث). په راتلونکو پړاوونو کې راځي: کتابونه (۴م)، انځورونه (۵م)، غږ (۶م)، لوبې (۷م)، ژبې (۸م)، پروګرام کول (۹م)، موبایل کنټرول (۱۰م).", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -14,6 +14,15 @@ function handleRequest(q) {
             addMessage("د ښوونځي کوئز دې لپاره جوړ شو — لوبه وکړه!", "ai");
         }
         askBeyond(q);
+        return;
+    }
+    if (intent.capability === "islamic") {
+        if (activateWorkspace("islamic", intent.mode)) {
+            buildIslamicPanel();
+            showPanel("islamic");
+            addMessage("اسلامي کارځای دې لپاره جوړ شو — د قرآن او حدیث څخه ځواب درکوم.", "ai");
+        }
+        islamicAsk(q);
         return;
     }
     if (cap.status === "planned") {
@@ -38,5 +47,6 @@ function showPanel(name) {
     const schoolPanel = document.getElementById("schoolPanel");
     if (chatPanel) chatPanel.style.display = name === "chat" ? "flex" : "none";
     if (schoolPanel) schoolPanel.style.display = name === "school" ? "flex" : "none";
+    showIslamicPanel(name === "islamic");
 }
 
