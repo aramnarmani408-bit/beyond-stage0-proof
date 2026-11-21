@@ -66,7 +66,7 @@ function mBridgeSection(panel) {
   var B = [
     ["اپلیکېشنونه", listApps, d => "اپونه: " + d.apps.length + " — " + d.apps.slice(0, 10).map(a => a.label).join("، ")],
     ["کارونه", appUsage, d => d.apps.sort((x, y) => y.minutes - x.minutes).slice(0, 5).map(a => a.label + ": " + a.minutes).join("، ")],
-    ["فایلونه", listFiles, d => d.files.map(f => f.name || f).join(", ")],
+    ["فایلونه", listFiles, d => d.files.map(f => f.name || f).join("، ")],
     ["سکرین ولوله", readScreen, d => d.text.slice(0, 500)],
     ["سکرین شاټ", captureScreen, d => { var im = document.createElement("img"); im.src = d.image; return im; }],
     ["یادونه", () => scheduleTask({ title: "BEYOND X یادونه", text: "یادونه", delayMinutes: 60 }), d => "یادونه جوړه شوه: " + d.id]];
