@@ -23,7 +23,7 @@ function laeShowCard(obj) {
   box.appendChild(wsBtn("سم نه دی", function () {
     laeHideCard();
     laePending = { q: obj.q, obj: obj };
-    addMessage("څه سم کړم؟ سمه شمېره ولیکه (لکه «۳ نه، ۴») یا سم عمل (لکه «تفریق») — یا ولیکه «لغوه».“, "ai");
+    addMessage("څه سم کړم؟ سمه شمېره ولیکه (لکه «۳ نه، ۴») یا سم عمل (لکه «تفریق») — یا ولیکه «لغوه».", "ai");
   }));
   chatArea.appendChild(box);
   laeCardEl = box;
