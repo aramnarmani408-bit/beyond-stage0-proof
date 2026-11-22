@@ -31,9 +31,15 @@ function showRetry() {
 }
 async function askBeyond(question) {
     AppState.lastQuestion = question;
+    // L.A.E.: local handling first (memory commands + a pending
+    // understanding correction) — no gateway call for these.
+    if (typeof laeCommand === "function" && laeCommand(question)) return;
     if (isIdentityQuestion(question)) {
         setAction("ځواب ورکوم");
         addMessage("زه BEYOND X یم، د BEYOND AI جوړ کړی هوښیار مرستیال یم.", "ai");
+        // REQ-ANSWER-007: the identity answer IS an introduction — it
+        // counts as the first answer, so later answers stay ordinary.
+        if (typeof laeMarkAnswered === "function") laeMarkAnswered();
         setAction("چمتو یم");
         return;
     }
@@ -54,8 +60,16 @@ async function askBeyond(question) {
             text = await xChat(question, token);
         }
         setAction("ځواب ورکوم");
-        addMessage(text, "ai");
-        if (typeof universeOffer === "function") universeOffer(question, text);
+        // L.A.E.: a math answer is composed by the Living Answer Engine
+        // (verified computation first); anything else takes the plain path.
+        var laeDone = false;
+        if (typeof laeShow === "function") laeDone = laeShow(question, text);
+        if (!laeDone) {
+            addMessage(text, "ai");
+            if (typeof universeOffer === "function") universeOffer(question, text);
+        }
+        // REQ-ANSWER-007: the first answer (math or not) is now given.
+        if (typeof laeMarkAnswered === "function") laeMarkAnswered();
         chatState.status = "ready";
     } catch (e) {
         chatState.status = "failed";
