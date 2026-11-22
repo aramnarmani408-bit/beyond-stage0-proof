@@ -1,4 +1,4 @@
-// BEYOND X module 44/44: init — element wiring + resume + polling (LAST)
+// BEYOND X module 56/56: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -70,6 +70,7 @@ if (loadWorkspace() && workspaceState.status === "ready") {
     else if (workspaceState.capability === "polyglot") { buildLanguagePanel(); showPanel("language"); }
     else if (workspaceState.capability === "programming") { buildCodePanel(); showPanel("code"); }
     else if (workspaceState.capability === "mobile") { buildMobilePanel(); showPanel("mobile"); }
+    else if (typeof universeResume === "function") universeResume(workspaceState.capability);
 }
 checkGateway();
 if (typeof setInterval !== "undefined") {
