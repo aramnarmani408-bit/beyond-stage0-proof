@@ -20,7 +20,7 @@ function showQuizQuestion() {
                 const names = weakList.map(function (i) {
                     return quizState.kind === "sentence" ? vocabItems()[i].en : quizWords[i][0];
                 });
-                r += " — کمزورې کلمې: " + names.join("؋ ");
+                r += " — کمزورې کلمې: " + names.join("، ");
             } else {
                 r += " — ټولې کلمې زده شوې!";
             }
