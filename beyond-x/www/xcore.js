@@ -37,3 +37,68 @@ async function checkGateway() {
     return gatewayState.status;
 }
 
+// Phase 1: jump-to-latest (ui.js is at the push limit).
+var jumpBtn = null;
+function onChatScroll() {
+    var a = document.getElementById("chatArea");
+    if (!a || !jumpBtn) return;
+    jumpBtn.style.display = a.scrollHeight - a.scrollTop - (a.clientHeight || 0) > 120 ? "block" : "none";
+}
+function jumpToLatest() {
+    var a = document.getElementById("chatArea");
+    if (!a) return;
+    a.scrollTop = a.scrollHeight;
+    if (jumpBtn) jumpBtn.style.display = "none";
+}
+// Phase 1: history-row rendering (answer.js is at the push limit too).
+function miniBtn(text, fn) {
+    var b = document.createElement("button");
+    b.textContent = text;
+    b.style.background = "transparent";
+    b.style.color = "#94A3B8";
+    b.style.border = "0";
+    b.style.padding = "4px";
+    b.style.cursor = "pointer";
+    b.addEventListener("click", fn);
+    return b;
+}
+function chatRowEl(c) {
+    var li = document.createElement("li");
+    li.className = "chat";
+    var main = document.createElement("div");
+    var t = document.createElement("div");
+    t.textContent = (c.pinned ? "★ " : "") + (c.title || chatTitleOf(c, 0));
+    if (c.id === AppState.convId) t.style.color = "#00F5FF";
+    main.appendChild(t);
+    var last = chatLastMsg(c);
+    if (last) {
+        var l = document.createElement("div");
+        l.textContent = last;
+        l.style.color = "#94A3B8";
+        main.appendChild(l);
+    }
+    main.addEventListener("click", function () { switchChat(c.id); });
+    li.appendChild(main);
+    var acts = document.createElement("div");
+    acts.appendChild(miniBtn("📌", function () { chatPin(c.id); }));
+    acts.appendChild(miniBtn("✎", function () { chatRenameStart(c.id, li, main); }));
+    acts.appendChild(miniBtn("📦", function () { chatArchive(c.id); }));
+    acts.appendChild(miniBtn(chatDeleteArm === c.id ? "ډاډه یې؟" : "🗑", function () { chatDelete(c.id); }));
+    li.appendChild(acts);
+    return li;
+}
+// Phase 1: jump-to-latest + Stop buttons (D7/D12). Called once from init.js.
+function buildChatButtons() {
+    var p = document.getElementById("chatPanel");
+    if (!p) return;
+    jumpBtn = document.createElement("button");
+    jumpBtn.id = "jumpBtn"; jumpBtn.textContent = "↓ وروستی";
+    jumpBtn.addEventListener("click", jumpToLatest);
+    p.appendChild(jumpBtn);
+    stopBtn = document.createElement("button");
+    stopBtn.id = "stopBtn"; stopBtn.textContent = "ودروه";
+    stopBtn.addEventListener("click", function () { stopChat(); });
+    p.appendChild(stopBtn);
+    var a = document.getElementById("chatArea");
+    if (a) a.addEventListener("scroll", onChatScroll);
+}
