@@ -35,7 +35,7 @@ function laeDirectLine(obj) {
 function laeUnderstandText(obj) {
   var p = obj.parsed;
   var t = "زما پوهېدنه: ";
-  if (p.kind === "word") t += "دا د حساب پوښتنه ده — عمل: " + LAE_OP_NAME[p.op] + "، شمېرې: " + p.nums.map(laeFmt).join(", ");
+  if (p.kind === "word") t += "دا د حساب پوښتنه ده — عمل: " + LAE_OP_NAME[p.op] + "، شمېرې: " + p.nums.map(laeFmt).join("، ");
   else if (p.kind === "equation") t += "دا یوه معادله ده — د x ارزښت غوښتل شوی";
   else if (p.kind === "geometry") t += "دا د هندسې پوښتنه ده — شکل: " + LAE_SHAPE_NAME[p.values.shape] + "، غوښتل شوی: " + (p.ask === "area" ? "مساحت" : "محیط");
   else t += "دا یوه محاسبه ده";
@@ -87,7 +87,7 @@ function laeShow(q, modelText) {
   laeHideAll();
   if (!obj.gate.ok) {
     if (modelText) addMessage(modelText, "ai");
-    addMessage("د محاسبې تایید ونه شو (" + obj.gate.problems.join(", ") + ") — ځواب وګوره.", "ai");
+    addMessage("د محاسبې تایید ونه شو (" + obj.gate.problems.join("، ") + ") — ځواب وګوره.", "ai");
     return true;
   }
   laeRender(obj, "");
