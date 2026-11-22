@@ -18,20 +18,8 @@ if (drawerBtn && drawer) {
     drawerBtn.addEventListener("click", () => drawer.classList.toggle("open"));
 }
 
-if (newChatBtn && chatArea) {
-    newChatBtn.addEventListener("click", () => {
-        while (chatArea.firstChild) chatArea.removeChild(chatArea.firstChild);
-        AppState.messages = [];
-        AppState.currentChat++;
-        AppState.convId = "conv-" + Date.now();
-        AppState.lastError = null;
-        const btn = document.getElementById("errDetailsBtn");
-        if (btn) btn.style.display = "none";
-        saveChat();
-        updateChatTitle();
-        setAction("چمتو یم");
-    });
-}
+if (newChatBtn) newChatBtn.addEventListener("click", newChat);
+if (typeof buildDrawerControls === "function") buildDrawerControls();
 
 if (closeWorkspaceBtn) closeWorkspaceBtn.addEventListener("click", closeWorkspace);
 
@@ -43,6 +31,8 @@ if (askInput) {
         if (e.key === "Enter") sendQuestion();
     });
 }
+
+if (typeof buildChatButtons === "function") buildChatButtons();
 
 if (quizRestart) quizRestart.addEventListener("click", startQuiz);
 
@@ -65,7 +55,10 @@ if (!loadProgress()) startQuiz();
 else if (quizState.kind === "sentence" && vocabItems().length === 0) startQuiz();
 else showQuizQuestion();
 if (!AppState.convId) AppState.convId = "conv-" + Date.now();
+// Phase 1: the demo-chip rotation counter advances once per app open (D2).
+try { if (typeof localStorage !== "undefined") localStorage.setItem(DEMO_KEY, String(demoCount() + 1)); } catch (e) {}
 loadChat();
+if (AppState.messages.length === 0) renderDemo();
 if (loadWorkspace() && workspaceState.status === "ready") {
     setWorkspaceStatus("ready");
     if (workspaceState.capability === "school") showPanel("school");
