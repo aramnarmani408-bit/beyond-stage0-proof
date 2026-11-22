@@ -1,17 +1,17 @@
 function deviceReadingGuard(q) {
-    var hasDevice = q.indexOf("سکرین") !== -1 || q.indexOf("موبایل") !== -1 || q.indexOf("تلیفون") !== -1;
+    var hasDevice = /سکرین|موبایل|تلیفون/.test(q);
     if (!hasDevice) return null;
-    if (q.indexOf("ولوله") === -1 && q.indexOf("ولولئ") === -1 && q.indexOf("لوستل") === -1) return null;
+    if (!/ولول|لوستل/.test(q)) return null;
     if (q.indexOf("کتاب") !== -1) return null;
-    if (q.indexOf("عکس") !== -1 || q.indexOf("انځور") !== -1) return null;
-    var r = q.split("په موبایل کې").join("").split("په تلیفون کې").join("").split("په سکرین کې").join("");
-    if (r.indexOf("سکرین") !== -1 || r.indexOf("موبایل") !== -1 || r.indexOf("تلیفون") !== -1) return "mobile";
+    if (/عکس|انځور/.test(q)) return null;
+    var r = q.replace(/په (موبایل|تلیفون|سکرین) کې/g, "");
+    if (/سکرین|موبایل|تلیفون/.test(r)) return "mobile";
     if (q.indexOf("متن") !== -1) return "mobile";
     return "ask";
 }
 function handleRequest(q) {
     if (isCapabilityQuestion(q)) {
-        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه) او پروګرام کول (کوډ ولیکه او وچلوه) او موبایل کنټرول (موبایل وپېژنه او کنټرول یې کړه). په راتلونکو پړاوونو کې راځي: NEON (۱۱م).", "ai");
+        addMessage("زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز (د انګلیسي لغتونه او جملې) او اسلامي (قرآن او حدیث) او کتابونه (لټون او لوستل) او انځورونه (جوړول او پوهېدل) او غږ (ثبتول او اورېدل) او لوبې (لوبې کول او جوړول) او ژبې (ژباړه او زده کړه) او پروګرام کول (کوډ ولیکه او وچلوه) او موبایل کنټرول (موبایل وپېژنه او کنټرول یې کړه) او درس او ډیزاین او روزنه او کوډ کارځای او پرېکړه.", "ai");
         return;
     }
     const intent = analyzeIntent(q);
@@ -95,9 +95,10 @@ function handleRequest(q) {
         return;
     }
     if (cap.status === "planned") {
-        addMessage("د " + cap.name + " سیستم لا نه دی جوړ شوی — په " + pashtoDigits(cap.stage) + "م پړاو کې راځي. اوس زه دا کولی شم: خبرې په پښتو او د ښوونځي کوئز.", "ai");
+        addMessage("د " + cap.name + " سیستم لا نه دی جوړ شوی — په " + pashtoDigits(cap.stage) + "م پړاو کې راځي.", "ai");
         return;
     }
+    if (typeof universeRoute === "function" && universeRoute(q)) return askBeyond(q);
     askBeyond(q);
 }
 
