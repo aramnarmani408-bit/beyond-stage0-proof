@@ -40,10 +40,10 @@ function verifyCapability(cap) {
         if (!quizWords || quizWords.length === 0) return { ok: false, missing: "quizWords" };
         return { ok: true, missing: null };
     }
-    var names = ["islamic", "books", "images", "voice", "games", "polyglot", "programming", "mobile"];
+    var names = ["islamic", "books", "images", "voice", "games", "polyglot", "programming", "mobile", "lesson", "design", "training", "codews", "decision"];
     if (names.indexOf(cap) === -1) return { ok: false, missing: "unknown" };
     try {
-        var table = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel, mobile: buildMobilePanel };
+        var table = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel, mobile: buildMobilePanel, lesson: buildLessonPanel, design: buildDesignPanel, training: buildTrainPanel, codews: buildCodeWsPanel, decision: buildDecisionPanel };
         if (typeof table[cap] === "function") return { ok: true, missing: null };
     } catch (e) { /* missing panel script — fall through */ }
     return { ok: false, missing: cap === "polyglot" ? "language" : cap };
