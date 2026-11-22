@@ -1,7 +1,8 @@
-# BEYOND X test — cloud build workflow (v8)
+# BEYOND X test — cloud build workflow (v9)
 # Builds beyond-x/ (Capacitor) into a debug APK. appId com.beyondx.app.
 # v7: fixed debug keystore.
 # v8: diagnostic — verify keystore + signingReport.
+# v9: restore to $ANDROID_USER_HOME too.
 
 name: BEYOND X test (debug APK)
 
@@ -77,16 +78,11 @@ jobs:
 
       - name: Restore debug keystore
         working-directory: beyond-x
-        run: mkdir -p ~/.android && base64 -d android/debug.keystore.b64 > ~/.android/debug.keystore
-
-      - name: Verify keystore
-        working-directory: beyond-x/android
         run: |
-          echo "HOME=$HOME"
-          whoami
-          ls -l ~/.android/debug.keystore
-          keytool -list -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey
-          chmod +x gradlew && ./gradlew signingReport
+          mkdir -p ~/.android "${ANDROID_USER_HOME:-$HOME/.android}"
+          base64 -d android/debug.keystore.b64 > ~/.android/debug.keystore
+          base64 -d android/debug.keystore.b64 > "${ANDROID_USER_HOME:-$HOME/.android}/debug.keystore"
+          keytool -list -v -keystore "${ANDROID_USER_HOME:-$HOME/.android}/debug.keystore" -storepass android -alias androiddebugkey
 
       - name: Build debug APK
         working-directory: beyond-x/android
