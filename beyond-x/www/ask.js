@@ -55,6 +55,7 @@ async function askBeyond(question) {
         }
         setAction("ځواب ورکوم");
         addMessage(text, "ai");
+        if (typeof universeOffer === "function") universeOffer(question, text);
         chatState.status = "ready";
     } catch (e) {
         chatState.status = "failed";
