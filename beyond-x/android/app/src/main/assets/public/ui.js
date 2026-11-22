@@ -60,6 +60,7 @@ function showPanel(name) {
   showLanguagePanel(name === "language");
   showCodePanel(name === "code");
   showMobilePanel(name === "mobile");
+  showUniversePanel(name);
 }
 var chatQuery = "";
 var chatListPage = 1;
