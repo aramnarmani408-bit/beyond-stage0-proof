@@ -1,6 +1,7 @@
 const CHAT_KEY = "beyondx-chat-v1";
 const CHAT_MAX = 50;
 const CHAT_MAX_CHATS = 50;
+var convSeq = 0; // Stage 12: unique ids (same-ms newChat calls collided).
 function chatTitleOf(c, idx) {
   if (c.renamed && c.title) return c.title;
   for (var i = 0; i < c.messages.length; i++) {
@@ -16,14 +17,8 @@ function saveChat() {
     if (!id) return;
     var msgs = AppState.messages.slice(-CHAT_MAX);
     var cs = AppState.chats, found = false;
-    for (var i = 0; i < cs.length; i++) {
-      if (cs[i].id === id) {
-        cs[i].messages = msgs;
-        cs[i].title = chatTitleOf(cs[i], i);
-        cs[i].updated = Date.now();
-        found = true;
-        break;
-      }
+    for (var i = 0; i < cs.length; i++) if (cs[i].id === id) {
+      cs[i].messages = msgs; cs[i].title = chatTitleOf(cs[i], i); cs[i].updated = Date.now(); found = true; break;
     }
     if (!found) cs.push({ id: id, title: chatTitleOf({ messages: msgs }, cs.length), messages: msgs, updated: Date.now() });
     localStorage.setItem(CHAT_KEY, JSON.stringify({ chats: cs, activeId: id }));
@@ -45,15 +40,13 @@ function loadChat() {
     AppState.chats = [];
     for (var i = 0; i < chats.length; i++) {
       var c = chats[i];
-      if (!c || !Array.isArray(c.messages)) continue;
-      AppState.chats.push({ id: c.id || ("conv-" + i), title: chatTitleOf(c, AppState.chats.length), messages: c.messages.slice(-CHAT_MAX), updated: c.updated || 0, pinned: !!c.pinned, archived: !!c.archived, renamed: !!c.renamed });
+      if (c && Array.isArray(c.messages)) AppState.chats.push({ id: c.id || ("conv-" + i), title: chatTitleOf(c, AppState.chats.length), messages: c.messages.slice(-CHAT_MAX), updated: c.updated || 0, pinned: !!c.pinned, archived: !!c.archived, renamed: !!c.renamed });
     }
     if (AppState.chats.length === 0) return false;
-    var active = null;
+    var active = AppState.chats[AppState.chats.length - 1];
     for (var j = 0; j < AppState.chats.length; j++) {
       if (AppState.chats[j].id === activeId) { active = AppState.chats[j]; break; }
     }
-    if (!active) active = AppState.chats[AppState.chats.length - 1];
     AppState.convId = active.id;
     AppState.messages = active.messages.slice();
     renderChatMessages();
@@ -69,11 +62,8 @@ function renderChatMessages() {
   while (chatArea.firstChild) chatArea.removeChild(chatArea.firstChild);
   hideDemo();
   for (var i = 0; i < AppState.messages.length; i++) {
-    var m = AppState.messages[i];
-    var msg = document.createElement("div");
-    msg.className = "msg " + m.who;
-    msg.textContent = m.text;
-    chatArea.appendChild(msg);
+    var m = AppState.messages[i], msg = document.createElement("div");
+    msg.className = "msg " + m.who; msg.textContent = m.text; chatArea.appendChild(msg);
   }
   chatArea.scrollTop = chatArea.scrollHeight;
 }
@@ -88,7 +78,7 @@ function newChat() {
     goView("history");
     return;
   }
-  var id = "conv-" + Date.now();
+  var id = "conv-" + Date.now() + "-" + (convSeq++);
   AppState.chats.push({ id: id, title: "خبره " + pashtoDigits(AppState.chats.length + 1), messages: [], updated: Date.now() });
   AppState.convId = id;
   AppState.messages = [];
@@ -109,9 +99,7 @@ function switchChat(id) {
   if (!Array.isArray(AppState.chats)) return;
   saveChat();
   var target = null;
-  for (var i = 0; i < AppState.chats.length; i++) {
-    if (AppState.chats[i].id === id) { target = AppState.chats[i]; break; }
-  }
+  for (var i = 0; i < AppState.chats.length; i++) if (AppState.chats[i].id === id) { target = AppState.chats[i]; break; }
   if (!target) return;
   AppState.convId = target.id;
   AppState.messages = target.messages.slice();
