@@ -120,4 +120,3 @@ function renderChatList() {
   a.appendChild(miniBtn(chatShowArchived ? "آرشیف پټ کړه" : "آرشیف وښیه", function () { chatShowArchived = !chatShowArchived; renderChatList(); }));
   list.appendChild(a);
 }
-
