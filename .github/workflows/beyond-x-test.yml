@@ -1,17 +1,6 @@
-# BEYOND X test — cloud build workflow (v2)
-# Builds the stage-1 Capacitor shell (beyond-x/) into a debug APK.
-# Dispatched by the BEYOND gateway (build_key input declared so the
-# dispatch is accepted). Verified shell files (round 7 run #3556):
-# www/index.html + www/app.js. appId com.beyondx.app.
-# v2: no package-lock.json (npm install, no cache); no binaries pushed —
-# launcher/splash PNGs + the Gradle wrapper are generated in CI below.
-# v3: SDK setup installs platform-tools only (legacy "tools" is gone).
-# v4: icons via dependency-free Node (zlib) — ImageMagick is NOT on
-# ubuntu-26.04 runners (run #44723211977 failed on "convert not found").
-# v5: wrapper files downloaded directly — never run the runner's system
-# Gradle 9.9.1 on the project (AGP 8.13.0 breaks on Gradle 9.6+).
-# v6: JDK 21 — Capacitor 8.6.2 requires source release 21 (JDK 17 fails
-# the compile with "invalid source release: 21", run #44725117190).
+# BEYOND X test — cloud build workflow (v7)
+# Builds beyond-x/ (Capacitor) into a debug APK. appId com.beyondx.app.
+# v7: fixed debug keystore.
 
 name: BEYOND X test (debug APK)
 
@@ -21,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       build_key:
-        description: "BEYOND build key (idempotency)"
+        description: "BEYOND build key"
         required: false
         type: string
 
@@ -44,7 +33,7 @@ jobs:
         working-directory: beyond-x
         run: npm install
 
-      - name: Sync web assets into the Android project
+      - name: Sync web assets
         working-directory: beyond-x
         run: npx cap sync android
 
@@ -52,30 +41,20 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          # v6 fix (run #44725117190 failed at compileDebugJavaWithJavac):
-          # capacitor-android requires source release 21, which JDK 17
-          # cannot compile ("invalid source release: 21"). AGP 8.13.0 and
-          # Gradle 8.14.3 both support running on JDK 21.
+          # v6: JDK 21 (run #44725117190).
           java-version: "21"
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          # v3 fix (run #44722472228 failed in 19s): the action's DEFAULT
-          # packages list ("tools platform-tools") asks sdkmanager for the
-          # legacy "tools" package, which no longer exists in the SDK repo
-          # ("Failed to find package 'tools'", exit 1). Install only
-          # platform-tools; the runner already ships cmdline-tools.
+          # v3: install platform-tools only; legacy "tools" is gone (run #44722472228).
           packages: platform-tools
 
-      - name: Generate launcher + splash icons
+      - name: Generate icons
         run: |
           cd beyond-x/android/app/src/main/res
           mkdir -p mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi drawable drawable-land-mdpi drawable-land-hdpi drawable-land-xhdpi drawable-land-xxhdpi drawable-land-xxxhdpi drawable-port-mdpi drawable-port-hdpi drawable-port-xhdpi drawable-port-xxhdpi drawable-port-xxxhdpi
-          # v4 fix (run #44723211977 failed in 16s): ImageMagick "convert"
-          # is NOT installed on ubuntu-26.04 runners. Generate the 26
-          # solid-color PNGs with dependency-free Node (zlib) instead —
-          # verified locally: 26/26 valid PNGs, correct sizes + colors.
+          # v4: no ImageMagick on ubuntu-26.04 runners (run #44723211977); Node (zlib) PNGs.
           cat > /tmp/gen-icons.js <<'EOF'
           const fs = require('fs'), zlib = require('zlib');
           const T = new Int32Array(256);
@@ -93,15 +72,15 @@ jobs:
       - name: Generate Gradle wrapper
         working-directory: beyond-x/android
         run: |
-          # v5 fix (run #44723592183 failed in 52s): NEVER run the runner's
-          # system Gradle (9.9.1) against this project — "gradle wrapper"
-          # evaluates it first and AGP 8.13.0 breaks on Gradle 9.6+ (an
-          # internal API it uses was removed). Download the wrapper files
-          # for 8.14.3 directly instead; ./gradlew then runs 8.14.3.
+          # v5: never the runner's Gradle 9.9.1 (AGP breaks, run #44723592183); download 8.14.3.
           curl -fsSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew
           curl -fsSL -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew.bat
           curl -fsSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradle/wrapper/gradle-wrapper.jar
           ls -la gradlew gradle/wrapper/gradle-wrapper.jar
+
+      - name: Restore debug keystore
+        working-directory: beyond-x
+        run: mkdir -p ~/.android && base64 -d android/debug.keystore.b64 > ~/.android/debug.keystore
 
       - name: Build debug APK
         working-directory: beyond-x/android
