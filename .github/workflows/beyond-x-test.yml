@@ -1,6 +1,7 @@
-# BEYOND X test — cloud build workflow (v7)
+# BEYOND X test — cloud build workflow (v8)
 # Builds beyond-x/ (Capacitor) into a debug APK. appId com.beyondx.app.
 # v7: fixed debug keystore.
+# v8: diagnostic — verify keystore + signingReport.
 
 name: BEYOND X test (debug APK)
 
@@ -41,20 +42,17 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          # v6: JDK 21 (run #44725117190).
           java-version: "21"
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          # v3: install platform-tools only; legacy "tools" is gone (run #44722472228).
           packages: platform-tools
 
       - name: Generate icons
         run: |
           cd beyond-x/android/app/src/main/res
           mkdir -p mipmap-mdpi mipmap-hdpi mipmap-xhdpi mipmap-xxhdpi mipmap-xxxhdpi drawable drawable-land-mdpi drawable-land-hdpi drawable-land-xhdpi drawable-land-xxhdpi drawable-land-xxxhdpi drawable-port-mdpi drawable-port-hdpi drawable-port-xhdpi drawable-port-xxhdpi drawable-port-xxxhdpi
-          # v4: no ImageMagick on ubuntu-26.04 runners (run #44723211977); Node (zlib) PNGs.
           cat > /tmp/gen-icons.js <<'EOF'
           const fs = require('fs'), zlib = require('zlib');
           const T = new Int32Array(256);
@@ -72,7 +70,6 @@ jobs:
       - name: Generate Gradle wrapper
         working-directory: beyond-x/android
         run: |
-          # v5: never the runner's Gradle 9.9.1 (AGP breaks, run #44723592183); download 8.14.3.
           curl -fsSL -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew
           curl -fsSL -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradlew.bat
           curl -fsSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.14.3/gradle/wrapper/gradle-wrapper.jar
@@ -81,6 +78,15 @@ jobs:
       - name: Restore debug keystore
         working-directory: beyond-x
         run: mkdir -p ~/.android && base64 -d android/debug.keystore.b64 > ~/.android/debug.keystore
+
+      - name: Verify keystore
+        working-directory: beyond-x/android
+        run: |
+          echo "HOME=$HOME"
+          whoami
+          ls -l ~/.android/debug.keystore
+          keytool -list -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey
+          chmod +x gradlew && ./gradlew signingReport
 
       - name: Build debug APK
         working-directory: beyond-x/android
