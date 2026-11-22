@@ -20,7 +20,7 @@ function showQuizQuestion() {
                 const names = weakList.map(function (i) {
                     return quizState.kind === "sentence" ? vocabItems()[i].en : quizWords[i][0];
                 });
-                r += " — کمزورې کلمې: " + names.join("، ");
+                r += " — کمزورې کلمې: " + names.join(", ");
             } else {
                 r += " — ټولې کلمې زده شوې!";
             }
@@ -68,25 +68,6 @@ function showQuizQuestion() {
     }
 }
 
-// Stage 12: the school panel is JS-built (index.html shrink, 476 chars).
-// Runs at module load, before init.js wires the buttons. The #schoolPanel
-// CSS rule still applies by id, so the panel starts hidden.
-var SCHOOL_DEFS = "button:backChat:← خبرې|button:closeWorkspaceBtn:کارځای بند کړه|div:quizWord:|div:quizOptions:|div:quizFeedback:|span:quizScore:0/6|div:quizResult:|button:wordBtn:لغتونه|button:sentBtn:جملې|button:reviseBtn:بیا زده کړه|button:modeBtn:↔ پښتو ← انګلیسي|button:quizRestart:بیا پیل";
-function buildSchoolPanel() {
-    if (document.getElementById("schoolPanel")) return null;
-    var m = document.getElementById("main");
-    if (!m) return null;
-    var p = document.createElement("div");
-    p.id = "schoolPanel";
-    SCHOOL_DEFS.split("|").forEach(function (d) {
-        var a = d.split(":");
-        var e = document.createElement(a[0]);
-        e.id = a[1];
-        e.textContent = a[2] || "";
-        p.appendChild(e);
-    });
-    m.appendChild(p);
-    return p;
-}
-buildSchoolPanel();
+// The school panel builder moved to builders.js (L.A.E. Phase 1) —
+// buildSchoolPanel + SCHOOL_DEFS live there now.
 
