@@ -72,3 +72,51 @@ function toggleMode() {
     startQuiz();
 }
 
+// Phase 1 (2026-11-22): demo-box content — the local worked example (a real
+// quiz question computed live from quizWords, never canned) + the recent-
+// chats strip (max 3 rows, title + time, only when chats exist).
+function demoQuizExample(box) {
+    var idx = Math.floor(Math.random() * quizWords.length);
+    var pair = quizWords[idx];
+    var q = document.createElement("div");
+    q.textContent = "«" + pair[0] + "» په پښتو څه کېږي؟";
+    box.appendChild(q);
+    var opts = [pair[1]];
+    for (var i = 0; i < quizWords.length && opts.length < 4; i++) {
+        if (i !== idx) opts.push(quizWords[i][1]);
+    }
+    for (var j = opts.length - 1; j > 0; j--) {
+        var k = Math.floor(Math.random() * (j + 1));
+        var t = opts[j]; opts[j] = opts[k]; opts[k] = t;
+    }
+    var fb = document.createElement("div");
+    for (var m = 0; m < opts.length; m++) {
+        const o = opts[m];
+        var b = document.createElement("button");
+        b.textContent = o;
+        b.addEventListener("click", function () {
+            fb.textContent = o === pair[1] ? "سم دی ✓" : "غلط دی — سم ځواب: " + pair[1];
+        });
+        box.appendChild(b);
+    }
+    box.appendChild(fb);
+}
+function demoRecentStrip(box) {
+    var cs = Array.isArray(AppState.chats) ? AppState.chats : [];
+    var rows = cs.filter(function (c) { return c.messages.length > 0 && c.id !== AppState.convId && !c.archived; });
+    rows.sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); });
+    rows = rows.slice(0, 3);
+    for (var i = 0; i < rows.length; i++) {
+        var c = rows[i];
+        var t = "";
+        if (c.updated) {
+            var d = new Date(c.updated);
+            t = " — " + d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2);
+        }
+        const id = c.id;
+        var b = document.createElement("button");
+        b.textContent = (c.title || chatTitleOf(c, 0)) + t;
+        b.addEventListener("click", function () { switchChat(id); });
+        box.appendChild(b);
+    }
+}
