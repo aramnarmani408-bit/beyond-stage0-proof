@@ -1,5 +1,13 @@
 var sessionToken = null;
 var sessionExpiry = 0;
+var chatCtrl = null;
+var chatStopped = false;
+function stopChat() {
+    if (chatCtrl) {
+        chatStopped = true;
+        chatCtrl.abort();
+    }
+}
 async function ensureSession() {
     if (sessionToken && Date.now() < sessionExpiry - 30000) return sessionToken;
     const resp = await fetch("https://beyond-build-gateway.aramnarmani408.workers.dev/api/v1/x/session/guest", {
@@ -19,10 +27,15 @@ async function xChat(question, token) {
     let timer = null;
     try {
         const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+        chatCtrl = ctrl;
+        const abortP = new Promise(function (resolve, reject) {
+            if (ctrl) ctrl.signal.addEventListener("abort", function () { reject(new Error("Stopped")); });
+        });
+        abortP.catch(function () {});
         const timeout = new Promise(function (resolve, reject) {
             timer = setTimeout(function () {
-                if (ctrl) ctrl.abort();
                 reject(new Error("Timeout"));
+                if (ctrl) ctrl.abort();
             }, CHAT_TIMEOUT_MS);
         });
         const call = fetch("https://beyond-build-gateway.aramnarmani408.workers.dev/api/v1/x/chat", {
@@ -33,7 +46,7 @@ async function xChat(question, token) {
                 context: { workspace: "chat", depth: (typeof neonPrefs !== "undefined" ? neonPrefs.depth : "full"), style: (typeof neonPrefs !== "undefined" ? neonPrefs.style : "teacher") } }),
             signal: ctrl ? ctrl.signal : undefined
         });
-        const resp = await Promise.race([call, timeout]);
+        const resp = await Promise.race([call, timeout, abortP]);
         if (timer) clearTimeout(timer);
         if (resp.status === 429) throw new Error("RateLimit");
         if (resp.status === 401) throw new Error("Unauthorized");
@@ -45,6 +58,7 @@ async function xChat(question, token) {
             || data.response.text.length === 0) throw new Error("Bad response");
         return data.response.text;
     } finally {
+        chatCtrl = null;
         if (timer) clearTimeout(timer);
     }
 }
