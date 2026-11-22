@@ -49,6 +49,11 @@ const CAPABILITIES = {
     polyglot: { name: "ژبې", status: "available", stage: 8 },
     programming: { name: "پروګرام کول", status: "available", stage: 9 },
     mobile: { name: "موبایل کنټرول", status: "available", stage: 10 },
+    lesson: { name: "درس", status: "available", stage: 12 },
+    design: { name: "ډیزاین", status: "available", stage: 12 },
+    training: { name: "روزنه", status: "available", stage: 12 },
+    codews: { name: "کوډ کارځای", status: "available", stage: 12 },
+    decision: { name: "پرېکړه", status: "available", stage: 12 },
     neon: { name: "NEON", status: "planned", stage: 11 }
 };
 
