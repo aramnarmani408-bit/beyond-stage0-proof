@@ -17,7 +17,8 @@ function laeLengthFor(q) {
   if (s.indexOf("لنډ") !== -1) return "short";
   var noLen = s.split("اوږدوالی").join("");
   if (noLen.indexOf("اوږد") !== -1 || s.indexOf("بشپړ") !== -1 || s.indexOf("تشریح") !== -1 || s.indexOf("تفصیل") !== -1) return "long";
-  return "medium";
+  // Settings build: no length words — the user's default length.
+  return (typeof neonPrefs !== "undefined" && neonPrefs.depth) || "medium";
 }
 function laeBuildAnswer(q, modelText, parsedIn) {
   var parsed = parsedIn || laeParseMath(q);
@@ -87,7 +88,7 @@ function laeShow(q, modelText) {
   laeHideAll();
   if (!obj.gate.ok) {
     if (modelText) addMessage(modelText, "ai");
-    addMessage("د محاسبې تایید ونه شو (" + obj.gate.problems.join("، ") + ") — ځواب وګوره.", "ai");
+    addMessage("د محاسبې تایید ونه شو (" + obj.gate.problems.join(", ") + ") — ځواب وګوره.", "ai");
     return true;
   }
   laeRender(obj, "");
