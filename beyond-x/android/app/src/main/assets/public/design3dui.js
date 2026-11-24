@@ -14,7 +14,7 @@ function d3Show() {
     d3CanvasEl = document.createElement("canvas");
     d3CanvasEl.width = 300;
     d3CanvasEl.height = 400;
-    d3CanvasEl.style.background = "#0A0A1F";
+    d3CanvasEl.style.background = "var(--cd)";
     d3CanvasEl.addEventListener("mousedown", function (e) { d3Drag = { x: e.clientX, y: e.clientY }; });
     d3CanvasEl.addEventListener("mousemove", function (e) { d3Move(e.clientX, e.clientY); });
     d3CanvasEl.addEventListener("mouseup", function () { d3Drag = null; });
