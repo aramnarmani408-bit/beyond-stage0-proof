@@ -68,6 +68,7 @@ function buildTrainPanel() {
   p.appendChild(trainNextEl);
   p.appendChild(wsBtn("بل ګام", function () { if (trainPos < trainSteps.length - 1) { trainPos++; trainRender(); } }));
   p.appendChild(wsBtn("ناسته خوندي کړه", function () { universeSave("training", { steps: trainSteps.length, done: trainDoneCount(), at: Date.now() }); showToast("ناسته خوندي شوه"); }));
+  p.appendChild(promptExamples("training"));
   trainPanelEl = p;
   trainRender();
   return p;
