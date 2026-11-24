@@ -95,6 +95,7 @@ function buildCodeWsPanel() {
   p.appendChild(codewsPreviewEl);
   p.appendChild(wsEl("div", "پروژې:"));
   p.appendChild(codewsProjects());
+  p.appendChild(promptExamples("codews"));
   codewsPanelEl = p;
   return p;
 }
