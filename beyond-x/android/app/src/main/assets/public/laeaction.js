@@ -75,5 +75,5 @@ function laeDrawLine(x, y, w, h) {
 }
 function laeDrawLabel(x, y, text) {
   designAdd("text");
-  (function (xx, yy, tt) { designEdit(function (s) { s.x = xx; s.y = yy; s.text = tt; s.color = "#F1F5F9"; }); })(x, y, text);
+  (function (xx, yy, tt) { designEdit(function (s) { s.x = xx; s.y = yy; s.text = tt; s.color = "var(--tx)"; }); })(x, y, text);
 }
