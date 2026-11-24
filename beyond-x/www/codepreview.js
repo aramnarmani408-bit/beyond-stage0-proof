@@ -5,7 +5,7 @@ var CODEWS_TAGS = ["div", "p", "span", "button", "h1", "h2", "h3", "ul", "ol", "
 var CODEWS_CSS = ["color", "background", "font-size", "padding", "margin", "border", "text-align"];
 function codewsHighlight(code) {
   var out = [];
-  var re = /(\/\/[^^\n]*|#[^\n]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\b(?:def|function|return|if|else|for|while|class|import|from|var|let|const|print)\b|\b\d+\b)/g;
+  var re = /(\/\/[^\n]*|#[^\n]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\b(?:def|function|return|if|else|for|while|class|import|from|var|let|const|print)\b|\b\d+\b)/g;
   var last = 0, m;
   while ((m = re.exec(code || "")) !== null) {
     if (m.index > last) out.push({ text: code.slice(last, m.index), cls: "" });
