@@ -23,6 +23,7 @@ function buildLessonPanel() {
   p.appendChild(lessonProgressEl);
   p.appendChild(wsBtn("کوئز وکړه", function () { showPanel("school"); }));
   p.appendChild(wsBtn("پرمختګ خوندي کړه", function () { universeSave("lesson", { steps: lessonSteps.length, done: lessonDoneCount(), at: Date.now() }); showToast("پرمختګ خوندي شو"); }));
+  p.appendChild(promptExamples("lesson"));
   lessonPanelEl = p;
   lessonRender();
   return p;
