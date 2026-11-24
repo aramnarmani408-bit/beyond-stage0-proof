@@ -46,7 +46,7 @@ function imagesPanelError(e) {
     imagesClear();
     var m = e.message || "";
     if (m.indexOf("Failed: ") === 0) imagesAdd("انځور جوړ نه شو — " + m.slice(8));
-    else if (m === "RateLimit") imagesAdd("ډېرې غوښتنې وشوې — لږ وروuste بیا هڅه وکړه");
+    else if (m === "RateLimit") imagesAdd("ډېرې غوښتنې وشوې — لږ وروسته بیا هڅه وکړه");
     else if (m === "TooBig") imagesAdd("انځور ډېر لوی دی — تر ۲ میګابایټ پورې.");
     else imagesAdd("انټرنیټ نشته یا ځواب ونه رسېد — بیا هڅه وکړه");
 }
