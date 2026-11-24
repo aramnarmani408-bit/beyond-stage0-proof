@@ -24,7 +24,7 @@ function decisionRender() {
       var box = wsEl("div", "");
       box.appendChild(wsEl("div", o.name));
       box.appendChild(wsEl("div", "ګټې: " + (o.pros || []).join("، ")));
-      box.appendChild(wsEl("div", "زیانونه: " + (o.cons || []).join("، ")));
+      box.appendChild(wsEl("div", "زیانونه: " + (o.cons || []).join(", ")));
       if (!o.ratings) o.ratings = {};
       for (var c in decisionWeights) {
         (function (crit) {
@@ -83,6 +83,7 @@ function buildDecisionPanel() {
   p.appendChild(decisionTableEl);
   decisionResultEl = wsEl("div", "");
   p.appendChild(decisionResultEl);
+  p.appendChild(promptExamples("decision"));
   decisionPanelEl = p;
   decisionRender();
   return p;
