@@ -1,7 +1,7 @@
 const CHAT_KEY = "beyondx-chat-v1";
 const CHAT_MAX = 50;
 const CHAT_MAX_CHATS = 50;
-var convSeq = 0; // unique ids
+var convSeq = 0;
 function chatTitleOf(c, idx) {
   if (c.renamed && c.title) return c.title;
   for (var i = 0; i < c.messages.length; i++) {
@@ -21,7 +21,7 @@ function saveChat() {
       cs[i].messages = msgs; cs[i].title = chatTitleOf(cs[i], i); cs[i].updated = Date.now(); found = true; break;
     }
     if (!found) cs.push({ id: id, title: chatTitleOf({ messages: msgs }, cs.length), messages: msgs, updated: Date.now() });
-    localStorage.setItem(CHAT_KEY, JSON.stringify({ chats: cs, activeId: id }));
+    histPersist(cs, id);
   } catch (e) {}
 }
 function loadChat() {
