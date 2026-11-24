@@ -3,6 +3,20 @@ var sessionExpiry = 0;
 var gatewayUsage = null;
 var chatCtrl = null;
 var chatStopped = false;
+// Data budget (infra.js): real chat-route bytes, counted per call.
+// Stateless: every add reads the stored total first, so a reload
+// (or another tab) never loses the day's earlier bytes.
+function dataBudgetAdd(n) {
+    var b = dataBudgetRead() + n;
+    try { localStorage.setItem("beyondx-data-v1", JSON.stringify({ d: new Date().toISOString().slice(0, 10), b: b })); } catch (e) {}
+}
+function dataBudgetRead() {
+    try {
+        var s = JSON.parse(localStorage.getItem("beyondx-data-v1") || "null");
+        if (s && s.d === new Date().toISOString().slice(0, 10)) return s.b || 0;
+    } catch (e) {}
+    return 0;
+}
 function stopChat() {
     if (chatCtrl) {
         chatStopped = true;
@@ -39,12 +53,13 @@ async function xChat(question, token) {
                 if (ctrl) ctrl.abort();
             }, CHAT_TIMEOUT_MS);
         });
+        const bodyStr = JSON.stringify({ message: { text: question },
+            preferences: { language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), response_language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), stream: false, persona: (typeof neonPrefs !== "undefined" ? neonPrefs.style : "friend") },
+            context: { workspace: "chat" } });
         const call = fetch("https://beyond-build-gateway.aramnarmani408.workers.dev/api/v1/x/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
-            body: JSON.stringify({ message: { text: question },
-                preferences: { language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), response_language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), stream: false, persona: (typeof neonPrefs !== "undefined" ? neonPrefs.style : "friend") },
-                context: { workspace: "chat" } }),
+            body: bodyStr,
             signal: ctrl ? ctrl.signal : undefined
         });
         const resp = await Promise.race([call, timeout, abortP]);
@@ -53,6 +68,7 @@ async function xChat(question, token) {
         if (resp.status === 401) throw new Error("Unauthorized");
         if (!resp.ok) throw new Error("Network");
         const data = await resp.json();
+        dataBudgetAdd(bodyStr.length + JSON.stringify(data).length);
         if (data && data.usage) gatewayUsage = data.usage;
         if (!data || data.status !== "success" || !data.response
             || data.response.identity !== "beyondx"
