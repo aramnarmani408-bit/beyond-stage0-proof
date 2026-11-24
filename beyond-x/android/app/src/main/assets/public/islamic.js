@@ -35,6 +35,7 @@ function buildIslamicPanel() {
     panel.appendChild(btn);
     islamicResultEl = document.createElement("div");
     panel.appendChild(islamicResultEl);
+    panel.appendChild(promptExamples("islamic", islamicSearchEl, islamicSearch));
     document.getElementById("main").appendChild(panel);
     islamicPanelEl = panel;
     return panel;
