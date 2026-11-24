@@ -21,7 +21,7 @@ function languageClear(outEl) {
 function langInput(ph) {
   var e = document.createElement("input");
   e.placeholder = ph;
-  e.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+  e.style.cssText = "background:var(--sf);color:var(--tx);";
   return e;
 }
 function langSelect(pairs, def) {
