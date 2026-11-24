@@ -33,6 +33,9 @@ function laeShowEvidence(obj) {
   if (!chatArea) return;
   laeHideEvidence();
   addMessage(laeEvidenceText(obj.claims), "ai");
+  // Settings build: sources off hides the Evidence Map (the
+  // verification line above is the trust verdict, always shown).
+  if (typeof setPrefs !== "undefined" && setPrefs.showSources === "off") return;
   var box = wsEl("div", "");
   box.id = "laeEvidence";
   var mapEl = null;
