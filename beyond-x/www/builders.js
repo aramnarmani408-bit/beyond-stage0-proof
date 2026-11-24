@@ -44,6 +44,8 @@ function buildWelcome() {
   return w;
 }
 buildWelcome();
+function buildInputArea(){if(document.getElementById("inputArea"))return null;var c=document.getElementById("chatPanel");if(!c)return null;var d=bEl("div","inputArea");d.appendChild(bEl("input","askInput"));d.appendChild(bEl("button","sendBtn","↑"));c.appendChild(d);return d;}
+buildInputArea();
 function buildToast() {
   if (document.getElementById("toast")) return null;
   var b = document.body;
