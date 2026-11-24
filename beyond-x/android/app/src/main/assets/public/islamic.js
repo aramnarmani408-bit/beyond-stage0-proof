@@ -28,7 +28,7 @@ function buildIslamicPanel() {
     panel.appendChild(islamicEl("div", "اسلامي"));
     islamicSearchEl = document.createElement("input");
     islamicSearchEl.placeholder = "پلټنه...";
-    islamicSearchEl.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+    islamicSearchEl.style.cssText = "background:var(--sf);color:var(--tx);";
     panel.appendChild(islamicSearchEl);
     var btn = islamicEl("button", "پلټنه");
     btn.addEventListener("click", islamicSearch);
