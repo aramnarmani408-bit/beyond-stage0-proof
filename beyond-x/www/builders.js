@@ -85,8 +85,8 @@ function buildHeader() {
   h.appendChild(bEl("button", "drawerBtn", "⋮"));
   var svg = typeof document.createElementNS === "function" ? document.createElementNS("http://www.w3.org/2000/svg", "svg") : document.createElement("svg");
   svg.id = "avatar";
-  svg.setAttribute("width", "40");
-  svg.setAttribute("height", "40");
+  svg.setAttribute("width", "32");
+  svg.setAttribute("height", "32");
   svg.appendChild(headerCircle("18", "#0A0A1F", "#00F5FF"));
   svg.appendChild(headerCircle("10", "#A855F7", null));
   h.appendChild(svg);
