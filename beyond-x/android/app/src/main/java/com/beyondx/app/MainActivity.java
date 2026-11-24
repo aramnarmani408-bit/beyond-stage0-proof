@@ -10,6 +10,7 @@ public class MainActivity extends BridgeActivity {
     registerPlugin(BeyondXBridge.class);
     registerPlugin(BeyondXControl.class);
     registerPlugin(BeyondXActions.class);
+    registerPlugin(BeyondXStore.class);
     super.onCreate(savedInstanceState);
   }
 }
