@@ -107,4 +107,4 @@ function fillCodeWsPanel(content) {
   }
 }
 var CODEWS_LANGS = ["python", "javascript", "html", "css"];
-function showCodeWsPanel(show) { if (codewsPanelEl) codewsPanelEl.style.display = show ? "flex" : "none"; }
+function showCodeWsPanel(show) { wsShow(codewsPanelEl, show); }
