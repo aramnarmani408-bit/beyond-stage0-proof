@@ -76,6 +76,7 @@ function universeOffer(q, answer) {
   box.appendChild(wsEl("div", "ایا دا طریقه هم وکړم؟ — " + UNIVERSE_TYPES[type].name + " کارځای"));
   box.appendChild(wsBtn("هو، جوړ یې کړه", function () { universeHideOffer(); universeActivate(type, answer); }));
   box.appendChild(wsBtn("نه", universeHideOffer));
+  if (type === "lesson") box.appendChild(wsBtn("کوئز وکړه", function () { universeHideOffer(); showPanel("school"); }));
   chatArea.appendChild(box);
   universeOfferEl = box;
 }
