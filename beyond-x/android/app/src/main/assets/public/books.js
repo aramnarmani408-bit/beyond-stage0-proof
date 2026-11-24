@@ -60,6 +60,7 @@ function buildBooksPanel() {
     controls.appendChild(booksNoteEl);
     controls.appendChild(booksBtn("خوندي کړه", booksSaveNote));
     panel.appendChild(controls);
+    panel.appendChild(promptExamples("books", booksSearchEl, booksSearch));
     document.getElementById("main").appendChild(panel);
     booksPanelEl = panel;
     showBookLibrary();
