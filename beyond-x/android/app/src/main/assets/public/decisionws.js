@@ -23,8 +23,8 @@ function decisionRender() {
       var o = decisionOptions[idx];
       var box = wsEl("div", "");
       box.appendChild(wsEl("div", o.name));
-      box.appendChild(wsEl("div", "ګټې: " + (o.pros || []).join("ؼ ")));
-      box.appendChild(wsEl("div", "زیانونه: " + (o.cons || []).join("ؼ ")));
+      box.appendChild(wsEl("div", "ګټې: " + (o.pros || []).join("، ")));
+      box.appendChild(wsEl("div", "زیانونه: " + (o.cons || []).join("، ")));
       if (!o.ratings) o.ratings = {};
       for (var c in decisionWeights) {
         (function (crit) {
