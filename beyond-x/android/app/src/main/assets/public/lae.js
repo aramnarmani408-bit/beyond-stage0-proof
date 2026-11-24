@@ -88,7 +88,7 @@ function laeShow(q, modelText) {
   laeHideAll();
   if (!obj.gate.ok) {
     if (modelText) addMessage(modelText, "ai");
-    addMessage("د محاسبې تایید ونه شو (" + obj.gate.problems.join("، ") + ") — ځواب وګوره.", "ai");
+    addMessage("د محاسبې تایید ونه شو (" + obj.gate.problems.join(", ") + ") — ځواب وګوره.", "ai");
     return true;
   }
   laeRender(obj, "");
