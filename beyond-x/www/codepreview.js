@@ -5,7 +5,7 @@ var CODEWS_TAGS = ["div", "p", "span", "button", "h1", "h2", "h3", "ul", "ol", "
 var CODEWS_CSS = ["color", "background", "font-size", "padding", "margin", "border", "text-align"];
 function codewsHighlight(code) {
   var out = [];
-  var re = /(\/\/[^\n]*|#[^\n]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\b(?:def|function|return|if|else|for|while|class|import|from|var|let|const|print)\b|\b\d+\b)/g;
+  var re = /(\/\/[^^\n]*|#[^\n]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\b(?:def|function|return|if|else|for|while|class|import|from|var|let|const|print)\b|\b\d+\b)/g;
   var last = 0, m;
   while ((m = re.exec(code || "")) !== null) {
     if (m.index > last) out.push({ text: code.slice(last, m.index), cls: "" });
@@ -17,12 +17,13 @@ function codewsHighlight(code) {
   if (last < (code || "").length) out.push({ text: code.slice(last), cls: "" });
   return out;
 }
+// Phase 3: token colors follow the theme (vars from theme.js).
 function codewsColor(cls) {
-  if (cls === "kw") return "#A855F7";
-  if (cls === "str") return "#00FF88";
-  if (cls === "com") return "#94A3B8";
-  if (cls === "num") return "#00F5FF";
-  return "#F1F5F9";
+  if (cls === "kw") return "var(--tk)";
+  if (cls === "str") return "var(--ts)";
+  if (cls === "com") return "var(--tc)";
+  if (cls === "num") return "var(--tn)";
+  return "var(--tx)";
 }
 function codewsSyntaxEl(code) {
   var box = wsEl("div", "");
