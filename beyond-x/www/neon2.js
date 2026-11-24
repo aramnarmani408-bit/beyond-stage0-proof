@@ -45,7 +45,7 @@ function buildNeon() {
     prof.id = "profilePanel";
     prof.style.display = "none";
     prof.appendChild(nEl("div", "BEYOND X"));
-    [["شعار", "موږ به نړۍ بدلوو"], ["قانون", "قرآن کریم"], ["ژبه", "پښتو لومړی"], ["اوسنی حالت", "پړاو ۱۱ NEON"]].forEach(function (f) {
+    [["شعار", "موږ به نړۍ بدلوو"], ["قانون", "قرآن کریم"], ["ژبه", "پښتو لومړی"], ["اوسنی حالت", "ډیزاین پړاو ۲"]].forEach(function (f) {
         var row = nEl("div", "");
         row.className = "fact";
         var k = nEl("span", f[0]);
@@ -79,37 +79,4 @@ function neonFirstOpen() {
     firstOpenMs = Date.now() - NEON_T0;
     if (neonFirstOpenEl) neonFirstOpenEl.textContent = "لومړی خلاصېدل: " + firstOpenMs + "ms";
 }
-// Phase 1: the home demo — 3 chips rotating per open (pool in ask.js) + worked example + recent strip.
-var demoEl = null;
-function renderDemo() {
-    var chatArea = document.getElementById("chatArea");
-    if (!chatArea || demoEl) return;
-    if (AppState.messages.length > 0) return;
-    var cs = Array.isArray(AppState.chats) ? AppState.chats : [];
-    var box = document.createElement("div");
-    box.id = "demoBox";
-    var firstOpen = cs.every(function (c) { return c.messages.length === 0; });
-    if (firstOpen) demoQuizExample(box);
-    var start = (demoCount() * 3) % DEMO_POOL.length;
-    for (var i = 0; i < 3; i++) {
-        const q = DEMO_POOL[(start + i) % DEMO_POOL.length];
-        var b = document.createElement("button");
-        b.textContent = q;
-        b.addEventListener("click", function () {
-            var input = document.getElementById("askInput");
-            if (!input) return;
-            input.value = q;
-            sendQuestion();
-        });
-        box.appendChild(b);
-    }
-    demoRecentStrip(box);
-    chatArea.appendChild(box);
-    demoEl = box;
-}
-function hideDemo() {
-    if (!demoEl) return;
-    var chatArea = document.getElementById("chatArea");
-    if (chatArea) { try { chatArea.removeChild(demoEl); } catch (e) {} }
-    demoEl = null;
-}
+// Phase 2: the home demo moved to home.js (rows, not chips).
