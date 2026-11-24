@@ -16,7 +16,7 @@ function buildLessonPanel() {
   var p = wsPanel("lessonPanel");
   p.appendChild(wsEl("div", "درس — کچه: " + lessonLevel()));
   lessonBoardEl = wsEl("div", "");
-  lessonBoardEl.style.background = "#0A0A1F";
+  lessonBoardEl.style.background = "var(--cd)";
   lessonBoardEl.style.padding = "12px";
   p.appendChild(lessonBoardEl);
   lessonProgressEl = wsEl("div", "");
@@ -55,4 +55,4 @@ function fillLessonPanel(content) {
   lessonOpen = {};
   lessonRender();
 }
-function showLessonPanel(show) { if (lessonPanelEl) lessonPanelEl.style.display = show ? "flex" : "none"; }
+function showLessonPanel(show) { wsShow(lessonPanelEl, show); }
