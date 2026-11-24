@@ -85,3 +85,18 @@ function universeHideOffer() {
   if (chatArea) { try { chatArea.removeChild(universeOfferEl); } catch (e) {} }
   universeOfferEl = null;
 }
+// Phase 3: open shows the top (D10).
+function wsShow(el, show) { if (el) { el.style.display = show ? "flex" : "none"; if (show) el.scrollTop = 0; } }
+// Phase 3: var() colors resolve live; WebGL/export need hex.
+function wsThemeDark() { return typeof themePrefs !== "undefined" && themePrefs.theme === "dark"; }
+function wsResolveColor(c) { var d = wsThemeDark(); return c === "var(--tx)" ? (d ? "#F1F5F9" : "#0D0D0D") : c === "var(--mu)" ? (d ? "#94A3B8" : "#6B7280") : c; }
+// Phase 3 (D10): re-open the active workspace, no refill.
+function reopenWorkspace() {
+  var cap = workspaceState.capability;
+  if (!cap) return false;
+  if (cap === "school") { showPanel("school"); return true; }
+  var b = { islamic: buildIslamicPanel, books: buildBooksPanel, images: buildImagesPanel, voice: buildVoicePanel, games: buildGamesPanel, polyglot: buildLanguagePanel, programming: buildCodePanel, mobile: buildMobilePanel };
+  if (b[cap]) { b[cap](); showPanel(cap === "polyglot" ? "language" : cap === "programming" ? "code" : cap); return true; }
+  if (typeof universeResume === "function") return universeResume(cap);
+  return false;
+}
