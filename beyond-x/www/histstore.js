@@ -1,0 +1,23 @@
+// History store 1/4 — core (parts list §6): the schema + the
+// native bridge + migration + load. SQLite on the device via the
+// BeyondXStore plugin (built-in android.database.sqlite, no new
+// dependency); the browser falls back to localStorage, LABELLED
+// fallback — never SQLite. Schema v1: meta, chats, messages +
+// memory (REQ-MEMORY-001: created now, empty; the memory system
+// writes rows later. Kinds: lesson, teaching, conversation,
+// correction, fact, structure).
+var HIST_SCHEMA=["CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY,value TEXT)","CREATE TABLE IF NOT EXISTS chats(id TEXT PRIMARY KEY,title TEXT,updated INTEGER,pinned INTEGER,archived INTEGER,renamed INTEGER,lastMsg TEXT)","CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY,chat_id TEXT,role TEXT,text TEXT,ts INTEGER)","CREATE TABLE IF NOT EXISTS memory(kind TEXT,key TEXT,value TEXT,source TEXT,created INTEGER,updated INTEGER,PRIMARY KEY(kind,key))"];
+var histMode="", histLoading=false;
+function histNative(){return typeof Capacitor!=="undefined"&&typeof bridgeCall==="function";}
+function histIsLoading(){return histLoading;}
+function histExec(s,p){return bridgeCall("BeyondXStore","dbExec",{sql:s,params:p||[]});}
+function histQuery(s,p){return bridgeCall("BeyondXStore","dbQuery",{sql:s,params:p||[]});}
+function histLastText(c){var m=c.messages||[];return m.length?m[m.length-1].text.slice(0,40):"";}
+async function histSetMeta(k,v){return histExec("INSERT OR REPLACE INTO meta(key,value) VALUES(?,?)",[k,v]);}
+async function histGetMeta(k){var r=await histQuery("SELECT value FROM meta WHERE key=?",[k]);return r.ok&&r.data.rows.length?r.data.rows[0].value:null;}
+async function histSaveChatRow(c){return histExec("INSERT OR REPLACE INTO chats(id,title,updated,pinned,archived,renamed,lastMsg) VALUES(?,?,?,?,?,?,?)",[c.id,c.title||"",String(c.updated||0),c.pinned?"1":"0",c.archived?"1":"0",c.renamed?"1":"0",histLastText(c)]);}
+async function histSaveMsg(id,m){return histExec("INSERT INTO messages(chat_id,role,text,ts) VALUES(?,?,?,?)",[id,m.who||"user",m.text||"",String(Date.now())]);}
+async function histOpen(){var r=await bridgeCall("BeyondXStore","dbOpen",{});if(!r.ok)return false;for(var i=0;i<HIST_SCHEMA.length;i++){var e=await histExec(HIST_SCHEMA[i],[]);if(!e.ok)return false;}return true;}
+async function histCount(t){var r=await histQuery("SELECT COUNT(*) AS n FROM "+t,[]);return r.ok&&r.data.rows.length?r.data.rows[0].n:-1;}
+async function histMigrateFromLocal(){var raw=null;try{raw=localStorage.getItem(CHAT_KEY);}catch(e){}if(!raw)return null;var s=null;try{s=JSON.parse(raw);}catch(e){return null;}if(!s||!Array.isArray(s.chats))return null;await histExec("DELETE FROM messages",[]);await histExec("DELETE FROM chats",[]);var n=0,m=0;for(var i=0;i<s.chats.length;i++){var c=s.chats[i];if(!c||!Array.isArray(c.messages))continue;var id=c.id||("conv-"+i);var r=await histSaveChatRow({id:id,title:c.title,updated:c.updated,pinned:c.pinned,archived:c.archived,renamed:c.renamed,messages:c.messages});if(!r.ok)return null;n++;for(var j=0;j<c.messages.length;j++){var q=await histSaveMsg(id,c.messages[j]);if(!q.ok)return null;m++;}}if(await histCount("chats")!==n||await histCount("messages")!==m)return null;var raw2=null;try{raw2=localStorage.getItem(CHAT_KEY);}catch(e){}if(raw2!==raw)return null;await histSetMeta("migrated_from","localStorage");await histSetMeta("schema_version","1");if(s.activeId)await histSetMeta("active_id",s.activeId);try{localStorage.removeItem(CHAT_KEY);}catch(e){}return{chats:n,messages:m};}
+async function histLoadFromDb(){var cs=await histQuery("SELECT * FROM chats ORDER BY updated DESC",[]);if(!cs.ok)return false;var act=await histGetMeta("active_id");AppState.chats=[];for(var i=0;i<cs.data.rows.length;i++){var r=cs.data.rows[i];var ms=await histQuery("SELECT role,text,ts FROM messages WHERE chat_id=? ORDER BY id",[r.id]);var msgs=[];if(ms.ok)for(var j=0;j<ms.data.rows.length;j++)msgs.push({who:ms.data.rows[j].role,text:ms.data.rows[j].text});AppState.chats.push({id:r.id,title:r.title||"",messages:msgs.slice(-CHAT_MAX),updated:Number(r.updated)||0,pinned:r.pinned===1||r.pinned==="1",archived:r.archived===1||r.archived==="1",renamed:r.renamed===1||r.renamed==="1"});}if(!AppState.chats.length){AppState.convId="";AppState.messages=[];}else{var t=AppState.chats[0];for(var k=0;k<AppState.chats.length;k++)if(AppState.chats[k].id===act){t=AppState.chats[k];break;}AppState.convId=t.id;AppState.messages=t.messages.slice();}renderChatMessages();renderChatList();if(AppState.messages.length===0)renderDemo();else hideDemo();return true;}
