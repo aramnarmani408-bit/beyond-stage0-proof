@@ -19,7 +19,7 @@ function imagesBtn(text, fn) {
 function imagesInput(ph) {
     var el = document.createElement("input");
     el.placeholder = ph;
-    el.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+    el.style.cssText = "background:var(--sf);color:var(--tx);";
     return el;
 }
 function imagesAdd(text) {
