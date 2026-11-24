@@ -71,6 +71,7 @@ function voicePlayAudio(b64, mimeType) {
     voiceLastAudio = { b64: b64, mimeType: mimeType };
     if (!voiceAudioEl) voiceAudioEl = new Audio();
     voiceAudioEl.src = "data:" + mimeType + ";base64," + b64;
+if(typeof setPrefs!=="undefined")voiceAudioEl.playbackRate=+setPrefs.ttsRate||1;
     try { voiceAudioEl.play(); } catch (e) { return false; }
     return true;
 }
