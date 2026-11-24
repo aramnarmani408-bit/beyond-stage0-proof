@@ -71,3 +71,15 @@ function showQuizQuestion() {
 // The school panel builder moved to builders.js (L.A.E. Phase 1) —
 // buildSchoolPanel + SCHOOL_DEFS live there now.
 
+
+// Design Phase 4: the school route lives here (router.js is at the push
+// limit) — a quiz request starts the quiz at once, in the panel,
+// instead of only opening the panel and waiting for a tap.
+function routeSchool(q, mode) {
+    if (activateWorkspace("school", mode)) {
+        showPanel("school");
+        addMessage("د ښوونځي کوئز دې لپاره جوړ شو — لوبه وکړه!", "ai");
+    }
+    if (q.indexOf("کوئز") !== -1) startQuiz();
+    askBeyond(q);
+}
