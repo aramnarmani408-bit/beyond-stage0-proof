@@ -1,4 +1,4 @@
-// BEYOND X module 77/77: init — element wiring + resume + polling (LAST)
+// BEYOND X module 79/79: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -73,7 +73,7 @@ if (!AppState.convId) AppState.convId = "conv-" + Date.now();
 try { if (typeof localStorage !== "undefined") localStorage.setItem(DEMO_KEY, String(demoCount() + 1)); } catch (e) {}
 loadChat();
 if (AppState.messages.length === 0) renderDemo();
-if (loadWorkspace() && workspaceState.status === "ready") {
+if ((typeof setPrefs === "undefined" || setPrefs.wsResume !== "off") && loadWorkspace() && workspaceState.status === "ready") {
     setWorkspaceStatus("ready");
     // Phase 3: the resume chain lives in reopenWorkspace() (universelib.js)
     // — the same return path the status-line tap uses.
