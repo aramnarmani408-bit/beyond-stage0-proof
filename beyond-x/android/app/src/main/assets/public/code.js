@@ -38,11 +38,11 @@ function buildCodePanel() {
   panel.appendChild(codeLangSel);
   codeGenIn = document.createElement("input");
   codeGenIn.placeholder = "څه ډول پروګرام غواړې؟";
-  codeGenIn.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+  codeGenIn.style.cssText = "background:var(--sf);color:var(--tx);";
   panel.appendChild(codeGenIn);
   codeEditor = document.createElement("textarea");
   codeEditor.placeholder = "کوډ دلته ولیکئ...";
-  codeEditor.style.cssText = "background:#0A0A1F;color:#F1F5F9;min-height:120px;";
+  codeEditor.style.cssText = "background:var(--sf);color:var(--tx);min-height:120px;";
   panel.appendChild(codeEditor);
   var btns = document.createElement("div");
   btns.appendChild(codeBtn("چلوه", codeRunFromPanel));
