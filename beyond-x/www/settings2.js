@@ -25,7 +25,7 @@ function buildSettings2(prof){
 if(settings2Built||!prof)return;settings2Built=true;
 setOptRow(prof,"غږیز غږ","ttsVoice",[["gul","ګل نواز"],["lat","لطیفه"]],true);
 setOptRow(prof,"د غږ سرعت","ttsRate",[["0.75","ورو"],["1","عادي"],["1.25","ګړندی"]],true);
-setConfirmRow(prof,"ټولې خبرې","ټولې ړنګې کړه",function(){AppState.chats=[];AppState.messages=[];AppState.convId="conv-"+Date.now();try{localStorage.removeItem(CHAT_KEY);}catch(e){}var a=document.getElementById("chatArea");if(a)while(a.firstChild)a.removeChild(a.firstChild);renderChatList();renderDemo();showToast("ټولې خبرې ړنګې شوې");});
+setConfirmRow(prof,"ټولې خبرې","ټولې ړنګې کړه",function(){AppState.chats=[];AppState.messages=[];AppState.convId="conv-"+Date.now();try{localStorage.removeItem(CHAT_KEY);}catch(e){}if(typeof histPersist==="function")histPersist([],"");var a=document.getElementById("chatArea");if(a)while(a.firstChild)a.removeChild(a.firstChild);renderChatList();renderDemo();showToast("ټولې خبرې ړنګې شوې");});
 setText(prof,"اتومات سرلیک","د لومړۍ پوښتنې څخه");
 setOptRow(prof,"کارځای بېرته پرانیزه","wsResume",[["on","هو"],["off","نه"]],true);
 setBtnRow(prof,"د کارځای ډاټا","پاکه کړه",function(){if(typeof universeClear==="function")universeClear();try{localStorage.removeItem(WS_KEY);}catch(e){}showToast("د کارځای ډاټا پاکه شوه");});
