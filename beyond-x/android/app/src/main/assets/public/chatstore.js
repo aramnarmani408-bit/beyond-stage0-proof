@@ -1,7 +1,7 @@
 const CHAT_KEY = "beyondx-chat-v1";
 const CHAT_MAX = 50;
 const CHAT_MAX_CHATS = 50;
-var convSeq = 0; // Stage 12: unique ids (same-ms newChat calls collided).
+var convSeq = 0; // unique ids
 function chatTitleOf(c, idx) {
   if (c.renamed && c.title) return c.title;
   for (var i = 0; i < c.messages.length; i++) {
@@ -64,6 +64,7 @@ function renderChatMessages() {
   for (var i = 0; i < AppState.messages.length; i++) {
     var m = AppState.messages[i], msg = document.createElement("div");
     msg.className = "msg " + m.who; msg.textContent = m.text; chatArea.appendChild(msg);
+    if (m.who === "ai" && typeof mdWrapMsg === "function") mdWrapMsg(msg, m.text);
   }
   chatArea.scrollTop = chatArea.scrollHeight;
 }
