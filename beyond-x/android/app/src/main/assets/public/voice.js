@@ -42,6 +42,7 @@ function buildVoicePanel() {
     panel.appendChild(actions);
     voiceStatusEl = document.createElement("div");
     panel.appendChild(voiceStatusEl);
+    panel.appendChild(promptExamples("voice"));
     document.getElementById("main").appendChild(panel);
     voicePanelEl = panel;
     voiceRefreshStatus();
@@ -81,4 +82,19 @@ function voicePanelError(e) {
     else if (m === "NoMic") voiceAdd("مایکروفون اجازه نه ده ورکړل شوې — په متن ولیکئ.");
     else if (m === "NoSpeech") voiceAdd("کوم غږ ونه اورېدل شو — بیا هڅه وکړه.");
     else voiceAdd("انټرنیټ نشته یا ځواب ونه رسېد — بیا هڅه وکړه");
+}
+
+// Design Phase 4: the voice route lives here (router.js is at the push
+// limit). Quoted text is SPOKEN («سلام» په غږ واوره speaks سلام);
+// a bare واوره speaks the last answer — on EVERY request, not only
+// the first activation (the old router branch only spoke on first open).
+function routeVoice(q, mode) {
+    if (activateWorkspace("voice", mode)) {
+        buildVoicePanel();
+        showPanel("voice");
+        addMessage("د غږ کارځای دې لپاره جوړ شو — په پښتو وغږېږه او واوره.", "ai");
+    }
+    var m = q.match(/«([^»]+)»/);
+    if (m) { voiceSpeak(m[1], "ps"); return; }
+    if (q.indexOf("واوره") !== -1) voiceSpeakLast();
 }
