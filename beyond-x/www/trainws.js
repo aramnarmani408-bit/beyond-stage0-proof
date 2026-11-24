@@ -77,4 +77,4 @@ function fillTrainPanel(content) {
   trainPos = 0;
   trainRender();
 }
-function showTrainPanel(show) { if (trainPanelEl) trainPanelEl.style.display = show ? "flex" : "none"; }
+function showTrainPanel(show) { wsShow(trainPanelEl, show); }
