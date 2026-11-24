@@ -56,6 +56,7 @@ function buildImagesPanel() {
     panel.appendChild(imagesStatusEl);
     imagesHistoryEl = document.createElement("div");
     panel.appendChild(imagesHistoryEl);
+    panel.appendChild(promptExamples("images", imagesPromptEl, imagesGenerate));
     document.getElementById("main").appendChild(panel);
     imagesPanelEl = panel;
     showImagesHistory();
