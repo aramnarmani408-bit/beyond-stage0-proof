@@ -66,7 +66,7 @@ function buildMobilePanel() {
   mDgn = div();
   mAsk = document.createElement("input");
   mAsk.placeholder = "د موبایل په اړه وپوښته...";
-  mAsk.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+  mAsk.style.cssText = "background:var(--sf);color:var(--tx);";
   panel.appendChild(mAsk);
   panel.appendChild(mBtn("وپوښته", () => { var q = mAsk.value.trim(); if (q) xMobileAsk(q); }));
   mActs = div();
