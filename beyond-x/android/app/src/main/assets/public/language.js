@@ -83,6 +83,7 @@ function buildLanguagePanel() {
       if (activateWorkspace("voice", "temporary")) { buildVoicePanel(); showPanel("voice"); }
     })]));
   panel.appendChild(languageEl("div", "معناوې: ویکشنري (CC-BY-SA)"));
+  panel.appendChild(promptExamples("language", langTrIn, function (q) { languageShowTab(0); languageTranslateFromPanel(); }));
   document.getElementById("main").appendChild(panel);
   langPanel = panel;
   languageRenderLesson();
@@ -98,5 +99,5 @@ function routeLanguage(q) {
     addMessage("د ژبو کارځای دې لپاره جوړ شو — ژبه وژباړه، زده کړه او تمرین وکړه.", "ai");
   }
   var l = languagePromptFrom(q);
-  if (l && langTrIn) langTrIn.value = l;
+  if (l && langTrIn) { langTrIn.value = l; languageTranslateFromPanel(); }
 }
