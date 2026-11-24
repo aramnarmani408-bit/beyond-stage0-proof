@@ -96,4 +96,4 @@ function fillDecisionPanel(content) {
   }
   decisionRender();
 }
-function showDecisionPanel(show) { if (decisionPanelEl) decisionPanelEl.style.display = show ? "flex" : "none"; }
+function showDecisionPanel(show) { wsShow(decisionPanelEl, show); }
