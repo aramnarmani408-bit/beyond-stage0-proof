@@ -40,7 +40,7 @@ async function voiceSpeak(text, lang) {
     var l = lang || "ps";
     setAction("فکر کوم...");
     try {
-        var r = await xVoice("/voice/speak", await ensureSession(), { text: text, lang: l });
+        var r = await xVoice("/voice/speak", await ensureSession(), { text: text, lang: l, voice: (typeof ttsVoiceId === "function" ? ttsVoiceId(l) : undefined) });
         if (!r.audio) {
             if (!voiceSpeakDevice(text, l)) voicePanelError(new Error("Failed: " + (r.reason || "نامعلومه ستونزه")));
             return;
