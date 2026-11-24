@@ -41,7 +41,7 @@ function buildGamesPanel() {
     panel.appendChild(gamesPlayAreaEl);
     gamesInputEl = document.createElement("input");
     gamesInputEl.placeholder = "د لوبې شرح...";
-    gamesInputEl.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+    gamesInputEl.style.cssText = "background:var(--sf);color:var(--tx);";
     panel.appendChild(gamesInputEl);
     panel.appendChild(gamesBtn("جوړه کړه", gamesRequestFromPanel));
     gamesStatusEl = document.createElement("div");
