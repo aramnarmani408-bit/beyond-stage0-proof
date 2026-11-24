@@ -57,6 +57,7 @@ function buildCodePanel() {
   panel.appendChild(codePreviewEl);
   codeHistEl = document.createElement("div");
   panel.appendChild(codeHistEl);
+  panel.appendChild(promptExamples("code", codeGenIn, codeGenerateFromPanel));
   document.getElementById("main").appendChild(panel);
   codePanel = panel;
   loadCode();
@@ -95,3 +96,16 @@ function codeGenerateFromPanel() { return codePanelTask("generate"); }
 function codeExplainFromPanel() { return codePanelTask("explain"); }
 function codeFixFromPanel() { return codePanelTask("fix"); }
 function codeConvertFromPanel() { return codePanelTask("convert"); }
+
+// Design Phase 4: the code route lives here (router.js is at the push
+// limit) — a generate request now GENERATES at once, in the panel,
+// instead of only filling the input and waiting for a tap.
+function routeCode(q, mode) {
+  if (activateWorkspace("programming", mode)) {
+    buildCodePanel();
+    showPanel("code");
+    addMessage("د پروګرام کولو کارځای دې لپاره جوړ شو — کوډ ولیکه، وچلوه او وګوره.", "ai");
+  }
+  var c = codePromptFrom(q);
+  if (c && codeGenIn) { codeGenIn.value = c; codeGenerateFromPanel(); }
+}
