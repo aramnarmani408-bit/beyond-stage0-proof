@@ -12,6 +12,7 @@ function goView(name) {
     if (name === "profile") {
         if (neonProfile) neonProfile.style.display = "flex";
         showPanel("profile");
+        if (typeof settingsRefresh === "function") settingsRefresh();
     } else {
         if (neonProfile) neonProfile.style.display = "none";
         showPanel("chat");
@@ -58,7 +59,11 @@ function buildNeon() {
     fo.id = "neonFirstOpen";
     prof.appendChild(fo);
     neonFirstOpenEl = fo;
-    [["lang", "ژبه", [["ps", "پښتو"], ["en", "English"]]], ["depth", "ژوروالی", [["short", "لنډ"], ["full", "تفصیلي"]]], ["style", "طرز", [["teacher", "ښوونکی"], ["tech", "تخنیکي"]]]].forEach(function (pr) {
+    // Settings build: the rows are REAL now — language is Pashto only
+    // (the gateway ignores any other language); depth is the L.A.E.
+    // length default; style is the gateway persona (friend/teacher/
+    // formal). The old en/full/tech options were ignored upstream.
+    [["lang", "ژبه", []], ["depth", "د ځواب اوږدوالی", [["short", "لنډ"], ["medium", "منځنی"], ["long", "اوږد"]]], ["style", "د ځواب طرز", [["friend", "دوستانه"], ["teacher", "ښوونکی"], ["formal", "رسمي"]]]].forEach(function (pr) {
         var row = nEl("div", pr[1]);
         pr[2].forEach(function (opt) {
             var b = document.createElement("button");
@@ -67,6 +72,7 @@ function buildNeon() {
             row.appendChild(b);
             neonPrefBtns.push({ key: pr[0], value: opt[0], el: b });
         });
+        if (!pr[2].length) row.appendChild(nEl("span", "پښتو"));
         prof.appendChild(row);
     });
     main.appendChild(prof);
