@@ -27,7 +27,7 @@ function answerQuiz(chosen) {
     setTimeout(showQuizQuestion, 1200);
 }
 
-// Phase 1: history-list rendering + row actions (chatstore/ui are at the push limit; D21 forbids a new module).
+// History-list rendering + row actions.
 function chatGroupOf(u) {
     var d = new Date(u), n = new Date();
     if (d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate()) return "نن";
@@ -88,24 +88,28 @@ function chatRenameStart(id, li, main) {
     main.style.display = "none";
     var inp = document.createElement("input");
     inp.value = c.title || "";
-    inp.style.background = "#0A0A1F";
-    inp.style.color = "#F1F5F9";
-    inp.style.border = "1px solid #00F5FF";
+    inp.style.background = "var(--sf)";
+    inp.style.color = "var(--tx)";
+    inp.style.border = "1px solid var(--ac)";
     inp.style.borderRadius = "8px";
     inp.style.padding = "8px";
+    var saved = false;
+    function doSave() { if (saved) return; saved = true; chatRenameSave(id, inp.value); }
     inp.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") chatRenameSave(id, inp.value);
+        if (e.key === "Enter") doSave();
+        else if (e.key === "Escape") { saved = true; renderChatList(); }
     });
+    inp.addEventListener("blur", doSave);
     li.appendChild(inp);
     if (inp.focus) inp.focus();
 }
 function chatRenameSave(id, name) {
     chatMutate(id, function (c) {
         var n = (name || "").trim().slice(0, 30);
-        if (n) { c.title = n; c.renamed = true; }
+        if (n && n !== c.title) { c.title = n; c.renamed = true; }
     });
 }
-// Phase 1: drawer search + Settings (D16). Called once from init.js.
+// Drawer search + Settings. Called once from init.js.
 function buildDrawerControls() {
     var d = document.getElementById("drawer");
     if (!d) return;
