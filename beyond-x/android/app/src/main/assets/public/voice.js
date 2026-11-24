@@ -56,7 +56,7 @@ function showVoiceResult(r) {
     if (r.warning === "low_confidence") voiceAdd("شاید سم ونه پېژندل شو");
     voiceTextEl = document.createElement("input");
     voiceTextEl.value = r.text;
-    voiceTextEl.style.cssText = "background:#0A0A1F;color:#F1F5F9;";
+    voiceTextEl.style.cssText = "background:var(--sf);color:var(--tx);";
     voiceTranscriptEl.appendChild(voiceTextEl);
     voiceTranscriptEl.appendChild(voiceBtn("لیږل", function () {
         var q = voiceTextEl.value.trim();
