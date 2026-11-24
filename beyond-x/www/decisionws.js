@@ -83,6 +83,7 @@ function buildDecisionPanel() {
   p.appendChild(decisionTableEl);
   decisionResultEl = wsEl("div", "");
   p.appendChild(decisionResultEl);
+  p.appendChild(promptExamples("decision"));
   decisionPanelEl = p;
   decisionRender();
   return p;
