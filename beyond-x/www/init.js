@@ -1,4 +1,4 @@
-// BEYOND X module 65/65: init — element wiring + resume + polling (LAST)
+// BEYOND X module 77/77: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -50,6 +50,12 @@ if (sentBtn) {
 if (backChat) backChat.addEventListener("click", () => showPanel("chat"));
 
 if (typeof buildNeon === "function") buildNeon();
+
+// Phase 2: theme first (the stored theme applies before first paint
+// settles), then the avatar + the settings rows in the profile panel.
+if (typeof applyTheme === "function") applyTheme();
+if (typeof buildAvatar === "function") buildAvatar();
+if (typeof buildSettings === "function") buildSettings();
 
 if (!loadProgress()) startQuiz();
 else if (quizState.kind === "sentence" && vocabItems().length === 0) startQuiz();
