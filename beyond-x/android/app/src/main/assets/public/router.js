@@ -16,14 +16,7 @@ function handleRequest(q) {
     }
     const intent = analyzeIntent(q);
     const cap = CAPABILITIES[intent.capability];
-    if (intent.capability === "school") {
-        if (activateWorkspace("school", intent.mode)) {
-            showPanel("school");
-            addMessage("د ښوونځي کوئز دې لپاره جوړ شو — لوبه وکړه!", "ai");
-        }
-        askBeyond(q);
-        return;
-    }
+    if (intent.capability === "school") { routeSchool(q, intent.mode); return; }
     if (intent.capability === "islamic") {
         if (activateWorkspace("islamic", intent.mode)) {
             buildIslamicPanel();
@@ -64,27 +57,10 @@ function handleRequest(q) {
         }
         return;
     }
-    if (intent.capability === "voice") {
-        if (activateWorkspace("voice", intent.mode)) {
-            buildVoicePanel();
-            showPanel("voice");
-            addMessage("د غږ کارځای دې لپاره جوړ شو — په پښتو وغږېږه او واوره.", "ai");
-            if (q.indexOf("واوره") !== -1) voiceSpeakLast();
-        }
-        return;
-    }
+    if (intent.capability === "voice") { routeVoice(q, intent.mode); return; }
     if (intent.capability === "games") { routeGames(q); return; }
     if (intent.capability === "polyglot") { routeLanguage(q); return; }
-    if (intent.capability === "programming") {
-        if (activateWorkspace("programming", intent.mode)) {
-            buildCodePanel();
-            showPanel("code");
-            addMessage("د پروګرام کولو کارځای دې لپاره جوړ شو — کوډ ولیکه، وچلوه او وګوره.", "ai");
-        }
-        var c = codePromptFrom(q);
-        if (c && codeGenIn) codeGenIn.value = c;
-        return;
-    }
+    if (intent.capability === "programming" && !(typeof universeDirect === "function" && universeDirect(q) === "code")) { routeCode(q, intent.mode); return; }
     if (intent.capability === "mobile") {
         if (activateWorkspace("mobile", intent.mode)) {
             buildMobilePanel();
