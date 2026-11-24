@@ -1,5 +1,6 @@
 var sessionToken = null;
 var sessionExpiry = 0;
+var gatewayUsage = null;
 var chatCtrl = null;
 var chatStopped = false;
 function stopChat() {
@@ -42,8 +43,8 @@ async function xChat(question, token) {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
             body: JSON.stringify({ message: { text: question },
-                preferences: { language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), response_language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), stream: false },
-                context: { workspace: "chat", depth: (typeof neonPrefs !== "undefined" ? neonPrefs.depth : "full"), style: (typeof neonPrefs !== "undefined" ? neonPrefs.style : "teacher") } }),
+                preferences: { language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), response_language: (typeof neonPrefs !== "undefined" ? neonPrefs.lang : "ps"), stream: false, persona: (typeof neonPrefs !== "undefined" ? neonPrefs.style : "friend") },
+                context: { workspace: "chat" } }),
             signal: ctrl ? ctrl.signal : undefined
         });
         const resp = await Promise.race([call, timeout, abortP]);
@@ -52,6 +53,7 @@ async function xChat(question, token) {
         if (resp.status === 401) throw new Error("Unauthorized");
         if (!resp.ok) throw new Error("Network");
         const data = await resp.json();
+        if (data && data.usage) gatewayUsage = data.usage;
         if (!data || data.status !== "success" || !data.response
             || data.response.identity !== "beyondx"
             || typeof data.response.text !== "string"
