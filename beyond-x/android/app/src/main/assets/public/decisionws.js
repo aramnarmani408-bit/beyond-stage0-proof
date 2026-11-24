@@ -24,7 +24,7 @@ function decisionRender() {
       var box = wsEl("div", "");
       box.appendChild(wsEl("div", o.name));
       box.appendChild(wsEl("div", "ګټې: " + (o.pros || []).join("، ")));
-      box.appendChild(wsEl("div", "زیانونه: " + (o.cons || []).join("، ")));
+      box.appendChild(wsEl("div", "زیانونه: " + (o.cons || []).join(", ")));
       if (!o.ratings) o.ratings = {};
       for (var c in decisionWeights) {
         (function (crit) {
@@ -96,4 +96,4 @@ function fillDecisionPanel(content) {
   }
   decisionRender();
 }
-function showDecisionPanel(show) { if (decisionPanelEl) decisionPanelEl.style.display = show ? "flex" : "none"; }
+function showDecisionPanel(show) { wsShow(decisionPanelEl, show); }
