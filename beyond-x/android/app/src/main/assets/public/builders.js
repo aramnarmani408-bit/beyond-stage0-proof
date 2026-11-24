@@ -19,6 +19,7 @@ function buildSchoolPanel() {
     var a = d.split(":");
     p.appendChild(bEl(a[0], a[1], a[2] || ""));
   });
+  p.appendChild(promptExamples("school"));
   m.appendChild(p);
   return p;
 }
