@@ -1,4 +1,4 @@
-// BEYOND X module 79/79: init — element wiring + resume + polling (LAST)
+// BEYOND X module 83/83: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -72,7 +72,10 @@ if (!AppState.convId) AppState.convId = "conv-" + Date.now();
 // Phase 1: the demo-chip rotation counter advances once per app open (D2).
 try { if (typeof localStorage !== "undefined") localStorage.setItem(DEMO_KEY, String(demoCount() + 1)); } catch (e) {}
 loadChat();
-if (AppState.messages.length === 0) renderDemo();
+// History/SQLite: the async store init runs after the sync first
+// paint; the demo waits while it loads (no flash on the device).
+if (typeof histInit === "function") histInit();
+if (AppState.messages.length === 0 && !(typeof histIsLoading === "function" && histIsLoading())) renderDemo();
 if ((typeof setPrefs === "undefined" || setPrefs.wsResume !== "off") && loadWorkspace() && workspaceState.status === "ready") {
     setWorkspaceStatus("ready");
     // Phase 3: the resume chain lives in reopenWorkspace() (universelib.js)
