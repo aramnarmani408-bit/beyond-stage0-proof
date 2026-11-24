@@ -71,7 +71,7 @@ function buildDesignPanel() {
   designSvgEl = svgEl("svg");
   designSvgEl.setAttribute("width", "300");
   designSvgEl.setAttribute("height", "400");
-  designSvgEl.style.background = "#0A0A1F";
+  designSvgEl.style.background = "var(--cd)";
   p.appendChild(designSvgEl);
   designExportEl = document.createElement("textarea");
   designExportEl.style.width = "100%";
@@ -85,10 +85,10 @@ function fillDesignPanel(content) {
   designShapes = [];
   for (var i = 0; i < nodes.length; i++) {
     designShapes.push({ type: "rect", x: 60, y: 20 + i * 70, w: 180, h: 40, color: DESIGN_COLORS[i % 3], rot: 0, text: "" });
-    designShapes.push({ type: "text", x: 70, y: 20 + i * 70, w: 160, h: 20, color: "#F1F5F9", rot: 0, text: nodes[i].label });
-    if (i > 0) designShapes.push({ type: "line", x: 150, y: 20 + (i - 1) * 70 + 40, w: 0, h: 30, color: "#94A3B8", rot: 0, text: "" });
+    designShapes.push({ type: "text", x: 70, y: 20 + i * 70, w: 160, h: 20, color: "var(--tx)", rot: 0, text: nodes[i].label });
+    if (i > 0) designShapes.push({ type: "line", x: 150, y: 20 + (i - 1) * 70 + 40, w: 0, h: 30, color: "var(--mu)", rot: 0, text: "" });
   }
   designSel = -1;
   designRender();
 }
-function showDesignPanel(show) { if (designPanelEl) designPanelEl.style.display = show ? "flex" : "none"; }
+function showDesignPanel(show) { wsShow(designPanelEl, show); }
