@@ -50,6 +50,7 @@ function buildGamesPanel() {
     panel.appendChild(gamesPlayEl);
     gamesSavedEl = document.createElement("div");
     panel.appendChild(gamesSavedEl);
+    panel.appendChild(promptExamples("games", gamesInputEl, gamesRequestFromPanel));
     document.getElementById("main").appendChild(panel);
     gamesPanelEl = panel;
     showGamesSaved();
@@ -73,7 +74,7 @@ function routeGames(q) {
         addMessage("د لوبو کارځای دې لپاره جوړ شو — لوبه وکړه او نوې لوبه جوړه کړه.", "ai");
     }
     var g = gamesPromptFrom(q);
-    if (g && gamesInputEl) gamesInputEl.value = g;
+    if (g && gamesInputEl) { gamesInputEl.value = g; gamesRequestFromPanel(); }
 }
 function gamesAddSaved(id, description, playUrl, apkUrl) {
     gamesSaved.unshift({ id: id, description: description, playUrl: playUrl, apkUrl: apkUrl });
