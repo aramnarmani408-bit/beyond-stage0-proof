@@ -12,6 +12,7 @@ const wordBtn = document.getElementById("wordBtn");
 const sentBtn = document.getElementById("sentBtn");
 const backChat = document.getElementById("backChat");
 const closeWorkspaceBtn = document.getElementById("closeWorkspaceBtn");
+const wsStatusEl = document.getElementById("workspaceStatus");
 const errDetailsBtn = document.getElementById("errDetailsBtn");
 
 if (drawerBtn && drawer) {
@@ -22,6 +23,13 @@ if (newChatBtn) newChatBtn.addEventListener("click", newChat);
 if (typeof buildDrawerControls === "function") buildDrawerControls();
 
 if (closeWorkspaceBtn) closeWorkspaceBtn.addEventListener("click", closeWorkspace);
+
+// Phase 3 (D10): tapping the workspace status line returns to the
+// active workspace (without refilling it — reopenWorkspace).
+if (wsStatusEl) {
+    wsStatusEl.style.cursor = "pointer";
+    wsStatusEl.addEventListener("click", () => { if (typeof reopenWorkspace === "function") reopenWorkspace(); });
+}
 
 if (errDetailsBtn) errDetailsBtn.addEventListener("click", showErrorDetails);
 
@@ -67,16 +75,9 @@ loadChat();
 if (AppState.messages.length === 0) renderDemo();
 if (loadWorkspace() && workspaceState.status === "ready") {
     setWorkspaceStatus("ready");
-    if (workspaceState.capability === "school") showPanel("school");
-    else if (workspaceState.capability === "islamic") { buildIslamicPanel(); showPanel("islamic"); }
-    else if (workspaceState.capability === "books") { buildBooksPanel(); showPanel("books"); }
-    else if (workspaceState.capability === "images") { buildImagesPanel(); showPanel("images"); }
-    else if (workspaceState.capability === "voice") { buildVoicePanel(); showPanel("voice"); }
-    else if (workspaceState.capability === "games") { buildGamesPanel(); showPanel("games"); }
-    else if (workspaceState.capability === "polyglot") { buildLanguagePanel(); showPanel("language"); }
-    else if (workspaceState.capability === "programming") { buildCodePanel(); showPanel("code"); }
-    else if (workspaceState.capability === "mobile") { buildMobilePanel(); showPanel("mobile"); }
-    else if (typeof universeResume === "function") universeResume(workspaceState.capability);
+    // Phase 3: the resume chain lives in reopenWorkspace() (universelib.js)
+    // — the same return path the status-line tap uses.
+    if (typeof reopenWorkspace === "function") reopenWorkspace();
 }
 checkGateway();
 if (typeof setInterval !== "undefined") {
