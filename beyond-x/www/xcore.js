@@ -13,10 +13,8 @@ function renderXcore() {
     const dot = document.getElementById("statusDot");
     let gw = gatewayState.status;
     if (gw !== "connecting" && Date.now() - gatewayState.checkedAt > HEALTH_STALE_MS) gw = "unknown";
-    const gwLabel = gw === "online" ? "آنلاین" : gw === "degraded" ? "کمزوری" : gw === "offline" ? "آفلاین" : gw === "connecting" ? "نښلول کېږي" : "نامعلوم";
-    let chatLabel = "چمتو";
-    if (chatState.status === "busy") chatLabel = "بوخت";
-    else if (!isChatReady()) chatLabel = chatState.status === "failed" ? "ناکام شو" : "نشته";
+    const gwLabel = { online: "آنلاین", degraded: "کمزوری", offline: "آفلاین", connecting: "نښلول کېږي" }[gw] || "نامعلوم";
+    let chatLabel = chatState.status === "busy" ? "بوخت" : !isChatReady() ? (chatState.status === "failed" ? "ناکام شو" : "نشته") : "چمتو";
     if (line) line.textContent = "ګیټوې: " + gwLabel + " • چټ: " + chatLabel;
     if (dot) dot.style.background = gw === "online" ? "#00FF88" : gw === "degraded" ? "#FFC107" : gw === "connecting" ? "#00F5FF" : "#FF4444";
     if (typeof renderNeon === "function") renderNeon();
@@ -37,7 +35,7 @@ async function checkGateway() {
     return gatewayState.status;
 }
 
-// Phase 1: jump-to-latest (ui.js is at the push limit).
+// Jump-to-latest.
 var jumpBtn = null;
 function onChatScroll() {
     var a = document.getElementById("chatArea");
@@ -50,12 +48,12 @@ function jumpToLatest() {
     a.scrollTop = a.scrollHeight;
     if (jumpBtn) jumpBtn.style.display = "none";
 }
-// Phase 1: history-row rendering (answer.js is at the push limit too).
+// History rows.
 function miniBtn(text, fn) {
     var b = document.createElement("button");
     b.textContent = text;
     b.style.background = "transparent";
-    b.style.color = "#94A3B8";
+    b.style.color = "var(--mu)";
     b.style.border = "0";
     b.style.padding = "4px";
     b.style.cursor = "pointer";
@@ -67,14 +65,16 @@ function chatRowEl(c) {
     li.className = "chat";
     var main = document.createElement("div");
     var t = document.createElement("div");
-    t.textContent = (c.pinned ? "★ " : "") + (c.title || chatTitleOf(c, 0));
-    if (c.id === AppState.convId) t.style.color = "#00F5FF";
+    var tt = (c.pinned ? "★ " : "") + (c.title || chatTitleOf(c, 0));
+    if (c.updated) { var dd = new Date(c.updated); tt += " — " + dd.getHours() + ":" + ("0" + dd.getMinutes()).slice(-2); }
+    t.textContent = tt;
+    if (c.id === AppState.convId) t.style.color = "var(--ac)";
     main.appendChild(t);
     var last = chatLastMsg(c);
     if (last) {
         var l = document.createElement("div");
         l.textContent = last;
-        l.style.color = "#94A3B8";
+        l.style.color = "var(--mu)";
         main.appendChild(l);
     }
     main.addEventListener("click", function () { switchChat(c.id); });
@@ -84,10 +84,11 @@ function chatRowEl(c) {
     acts.appendChild(miniBtn("✎", function () { chatRenameStart(c.id, li, main); }));
     acts.appendChild(miniBtn("📦", function () { chatArchive(c.id); }));
     acts.appendChild(miniBtn(chatDeleteArm === c.id ? "ډاډه یې؟" : "🗑", function () { chatDelete(c.id); }));
+    acts.appendChild(miniBtn("↗", function () { if (typeof shareChat === "function") shareChat(c.id); }));
     li.appendChild(acts);
     return li;
 }
-// Phase 1: jump-to-latest + Stop buttons (D7/D12). Called once from init.js.
+// Chat buttons (init.js calls once).
 function buildChatButtons() {
     var p = document.getElementById("chatPanel");
     if (!p) return;
