@@ -16,7 +16,7 @@ function d3Box(s) {
     scl: [Math.max(0.05, s.w / 150), Math.max(0.05, s.h / 200), 0.12], color: s.color || "#00F5FF" };
 }
 function d3Hex(hex) {
-  var n = parseInt((hex || "#00F5FF").slice(1), 16);
+  var n = parseInt((wsResolveColor(hex) || "#00F5FF").slice(1), 16);
   return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
 }
 function d3Shader(gl, type, src) {
@@ -60,7 +60,7 @@ function d3Init() {
 function d3Render() {
   if (!d3Gl || !d3Prog) return;
   var gl = d3Gl;
-  gl.clearColor(0.04, 0.04, 0.12, 1);
+  if (wsThemeDark()) gl.clearColor(0.04, 0.04, 0.12, 1); else gl.clearColor(0.95, 0.95, 0.96, 1);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.uniform1f(gl.getUniformLocation(d3Prog, "rx"), d3RotX);
   gl.uniform1f(gl.getUniformLocation(d3Prog, "ry"), d3RotY);
