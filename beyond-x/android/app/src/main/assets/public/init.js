@@ -1,4 +1,4 @@
-// BEYOND X module 83/83: init — element wiring + resume + polling (LAST)
+// BEYOND X module 85/85: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -75,6 +75,7 @@ loadChat();
 // History/SQLite: the async store init runs after the sync first
 // paint; the demo waits while it loads (no flash on the device).
 if (typeof histInit === "function") histInit();
+if (typeof memInit === "function") memInit();
 if (AppState.messages.length === 0 && !(typeof histIsLoading === "function" && histIsLoading())) renderDemo();
 if ((typeof setPrefs === "undefined" || setPrefs.wsResume !== "off") && loadWorkspace() && workspaceState.status === "ready") {
     setWorkspaceStatus("ready");
