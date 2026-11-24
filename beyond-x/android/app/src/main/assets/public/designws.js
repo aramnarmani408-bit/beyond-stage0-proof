@@ -76,6 +76,7 @@ function buildDesignPanel() {
   designExportEl = document.createElement("textarea");
   designExportEl.style.width = "100%";
   p.appendChild(designExportEl);
+  p.appendChild(promptExamples("design"));
   designPanelEl = p;
   designRender();
   return p;
