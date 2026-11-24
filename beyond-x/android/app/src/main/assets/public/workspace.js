@@ -1,5 +1,13 @@
 const workspaceState = { capability: null, mode: null, status: null, startedAt: 0, verified: false };
 const WS_KEY = "beyondx-workspaces-v1";
+// Phase 2: the workspace status line style (moved from index.html).
+var WS_CSS = "#workspaceStatus{color:var(--gd);font-size:13px}";
+if (typeof document !== "undefined" && document.head && !document.getElementById("wsStyle")) {
+  var wsst = document.createElement("style");
+  wsst.id = "wsStyle";
+  wsst.textContent = WS_CSS;
+  document.head.appendChild(wsst);
+}
 function saveWorkspace() {
     try {
         if (typeof localStorage === "undefined") return;
