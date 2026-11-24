@@ -14,6 +14,10 @@ setBtnRow(prof,"را واردول","JSON فایل غوره کړه",function(){if
 var qs=setText(prof,"ذخیره اندازه","…");
 setBtnRow(prof,"ذخیره پاکول","آرشیف شوي ړنګ کړه",function(){if(typeof histCleanup==="function")histCleanup().then(function(n){showToast(n+" آرشیف شوي خبرې ړنګې شوې");});});
 setBtnRow(prof,"تاریخچه ترمیم","وګوره + ترمیم کړه",function(){if(typeof histRecover==="function")histRecover().then(function(r){showToast(r.ok?(r.restored?"له بیک اپ څخه بېرته راغله":"تاریخچه سمه ده"):"ترمیم ونه شو");});});
+var ms=setText(prof,"حافظه","…");
+function memRowsUp(){if(!histMode){setTimeout(memRowsUp,100);return;}if(typeof memQuota==="function")memQuota().then(function(q){ms.textContent="حافظه: "+q.count+" یادونه • "+Math.round(q.used/1024)+"KB / "+Math.round(q.quota/1024)+"KB"+(q.over?" — ډک شوی":"");});}
+setBtnRow(prof,"حافظه","وګوره / سم کړه",function(){if(typeof memToggleList==="function")memToggleList(prof);});
+setConfirmRow(prof,"حافظه","ټولې یادونه ړنګ کړه",function(){if(typeof memDeleteAll==="function")memDeleteAll().then(function(n){showToast(n+" یادونه ړنګې شوې");memRowsUp();});});
 setOptRow(prof,"حرکت","motion",[["on","چالان"],["off","بند"]],true);
 var pr=setText(prof,"اجازې","…"),nr=setText(prof,"نیټیو اجازې","…");
 settingsPerms().then(function(p){pr.textContent="اجازې: مایک "+(p.microphone||"—")+" • کامره "+(p.camera||"—")+" • خبرتیاوې "+(p.notifications||"—");nr.textContent="نیټیو اجازې: کارول "+(p["usage-stats"]||"—")+" • لاسرسی "+(p.accessibility||"—")+" • سکرین "+(p["screen-capture"]||"—");});
@@ -26,4 +30,5 @@ setOptRow(prof,"کم سرچینې حالت","lowres",[["on","چالان"],["off"
 var fr=setText(prof,"نظرونه",settingsFeedback().text);
 setBtnRow(prof,"نظرونه","ړنګ کړه",function(){try{localStorage.removeItem("beyondx-feedback-v1");}catch(e){}if(fr)fr.textContent="نظرونه: "+settingsFeedback().text;showToast("نظرونه ړنګ شول");});
 histRowsUp();
+memRowsUp();
 }
