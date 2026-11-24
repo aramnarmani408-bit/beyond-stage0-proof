@@ -38,7 +38,7 @@ function imagesWatermark(dataUrl, done) {
         ctx.shadowColor = "rgba(0,0,0,0.65)"; ctx.shadowBlur = 4;
         ctx.textAlign = "right"; ctx.textBaseline = "bottom";
         ctx.fillText("BEYOND X", im.width - fs / 2, im.height - fs / 2);
-        done(cv.toDataURL("image/jpeg", 0.9));
+        done(cv.toDataURL("image/jpeg", (typeof setLowQ === "function" && setLowQ()) ? 0.6 : 0.9));
     };
     im.onerror = function () { done(dataUrl); };
     im.src = dataUrl;
