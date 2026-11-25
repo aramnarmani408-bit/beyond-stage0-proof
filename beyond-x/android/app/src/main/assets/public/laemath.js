@@ -1,5 +1,3 @@
-// L.A.E. Phase 1: math engine (core) — pure functions, no DOM, no
-// fetch. Equations + geometry live in laemath2.js (the push limit).
 var LAE_DIGITS = {"۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4", "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9", "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4", "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9", "٫": "."};
 var LAE_EA = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
 function laeDigits(s) {
@@ -18,15 +16,21 @@ function laeNums(q) {
   var m = laeDigits(q || "").match(/\d+(\.\d+)?/g) || [];
   return m.map(function (x) { return parseFloat(x); });
 }
-// Safe evaluator: + - * / with precedence, no parens, no eval. A bare
-// expression with parens returns null (the model answers it instead).
+// Safe evaluator: + - * / ^ (right-assoc), no parens, no eval.
+// Unicode superscripts (digits + signs only) normalize to ^ form
+// with run-sharing (5⁻¹ -> 5^-1, 2³² -> 2^32) — the gateway's
+// xMathAscii semantics. Superscript LETTERS are not mapped: any
+// letter in the expr fails the charset either way, so the result
+// is identical to the gateway's (2ⁿ -> null, x² -> null).
+var LAE_SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻", LAE_SUP_A = "0123456789+-";
+function laeSupAscii(s) { return s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+/g, function (m) { var o = "^", i; for (i = 0; i < m.length; i++) o += LAE_SUP_A.charAt(LAE_SUP.indexOf(m.charAt(i))); return o; }); }
 function laeEval(expr) {
-  var s = laeDigits(expr || "").replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
-  if (s.length === 0 || s.length > 60 || !/^[0-9+\-*/.]+$/.test(s)) return null;
+  var s = laeSupAscii(laeDigits(expr || "").replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/"));
+  if (s.length === 0 || s.length > 60 || !/^[0-9+\-*/.^]+$/.test(s)) return null;
   var nums = [], ops = [], cur = "";
   for (var i = 0; i < s.length; i++) {
     var c = s.charAt(i);
-    if (c === "+" || c === "-" || c === "*" || c === "/") {
+    if (c === "+" || c === "-" || c === "*" || c === "/" || c === "^") {
       if (cur === "" && c === "-") { cur = "-"; continue; }
       if (cur === "" || cur === "-") return null;
       var v = parseFloat(cur);
@@ -38,6 +42,9 @@ function laeEval(expr) {
   var last = parseFloat(cur);
   if (isNaN(last)) return null;
   nums.push(last);
+  var p = nums.slice(), po = ops.slice();
+  for (var h = po.length - 1; h >= 0; h--) if (po[h] === "^") { var pw = Math.pow(p[h], p[h + 1]); if (!isFinite(pw)) return null; p.splice(h, 2, pw); po.splice(h, 1); }
+  nums = p; ops = po;
   var n2 = [nums[0]], o2 = [];
   for (var j = 0; j < ops.length; j++) {
     if (ops[j] === "*" || ops[j] === "/") {
@@ -52,14 +59,13 @@ function laeEval(expr) {
 }
 var LAE_OP_NAME = { "+": "جمع", "-": "تفریق", "*": "ضرب", "/": "تقسیم", expr: "محاسبه" };
 var LAE_SHAPE_NAME = { rect: "مستطیل", square: "مربع", circle: "دایره", triangle: "مثلث" };
-// Operation detection. Order matters: "هر یو" (divide) before "هر"
-// (multiply); subtract before add ("ورکړ" beats "واخیست" in one question).
+// Op detection: "هر یو" first; subtract beats add.
 function laeWordOp(q) {
   var s = q || "";
-  if (s.indexOf("تفریق") !== -1 || s.indexOf("ورکړ") !== -1 || s.indexOf("پاتې") !== -1 || s.indexOf("کم شو") !== -1 || s.indexOf("منفي") !== -1) return "-";
-  if (s.indexOf("تقسیم") !== -1 || s.indexOf("وېش") !== -1 || s.indexOf("هر یو") !== -1) return "/";
-  if (s.indexOf("ضرب") !== -1 || s.indexOf("ځلې") !== -1 || s.indexOf("ځله") !== -1 || s.indexOf("هر") !== -1) return "*";
-  if (s.indexOf("جمع") !== -1 || s.indexOf("واخیست") !== -1 || s.indexOf("نور") !== -1 || s.indexOf("ټول") !== -1 || s.indexOf("یوځای") !== -1) return "+";
+  if (/تفریق|ورکړ|پاتې|کم شو|منفي/.test(s)) return "-";
+  if (/تقسیم|وېش|هر یو/.test(s)) return "/";
+  if (/ضرب|ځلې|ځله|هر/.test(s)) return "*";
+  if (/جمع|واخیست|نور|ټول|یوځای/.test(s)) return "+";
   if (s.indexOf("+") !== -1) return "+";
   if (s.indexOf("-") !== -1 || s.indexOf("−") !== -1) return "-";
   if (s.indexOf("*") !== -1 || s.indexOf("×") !== -1) return "*";
@@ -76,6 +82,6 @@ function laeSolveWord(q, override) {
   else result = laeEval(nums[0] + " " + op + " " + nums[1]);
   if (result === null) return null;
   var disp = nums.map(laeFmt);
-  var steps = ["شمېرې: " + disp.join("، "), "عمل: " + LAE_OP_NAME[op], disp.join(op === "+" ? " + " : " " + op + " ") + " = " + laeFmt(result)];
+  var steps = ["شمېرې: " + disp.join("، "), "عمل: " + LAE_OP_NAME[op], disp.join(" " + op + " ") + " = " + laeFmt(result)];
   return { kind: "word", topic: "حساب", nums: nums, op: op, result: result, unit: laeUnit(q), steps: steps, formula: "", ask: "word", values: { nums: nums, op: op } };
 }
