@@ -1,8 +1,5 @@
-// Design Phase 2: Settings v1 (D16) — ONLY working settings. Every row
-// changes something real, at once, and persists it. No fake options:
-// no Dari (the gateway chat route does not read it), no dead toggles.
-// Settings build (parts list §4): the SET store + the sections live
-// in settings2.js; this file holds the v1 rows + the row builders.
+// Design Phase 2: Settings v1 (D16) — ONLY working settings.
+// The SET store + the sections live in settings2.js.
 var settingsBuilt = false;
 var settingsBtns = [];
 function markSettings() {
@@ -89,8 +86,27 @@ function buildSettings() {
   var ab = document.createElement("div");
   ab.textContent = "BEYOND X — تنظیمات";
   prof.appendChild(ab);
+  var d = "";
+  try { d = localStorage.getItem("beyondx-draft-v1") || ""; } catch (e) {}
+  setText(prof, "مسوده", d ? d.length + " توري" : "نشه");
+  setBtnRow(prof, "مسوده پاکه کړه", "پاک", function () { try { localStorage.removeItem("beyondx-draft-v1"); } catch (e) {} });
+  setBtnRow(prof, "د پروګرام په اړه", "وښایه", function () { ppAboutShow(); });
+  setBtnRow(prof, "خبرې PDF", "چاپ", function () { if (typeof ppPrintChat === "function") ppPrintChat(); });
   if (typeof buildSettings2 === "function") buildSettings2(prof);
   markSettings();
+}
+function ppAboutShow() {
+  var p = document.getElementById("ppAboutPanel");
+  if (!p) {
+    p = bEl("div", "ppAboutPanel", "");
+    p.id = "ppAboutPanel";
+    p.appendChild(bEl("div", "", "BEYOND X — جوړوونکی: ارمان"));
+    var b = bEl("button", "", "بند");
+    b.addEventListener("click", function () { p.style.display = "none"; });
+    p.appendChild(b);
+    document.body.appendChild(p);
+  }
+  p.style.display = "";
 }
 // The voice setting: when on, each AI answer is spoken aloud.
 function voiceAutoSpeak() {
