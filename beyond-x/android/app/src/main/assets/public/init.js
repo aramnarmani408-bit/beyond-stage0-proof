@@ -1,4 +1,4 @@
-// BEYOND X module 134/134: init — element wiring + resume + polling (LAST)
+// BEYOND X module 133/133: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -33,16 +33,7 @@ if (wsStatusEl) {
 
 if (errDetailsBtn) errDetailsBtn.addEventListener("click", showErrorDetails);
 
-if (sendBtn) sendBtn.addEventListener("click", sendQuestion);
-if (askInput) {
-    askInput.addEventListener("keydown", e => {
-        if (e.key === "Enter") sendQuestion();
-    });
-}
-
-if (typeof buildChatButtons === "function") buildChatButtons();
-
-if (quizRestart) quizRestart.addEventListener("click", startQuiz);
+if (sendBtn) sendBtn.addEventListener("click", startQuiz);
 
 if (reviseBtn) reviseBtn.addEventListener("click", startRevision);
 
