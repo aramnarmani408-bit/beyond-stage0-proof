@@ -33,7 +33,16 @@ if (wsStatusEl) {
 
 if (errDetailsBtn) errDetailsBtn.addEventListener("click", showErrorDetails);
 
-if (sendBtn) sendBtn.addEventListener("click", startQuiz);
+if (sendBtn) sendBtn.addEventListener("click", sendQuestion);
+if (askInput) {
+    askInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") sendQuestion();
+    });
+}
+
+if (typeof buildChatButtons === "function") buildChatButtons();
+
+if (quizRestart) quizRestart.addEventListener("click", startQuiz);
 
 if (reviseBtn) reviseBtn.addEventListener("click", startRevision);
 
