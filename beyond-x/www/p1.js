@@ -1,0 +1,23 @@
+// Partial parts (item 5) — workspace: #179 Minimize, #180 State,
+// #182 Performance, #183 Interaction. (#168 Math is in lessonws.js;
+// the math capability is in core.js + workspace.js.)
+var PP_MIN_KEY="beyondx-pp-min-v1";
+function ppPanelId(cap){if(cap==="polyglot")return "languagePanel";if(cap==="programming")return "codePanel";return cap+"Panel";}
+var PP_WS_ROW=null,PP_WS_MIN_BTN=null,PP_WS_MEM=null;
+function ppWsActions(){if(PP_WS_ROW)return PP_WS_ROW;var el=document.getElementById("workspaceStatus");if(!el)return null;var r=bEl("div","ppWsActions","");r.id="ppWsActions";r.style.display="none";PP_WS_MIN_BTN=bEl("button","","− کوچنی کړه");PP_WS_MIN_BTN.addEventListener("click",function(){if(workspaceState.minimized)ppRestore();else ppMinimize();});r.appendChild(PP_WS_MIN_BTN);[["خوندي کړه",ppWorkspaceExport],["شریک کړه",ppWorkspaceShare]].forEach(function(x){var b=bEl("button","",x[0]);b.addEventListener("click",x[1]);r.appendChild(b);});PP_WS_MEM=bEl("span","ppWsMem","");r.appendChild(PP_WS_MEM);if(el.parentNode)el.parentNode.appendChild(r);PP_WS_ROW=r;return r;}
+function ppWsActionsUp(){var r=ppWsActions();if(!r)return;var cap=workspaceState.capability;r.style.display=cap?"":"none";if(!cap)return;if(PP_WS_MIN_BTN)PP_WS_MIN_BTN.textContent=workspaceState.minimized?"بېرته خلاص کړه":"− کوچنی کړه";if(PP_WS_MEM)PP_WS_MEM.textContent="حافظه: "+ppMemUse();}
+function ppMinimize(){if(!workspaceState.capability)return;try{localStorage.setItem(PP_MIN_KEY,workspaceState.capability);}catch(e){}workspaceState.minimized=true;showPanel("chat");if(typeof setWorkspaceStatus==="function")setWorkspaceStatus("minimized");showToast("کارځای کوچنی شو");}
+function ppRestore(){var cap=null;try{cap=localStorage.getItem(PP_MIN_KEY);}catch(e){}if(!cap)return;workspaceState.minimized=false;try{localStorage.removeItem(PP_MIN_KEY);}catch(e){}showPanel(cap);if(typeof setWorkspaceStatus==="function")setWorkspaceStatus("ready");}
+function ppMemUse(){var n=0;try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);n+=(localStorage.getItem(k)||"").length;}}catch(e){}return Math.round(n/1024)+" KB";}
+function ppReleaseWorkspace(cap){if(cap==="images"&&typeof imagesResultEl!=="undefined"&&imagesResultEl){while(imagesResultEl.firstChild)imagesResultEl.removeChild(imagesResultEl.firstChild);}if(cap==="games"){var g=document.getElementById("gamesPanel");if(g&&g.querySelector){var c=g.querySelector("canvas");if(c&&c.parentNode)c.parentNode.removeChild(c);}}}
+function ppWsText(){var p=document.getElementById(ppPanelId(workspaceState.capability));return p?p.textContent:"";}
+function ppWorkspaceExport(){if(!workspaceState.capability){showToast("لومړی کارځای خلاص کړه");return;}var txt=ppWsText();if(!txt){showToast("خوندي کول نشته");return;}try{var blob=new Blob([txt],{type:"text/plain"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="beyondx-"+workspaceState.capability+".txt";a.click();showToast("کارځای خوندي شو");}catch(e){showToast("خوندي کول ونشول");}}
+function ppWorkspaceShare(){if(!workspaceState.capability){showToast("لومړی کارځای خلاص کړه");return;}var txt=ppWsText();if(!txt){showToast("شریکول نشته");return;}if(typeof mobileShare==="function")mobileShare("BEYOND X — "+workspaceState.capability,txt);else showToast("شریکول نشته");}
+if(typeof showPanel==="function"){var _p1SP=showPanel;showPanel=function(n){_p1SP(n);if(typeof showMathPanel==="function")showMathPanel(n==="math");};}
+if(typeof buildChatButtons==="function"){var _p1BCB=buildChatButtons;buildChatButtons=function(){_p1BCB();if(typeof ppAddMathBtn==="function")ppAddMathBtn();ppLenSelect();};}
+if(typeof setWorkspaceStatus==="function"){var _p1SWS=setWorkspaceStatus;setWorkspaceStatus=function(s){_p1SWS(s);ppWsActionsUp();};}
+if(typeof closeWorkspace==="function"){var _p1CW=closeWorkspace;closeWorkspace=function(){var cap=workspaceState.capability;_p1CW();if(cap)ppReleaseWorkspace(cap);};}
+
+var PP_LEN="normal";
+function ppLenSelect(){var a=document.getElementById("inputArea");if(!a||document.getElementById("ppLenSel"))return;var s=document.createElement("select");s.id="ppLenSel";[["normal","عادي"],["short","لنډ"],["long","اوږد"]].forEach(function(o){var op=document.createElement("option");op.value=o[0];op.textContent=o[1];s.appendChild(op);});s.addEventListener("change",function(){PP_LEN=s.value;});a.appendChild(s);}
+if(typeof askBeyond==="function"){var _ppAB=askBeyond;askBeyond=function(q){var p=PP_LEN==="short"?"په لنډ ډول ځواب راکړه: ":PP_LEN==="long"?"په تفصیل سره ځواب راکړه: ":"";PP_LEN="normal";var s=document.getElementById("ppLenSel");if(s)s.value="normal";return _ppAB(p+q);};}
