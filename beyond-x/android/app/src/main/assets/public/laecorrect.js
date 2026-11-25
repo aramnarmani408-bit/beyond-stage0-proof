@@ -61,7 +61,7 @@ function laeCommand(q) {
   var s = q || "";
   // REQ-IDENTITY-002: "which model?" gets a BEYOND X answer, no model named.
   if (s.indexOf("ستا ماډل") !== -1 || s.indexOf("ستا موډل") !== -1 || s.indexOf("کوم ماډل یې") !== -1 || s.indexOf("کوم موډل یې") !== -1 || s.indexOf("which model") !== -1) {
-    addMessage("زه BEYOND X یم، د BEYOND AI جوړ کړی هوښیار مرستیال یم.", "ai");
+    addMessage("زه BEYOND X یم، د ارمان جوړ کړی هوښیار مرستیال یم.", "ai");
     return true;
   }
   if (s.indexOf("زما یادونه ړنګه کړه") !== -1 || s.indexOf("حافظه ړنګه کړه") !== -1) {
