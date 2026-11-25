@@ -81,7 +81,7 @@ function laeGwCalcBox(box, spec) {
       v = (typeof laeEval === "function") ? laeEval(s) : null;
       p.push(o.label + ": " + (v === null ? "—" : laeFmt(v)));
     }
-    outEl.textContent = p.join(", ");
+    outEl.textContent = p.join("، ");
   }
   for (i = 0; i < spec.vars.length; i++) (function (vv) {
     var r = wsEl("div", ""), inp = document.createElement("input");
