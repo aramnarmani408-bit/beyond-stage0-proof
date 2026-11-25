@@ -54,7 +54,7 @@ function accRender() {
     av.appendChild(b);
   });
   accBox.appendChild(av);
-  setText(accBox, "عکس", "د عکس پورته کول لا نه دي چمتو — R2 ته اړتیا ده");
+  if (typeof photoWsShow === "function") photoWsShow();
   setText(accBox, "تاریخچه خوندي کول", u.opt_in_history ? "هو" : "نه");
   setBtnRow(accBox, "تاریخچه", u.opt_in_history ? "بند کړه" : "چالان کړه", function () {
     var next = !accUser().opt_in_history;
