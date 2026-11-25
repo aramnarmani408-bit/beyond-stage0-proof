@@ -69,3 +69,4 @@ const WS_LABELS = {
     minimized: "کوچنی شوی", saved: "خوندي شو",
     closed: "بند شو", error: "تېروتنه"
 };
+
