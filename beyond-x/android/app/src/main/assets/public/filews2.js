@@ -1,0 +1,23 @@
+// #178 filews2 — panel + registry.
+var fwPanelEl = null, fwListEl = null, fwPrevEl = null, fwSearchEl = null, fwResEl = null, fwCur = null;
+function fwRenderList() { if (!fwListEl) return; wsClear(fwListEl); var fs = fwTextFiles(); if (!fs.length) { fwListEl.appendChild(wsEl("div", "متن فایل نشته.")); return; } for (var i = 0; i < fs.length; i++) { (function (f) { var r = wsEl("div", ""); r.appendChild(wsEl("div", fwFileLabel(f))); r.appendChild(wsBtn("خلاص کړه", function () { fwShowPreview(f); })); fwListEl.appendChild(r); })(fs[i]); } }
+function fwShowPreview(f) { if (!fwIsPreviewable(f)) { showToast("دا فایل خلاص نه شو"); return false; } fwCur = f; if (fwPrevEl) fwPrevEl.textContent = fwPreviewText(f.text); if (fwResEl) fwResEl.textContent = (f.name || "فایل") + " • " + fwLineCount(f.text) + " کرښې"; fwRenderList(); return true; }
+function fwClosePreview() { fwCur = null; if (fwPrevEl) fwPrevEl.textContent = ""; if (fwResEl) fwResEl.textContent = ""; }
+function fwDoSearch() { if (!fwCur) { showToast("لومړی یو فایل خلاص کړه"); return 0; } var q = fwSearchEl ? fwSearchEl.value : ""; var hits = fwSearchLines(fwCur.text, q); if (fwResEl) { if (!q) fwResEl.textContent = "لټون ولیکئ."; else if (!hits.length) fwResEl.textContent = "نه وموندل شو: " + q; else fwResEl.textContent = hits.length + " موندل شوي • کرښه " + hits[0] + ": " + fwSearchFirst(fwCur.text, q); } return hits.length; }
+function fwCopyCur() { if (!fwCur) { showToast("لومړی یو فایل خلاص کړه"); return; } if (typeof docCopy === "function") docCopy(fwCur.text || ""); else showToast("کاپي نشوه"); }
+function fwOpenAttached() { var fs = fwTextFiles(); if (!fs.length) { showToast("متن فایل نشته"); return false; } var f = fs[fs.length - 1]; buildFileWsPanel(); fwShowPreview(f); showToast("خلاص شو: " + (f.name || "فایل")); return true; }
+function buildFileWsPanel() { fwWrapAttach(); if (fwPanelEl) return fwPanelEl; var p = wsPanel("filewsPanel"); p.appendChild(wsEl("div", "فایل کارځای")); p.appendChild(wsEl("div", "یوازې متن فایلونه. PDF او Word استخراج لا نشته.")); fwListEl = wsEl("div", ""); p.appendChild(fwListEl); fwSearchEl = document.createElement("input"); fwSearchEl.placeholder = "په متن کې لټون"; p.appendChild(fwSearchEl); p.appendChild(wsBtn("لټون", fwDoSearch)); fwResEl = wsEl("div", ""); p.appendChild(fwResEl); fwPrevEl = document.createElement("pre"); fwPrevEl.style.cssText = "white-space:pre-wrap;max-height:320px;overflow-y:auto"; p.appendChild(fwPrevEl); p.appendChild(wsBtn("ضمیمه خلاص کړه", fwOpenAttached)); p.appendChild(wsBtn("کاپي", fwCopyCur)); p.appendChild(wsBtn("تړل", fwClosePreview)); fwPanelEl = p; fwRenderList(); return p; }
+function fillFileWsPanel(t) { buildFileWsPanel(); fwShowPreview({ kind: "text", name: "ځواب", text: String(t || ""), size: String(t || "").length }); }
+function ppOpenFileWs() { buildFileWsPanel(); fwRenderList(); showPanel("filews"); }
+function ppAddFileWsBtn() { fwWrapAttach(); var a = document.getElementById("inputArea"); if (!a || document.getElementById("ppFileWsBtn")) return; var b = bEl("button", "ppFileWsBtn", "📁 فایلونه"); b.addEventListener("click", ppOpenFileWs); a.appendChild(b); }
+if (typeof CAPABILITIES !== "undefined") CAPABILITIES.filews = { name: "فایلونه", status: "available", stage: 12 };
+if (typeof UNIVERSE_TYPES !== "undefined") { UNIVERSE_TYPES.filews = { cap: "filews", panel: "filews", name: "فایلونه" }; UNIVERSE_HINTS.filews = "متن فایل وګوره او لټون وکړه"; }
+var fwWrapped = false;
+function fwWrapAttach() { if (fwWrapped || typeof attach2Render !== "function") return; fwWrapped = true; var o = attach2Render; attach2Render = function () { o(); fwRenderList(); }; }
+var _fwVerify = verifyCapability; verifyCapability = function (c) { if (c === "filews") return { ok: typeof buildFileWsPanel === "function", missing: "filews" }; return _fwVerify(c); };
+var _fwIsCap = isUniverseCap; isUniverseCap = function (c) { return c === "filews" || _fwIsCap(c); };
+var _fwDirect = universeDirect; universeDirect = function (q) { q = q || ""; if (q.indexOf("فایل") !== -1 && (q.indexOf("خلاص") !== -1 || q.indexOf("وګوره") !== -1)) return "filews"; return _fwDirect(q); };
+var _fwBuild = universeBuild; universeBuild = function (t) { if (t === "filews") return buildFileWsPanel(); return _fwBuild(t); };
+var _fwFill = universeFill; universeFill = function (t, a) { if (t === "filews") { fillFileWsPanel(a || ""); return; } _fwFill(t, a); };
+var _fwShowUni = showUniversePanel; showUniversePanel = function (n) { _fwShowUni(n); wsShow(fwPanelEl, n === "filews"); };
+if (typeof setTimeout === "function") setTimeout(ppAddFileWsBtn, 800);
