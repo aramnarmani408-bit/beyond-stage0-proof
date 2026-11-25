@@ -86,3 +86,13 @@ function laeNextStep(obj) {
   if (p.kind === "word") return laeFmt(a + 5) + " " + p.op + " " + laeFmt(b) + " = ؟";
   return laeFmt(a) + " + " + laeFmt(b) + " = ؟";
 }
+
+// Living Answer, Phase 2: record a gateway answer in memory.
+function laeGwRemember(gw, q) {
+  var topic = gw.domain === "math" ? "ریاضي" : gw.domain === "science" ? "ساینس" : "عمومي";
+  if (gw.domain === "math" && typeof laeParseMath === "function") {
+    var p = laeParseMath(q);
+    if (p && p.topic) topic = p.topic;
+  }
+  laeRemember({ q: q, parsed: { topic: topic, result: gw.direct }, version: 1 });
+}
