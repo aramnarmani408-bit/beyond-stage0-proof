@@ -14,7 +14,7 @@ b.addEventListener("click",function(){if(attachInputEl)attachInputEl.click();});
 area.insertBefore(b,area.firstChild);
 attachInputEl=document.createElement("input");
 attachInputEl.type="file";attachInputEl.accept="image/*";attachInputEl.style.display="none";
-attachInputEl.addEventListener("change",function(){attachPick(attachInputEl.files?attachInputEl.files[0]:null);attachInputEl.value="";});
+attachInputEl.addEventListener("change",function(){if(typeof attachPickMany==="function")attachPickMany(attachInputEl.files);else attachPick(attachInputEl.files?attachInputEl.files[0]:null);attachInputEl.value="";});
 area.appendChild(attachInputEl);
 return b;
 }
