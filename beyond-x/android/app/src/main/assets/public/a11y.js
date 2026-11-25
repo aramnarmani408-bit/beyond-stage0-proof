@@ -13,3 +13,9 @@ if(typeof viCancelBtn==="function"){var _a11yVC=viCancelBtn;viCancelBtn=function
 if(typeof buildChatButtons==="function"){var _a11yBCB=buildChatButtons;buildChatButtons=function(){_a11yBCB();a11yLabels();};}
 if(typeof applySetPrefs==="function"){var _a11yASP=applySetPrefs;applySetPrefs=function(){_a11yASP();if(typeof setPrefs!=="undefined"&&setPrefs.motion==="off"&&typeof avatar3dStop==="function")avatar3dStop();};}
 a11yLabels();
+// --- Partial parts (item 5) ---
+// #221 Empty states: a friendly empty state for history, workspace,
+// search, files, drafts. #222 Error format: every error is 3 parts
+// (what happened + why + what to do).
+function ppEmpty(kind){var m={history:"لا دې کومه خبره نشته — نوې خبره پیل کړه.",workspace:"کارځای خالي دی — پوښتنه وکړه.",search:"هېڅ ونه موندل شو — بله کلمه هڅه وکړه.",files:"هېڅ فایل نشته — انځور یا متن ضمیمه کړه.",drafts:"هېڅ خوندي شوی مسوده نشته."}[kind]||"خالي دی";var d=bEl("div","pp-empty","");d.textContent=m;return d;}
+function ppErrFmt(what,why,fix){return what+" — "+why+" — "+fix;}
