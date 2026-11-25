@@ -1,4 +1,4 @@
-// BEYOND X module 125/125: init — element wiring + resume + polling (LAST)
+// BEYOND X module 134/134: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
