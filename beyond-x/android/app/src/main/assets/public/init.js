@@ -1,4 +1,4 @@
-// BEYOND X module 116/116: init — element wiring + resume + polling (LAST)
+// BEYOND X module 125/125: init — element wiring + resume + polling (LAST)
 const drawerBtn = document.getElementById("drawerBtn");
 const drawer = document.getElementById("drawer");
 const newChatBtn = document.getElementById("newChatBtn");
@@ -97,3 +97,4 @@ if (typeof document !== "undefined" && typeof document.addEventListener === "fun
 }
 setAction("چمتو یم");
 if (typeof neonFirstOpen === "function") neonFirstOpen();
+if (typeof splashReady === "function") splashReady();
