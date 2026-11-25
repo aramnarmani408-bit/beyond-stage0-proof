@@ -81,8 +81,11 @@ function handleRequest(q) {
 function sendQuestion() {
     const input = document.getElementById("askInput");
     if (!input) return;
-    const q = input.value.trim();
-    if (!q) return;
+    var q = input.value.trim();
+    if (!q) {
+        if (typeof attach2HasPending === "function" && attach2HasPending()) q = ATTACH_DEFAULT_Q;
+        else return;
+    }
     addMessage(q, "user");
     input.value = "";
     handleRequest(q);
