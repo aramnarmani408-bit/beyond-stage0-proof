@@ -3,9 +3,14 @@ var sessionExpiry = 0;
 var gatewayUsage = null;
 var chatCtrl = null;
 var chatStopped = false;
-// Data budget (infra.js): real chat-route bytes, counted per call.
-// Stateless: every add reads the stored total first, so a reload
-// (or another tab) never loses the day's earlier bytes.
+// #40: every gateway call is counted by route. The wrapper
+// forwards to the original; the call count stays 12.
+var GW_COUNT_KEY="beyondx-gwcount-v1";
+function gwRouteOf(u){var p=(u||"").split("/api/v1/x/")[1]||"";return p.split("/")[0].split("?")[0];}
+function gwCount(r){try{var s=JSON.parse(localStorage.getItem(GW_COUNT_KEY)||"null"),d=new Date().toISOString().slice(0,10);if(!s||s.d!==d)s={d:d,c:{}};s.c[r]=(s.c[r]||0)+1;localStorage.setItem(GW_COUNT_KEY,JSON.stringify(s));}catch(e){}}
+function gwCountText(){try{var s=JSON.parse(localStorage.getItem(GW_COUNT_KEY)||"null");if(!s||!s.c)return"";var t=[];for(var k in s.c)t.push(k+" "+pashtoDigits(s.c[k]));return t.join(" • ");}catch(e){return"";}}
+var _gwNet=(typeof fetch==="function")?fetch:null;
+if(_gwNet)fetch=function(u,o){try{if(typeof u==="string"&&u.indexOf("beyond-build-gateway")!==-1)gwCount(gwRouteOf(u));}catch(e){}return _gwNet(u,o);};
 function dataBudgetAdd(n) {
     var b = dataBudgetRead() + n;
     try { localStorage.setItem("beyondx-data-v1", JSON.stringify({ d: new Date().toISOString().slice(0, 10), b: b })); } catch (e) {}
