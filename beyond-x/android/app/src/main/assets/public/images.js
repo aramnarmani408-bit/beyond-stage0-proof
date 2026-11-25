@@ -12,8 +12,7 @@ function imagesEl(tag, text) {
     return el;
 }
 function imagesBtn(text, fn) {
-    var b = imagesEl("button", text);
-    b.addEventListener("click", fn);
+    var b = imagesEl("button", text);    b.addEventListener("click", fn);
     return b;
 }
 function imagesInput(ph) {
@@ -56,6 +55,7 @@ function buildImagesPanel() {
     panel.appendChild(imagesStatusEl);
     imagesHistoryEl = document.createElement("div");
     panel.appendChild(imagesHistoryEl);
+    panel.appendChild(imagesEl("div", "انځورونه خوندي نه دي."));
     panel.appendChild(promptExamples("images", imagesPromptEl, imagesGenerate));
     document.getElementById("main").appendChild(panel);
     imagesPanelEl = panel;
@@ -73,7 +73,7 @@ function showGeneratedImage(r) {
     img.src = "data:" + r.mimeType + ";base64," + r.image;
     img.style.maxWidth = "100%";
     imagesResultEl.appendChild(img);
-    imagesAdd(r.prompt + (r.watermark ? " — دا انځور د Pollinations نښه لري" : r.provider === "flux" ? " — دا انځور اوس ښکته کړه، وروسته نه خوندي کېږي." : ""));
+    imagesAdd(r.prompt + (r.watermark ? " — دا انځور د Pollinations نښه لري" : r.provider === "flux" ? " — دا انځور اوس ښکته کړه." : ""));
     var dl = document.createElement("a");
     dl.textContent = "خوندي کړه";
     dl.href = img.src;
