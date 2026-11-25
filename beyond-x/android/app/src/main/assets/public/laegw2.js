@@ -94,7 +94,7 @@ function laeGwRender(gw, q, modelText) {
   laeHideAll();
   if (bad.length > 0) {
     addMessage("ځواب: " + laeGwDirect(), "ai");
-    addMessage("د محاسبې تایید ونه شو (" + bad.join(", ") + ") — ځواب وګوره.", "ai");
+    addMessage("د محاسبې تایید ونه شو (" + bad.join("، ") + ") — ځواب وګوره.", "ai");
     return true;
   }
   laeGwRenderLayers();
