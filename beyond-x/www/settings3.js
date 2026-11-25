@@ -13,7 +13,7 @@ setBtnRow(prof,"صادرول","ټولې خبرې JSON",function(){if(typeof hist
 setBtnRow(prof,"را واردول","JSON فایل غوره کړه",function(){if(typeof histImportPick==="function")histImportPick();});
 var qs=setText(prof,"ذخیره اندازه","…");
 setBtnRow(prof,"ذخیره پاکول","آرشیف شوي ړنګ کړه",function(){if(typeof histCleanup==="function")histCleanup().then(function(n){showToast(n+" آرشیف شوي خبرې ړنګې شوې");});});
-setBtnRow(prof,"تاریخچه ترمیم","وګوره + ترمیم کړه",function(){if(typeof histRecover==="function")histRecover().then(function(r){showToast(r.ok?(r.restored?"له بیک اپ څخه بېرته راغله":"تاریخچه سمه ده"):":ترمیم ونه شو");});});
+setBtnRow(prof,"تاریخچه ترمیم","وګوره + ترمیم کړه",function(){if(typeof histRecover==="function")histRecover().then(function(r){showToast(r.ok?(r.restored?"له بیک اپ څخه بېرته راغله":"تاریخچه سمه ده")":"ترمیم ونه شو");});});
 var ms=setText(prof,"حافظه","…");
 function memRowsUp(){if(!histMode){setTimeout(memRowsUp,100);return;}if(typeof memQuota==="function")memQuota().then(function(q){ms.textContent="حافظه: "+q.count+" یادونه • "+Math.round(q.used/1024)+"KB / "+Math.round(q.quota/1024)+"KB"+(q.over?" — ډک شوی":"");});}
 setBtnRow(prof,"حافظه","وګوره / سم کړه",function(){if(typeof memToggleList==="function")memToggleList(prof);});
