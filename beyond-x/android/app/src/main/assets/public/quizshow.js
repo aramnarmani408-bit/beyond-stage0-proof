@@ -20,7 +20,7 @@ function showQuizQuestion() {
                 const names = weakList.map(function (i) {
                     return quizState.kind === "sentence" ? vocabItems()[i].en : quizWords[i][0];
                 });
-                r += " — کمزورې کلمې: " + names.join("، ");
+                r += " — کمزورې کلمې: " + names.join(", ");
             } else {
                 r += " — ټولې کلمې زده شوې!";
             }
@@ -82,4 +82,27 @@ function routeSchool(q, mode) {
     }
     if (q.indexOf("کوئز") !== -1) startQuiz();
     askBeyond(q);
+}
+
+// Living Answer, Phase 2: the quiz doing (one at a time, live scoring).
+function laeGwQuizBox(box, spec) {
+  var i = 0, score = 0;
+  if (!spec || !Array.isArray(spec.questions) || !spec.questions.length) { box.appendChild(wsEl("div", "کوئز نشته")); return; }
+  function show() {
+    while (box.firstChild) box.removeChild(box.firstChild);
+    if (i >= spec.questions.length) { box.appendChild(wsEl("div", "پایله: " + score + " / " + spec.questions.length)); return; }
+    var q = spec.questions[i];
+    box.appendChild(wsEl("div", q.q));
+    q.options.forEach(function (opt) {
+      box.appendChild(wsBtn(opt, function () {
+        var ok = (opt === q.answer);
+        if (ok) score++;
+        i++;
+        while (box.firstChild) box.removeChild(box.firstChild);
+        box.appendChild(wsEl("div", ok ? "سم دی!" : "سم ځواب: " + q.answer));
+        box.appendChild(wsBtn(i < spec.questions.length ? "بله پوښتنه" : "پایله", show));
+      }));
+    });
+  }
+  show();
 }
