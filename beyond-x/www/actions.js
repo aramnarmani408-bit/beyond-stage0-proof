@@ -58,18 +58,13 @@ async function regenerateLast() {
     return;
   }
   if (!AppState.lastQuestion) { showToast("بیا جوړولو ته پوښتنه نشته"); return; }
-  msgs.pop();
+  var cut = msgs.length;
+  while (cut > 0 && msgs[cut - 1].who === "ai") cut--;
+  if (cut === 0) cut = msgs.length - 1;
+  msgs.length = cut;
   if (typeof chatMutate === "function") chatMutate(AppState.convId, function () {});
   else saveChat();
-  var area = typeof document !== "undefined" ? document.getElementById("chatArea") : null;
-  if (area) {
-    for (var i = area.children.length - 1; i >= 0; i--) {
-      if (area.children[i].className === "msg ai") { area.removeChild(area.children[i]); break; }
-    }
-    for (var j = area.children.length - 1; j >= 0; j--) {
-      if (area.children[j].className === "act-row") { area.removeChild(area.children[j]); break; }
-    }
-  }
+  if (typeof renderChatMessages === "function") renderChatMessages();
   await askBeyond(AppState.lastQuestion);
 }
 function feedbackAnswer(text, good) {
