@@ -1,8 +1,10 @@
 // Static HTML builders — parts of index.html moved to JS so the script
 // tags fit the push limit. The school panel moved here from quizshow.js
 // (L.A.E. Phase 1); the drawer, welcome, toast, status + header followed.
+// Title moved here (item 8).
 // Every builder runs at module load, before init.js wires the buttons,
-// and is idempotent (returns null if the element already exists).
+// and is idempotent (null if it already exists).
+document.title = "BEYOND X";
 function bEl(tag, id, text) {
   var e = document.createElement(tag);
   if (id) e.id = id;
@@ -15,6 +17,7 @@ function buildSchoolPanel() {
   var m = document.getElementById("main");
   if (!m) return null;
   var p = bEl("div", "schoolPanel", "");
+  p.style.display = "none";
   SCHOOL_DEFS.split("|").forEach(function (d) {
     var a = d.split(":");
     p.appendChild(bEl(a[0], a[1], a[2] || ""));
