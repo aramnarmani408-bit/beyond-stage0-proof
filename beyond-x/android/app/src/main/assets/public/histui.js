@@ -1,9 +1,6 @@
-// History store 4/4 — UI hooks: xcore.js / ui.js / answer.js /
-// ctxshare.js are at the push limit, so the new behavior wraps
-// their functions here instead of editing them. Archived chats
-// group under آرشیف via the chatGroupOf wrap + the archived-last
-// sort in histListRows (a timestamp shared by an archived and an
-// unarchived chat falls back to the date group — cosmetic only).
+// History store 4/4 — UI hooks. xcore/ui/answer/ctxshare are at the
+// push limit, so new behavior wraps their functions here instead.
+// Archived chats group under آرشیف (chatGroupOf + histListRows).
 function histPinCount(){var n=0;for(var i=0;i<AppState.chats.length;i++)if(AppState.chats[i].pinned)n++;return n;}
 if(typeof chatPin==="function"){var _histChatPin=chatPin;chatPin=function(id){var c=chatById(id);if(c&&!c.pinned&&histPinCount()>=HIST_PIN_MAX){showToast("تر ټولو زیات ۵ پن شوي خبرې");return;}_histChatPin(id);};}
 if(typeof chatDelete==="function"){var _histChatDelete=chatDelete;chatDelete=function(id){var will=typeof chatDeleteArm!=="undefined"&&chatDeleteArm===id;var before=AppState.chats.length;var snap=null;if(will){var c=chatById(id);if(c){try{snap=JSON.parse(JSON.stringify(c));}catch(e){}}}_histChatDelete(id);if(will&&AppState.chats.length<before&&snap){histTomb={chat:snap,at:Date.now()};histShowUndo();}};}
@@ -15,3 +12,6 @@ function histCloseMenu(){var m=typeof document!=="undefined"?document.getElement
 function histRowMenu(id){if(typeof document==="undefined")return;var m=histFloat("histMenu");var items=[["کاپي کړه",function(){histDuplicate(id);}], ["TXT",function(){histExportOne(id,"txt");}], ["JSON",function(){histExportOne(id,"json");}]];items.forEach(function(it){var b=document.createElement("button");b.textContent=it[0];b.style.display="block";b.style.width="100%";b.style.margin="4px 0";b.addEventListener("click",function(){histCloseMenu();it[1]();});m.appendChild(b);});}
 function histShowUndo(){if(typeof document==="undefined")return;var b=histFloat("histUndo");var t=document.createElement("div");t.textContent="خبره ړنګه شوه";b.appendChild(t);var u=document.createElement("button");u.textContent="بېرته راوله";u.addEventListener("click",histUndoDelete);b.appendChild(u);setTimeout(histHideUndo,10000);}
 function histHideUndo(){var b=typeof document!=="undefined"?document.getElementById("histUndo"):null;if(b){if(b.parentNode)b.parentNode.removeChild(b);else if(b.parent)b.parent.removeChild(b);}}
+// Vision thumbnails: one query per chat open, matched by message text.
+async function histShowThumbs(){if(!histNative())return;var a=document.getElementById("chatArea"),id=AppState.convId||"";if(!a||!id)return;var r;try{r=await histQuery("SELECT thumb, text FROM message_images WHERE chat_id=?",[id]);}catch(e){return;}if(!r||!r.ok||!r.data)return;var rows=r.data.rows||[];for(var i=0;i<a.children.length;i++){var d=a.children[i];if(!d.className||d.className.indexOf("msg ai")===-1)continue;var t=(d.textContent||"").slice(0,200);for(var j=0;j<rows.length;j++){var w=rows[j];if(w.text!==t||!w.thumb)continue;var m=bEl("img","","");m.src=w.thumb;m.style.cssText="display:block;max-width:120px;border-radius:8px";d.appendChild(m);break;}}}
+if(typeof renderChatMessages==="function"){var _histRender=renderChatMessages;renderChatMessages=function(){_histRender();histShowThumbs();};}
