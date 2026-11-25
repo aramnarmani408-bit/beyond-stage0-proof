@@ -93,3 +93,10 @@ function fillDesignPanel(content) {
   designRender();
 }
 function showDesignPanel(show) { wsShow(designPanelEl, show); }
+
+function laeGwDiagram(spec) {
+  if (!spec || !spec.shape || !Array.isArray(spec.nums)) return;
+  universeActivate("design", "");
+  var n = spec.nums, s = spec.shape, a = s==="rect"?n[0]*n[1]:s==="square"?n[0]*n[0]:s==="circle"?Math.PI*n[0]*n[0]:s==="triangle"?0.5*n[0]*n[1]:0;
+  laeDrawFigure({ values: { shape: s, nums: n }, ask: "area", result: a });
+}
