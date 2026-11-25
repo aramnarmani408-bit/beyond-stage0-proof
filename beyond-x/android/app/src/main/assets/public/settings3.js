@@ -36,4 +36,5 @@ var fr=setText(prof,"نظرونه",settingsFeedback().text);
 setBtnRow(prof,"نظرونه","ړنګ کړه",function(){try{localStorage.removeItem("beyondx-feedback-v1");}catch(e){}if(fr)fr.textContent="نظرونه: "+settingsFeedback().text;showToast("نظرونه ړنګ شول");});
 histRowsUp();
 memRowsUp();
+if(typeof buildAccountsSettings==="function")buildAccountsSettings(prof);
 }
