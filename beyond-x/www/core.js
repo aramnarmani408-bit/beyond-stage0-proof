@@ -50,6 +50,7 @@ const CAPABILITIES = {
     programming: { name: "پروګرام کول", status: "available", stage: 9 },
     mobile: { name: "موبایل کنټرول", status: "available", stage: 10 },
     lesson: { name: "درس", status: "available", stage: 12 },
+    math: { name: "ریاضي", status: "available", stage: 12 },
     design: { name: "ډیزاین", status: "available", stage: 12 },
     training: { name: "روزنه", status: "available", stage: 12 },
     codews: { name: "کوډ کارځای", status: "available", stage: 12 },
@@ -64,6 +65,7 @@ const WS_LABELS = {
     failed: "ناکام شو", "dependency-missing": "اړتیا نشته",
     "permission-required": "اجازه پکار ده",
     "gateway-unavailable": "ګیټوې نشته",
-    "verification-failed": "تایید ناکام شو"
+    "verification-failed": "تایید ناکام شو",
+    minimized: "کوچنی شوی", saved: "خوندي شو",
+    closed: "بند شو", error: "تېروتنه"
 };
-
