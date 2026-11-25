@@ -60,7 +60,7 @@ function laeParseMath(q, override) {
   if (w) return w;
   // Bare expression ("۵+۳").
   var s = laeDigits(q).replace(/\s+/g, "");
-  if (s.length <= 20 && /^[0-9+\-*/.×÷]+$/.test(s) && /[+\-*/×÷]/.test(s)) {
+  if (s.length <= 20 && /^[0-9+\-*/.×÷^⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+$/.test(s) && /[+\-*/×÷^⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]/.test(s)) {
     var v = laeEval(s);
     if (v !== null) return { kind: "expr", topic: "حساب", nums: laeNums(q), op: "expr", result: v, unit: "", steps: [s + " = " + laeFmt(v)], formula: "", ask: "expr", values: { nums: laeNums(q), op: "expr" } };
   }
