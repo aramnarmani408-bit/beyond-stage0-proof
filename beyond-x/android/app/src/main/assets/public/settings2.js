@@ -32,6 +32,5 @@ setBtnRow(prof,"د کارځای ډاټا","پاکه کړه",function(){if(typeof
 setOptRow(prof,"سرچینې وښیه","showSources",[["on","هو"],["off","نه"]],true);
 setText(prof,"ستا ډاټا","یوازې ستا په وسیله کې ده");
 setBtnRow(prof,"زما یادونه","ړنګه کړه",function(){if(typeof laeClearMemory==="function")laeClearMemory();showToast("یادونه ړنګه شوه");});
-setText(prof,"ناسته","مېلمه");
 if(typeof buildSettings3==="function")buildSettings3(prof);
 }
