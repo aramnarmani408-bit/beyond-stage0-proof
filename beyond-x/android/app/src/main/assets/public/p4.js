@@ -1,0 +1,15 @@
+// Partial parts (item 5) — overflow: features that do not fit the
+// 4KB byte budget of their home files. #92 PDF, #223 Undo, #24/#144
+// font + UI scale, #201/#202/#29/#200 rows, #101 sent files, #148
+// shortcuts, #119 image delete.
+var PP_UNDO=null,PP_UNDO_TIMER=null;
+function ppUndoPush(label,fn){PP_UNDO={label:label,fn:fn};ppUndoShow();}
+function ppUndoShow(){var t=document.getElementById("ppUndoToast");if(!t){t=bEl("div","ppUndoToast","");t.id="ppUndoToast";t.style.cssText="position:fixed;bottom:20px;left:20px;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px;z-index:60";document.body.appendChild(t);}while(t.firstChild)t.removeChild(t.firstChild);t.appendChild(bEl("span","",PP_UNDO?PP_UNDO.label:""));var b=bEl("button","","بېرته راوګرځوه");b.addEventListener("click",function(){ppUndo();});t.appendChild(b);t.style.display="";if(PP_UNDO_TIMER)clearTimeout(PP_UNDO_TIMER);PP_UNDO_TIMER=setTimeout(function(){t.style.display="none";PP_UNDO=null;},5000);}
+function ppUndo(){if(!PP_UNDO)return;var fn=PP_UNDO.fn;PP_UNDO=null;var t=document.getElementById("ppUndoToast");if(t)t.style.display="none";if(fn)fn();}
+function ppPrintChat(){var f=document.getElementById("ppPrintFrame");if(!f){f=document.createElement("iframe");f.id="ppPrintFrame";f.style.cssText="position:absolute;left:-9999px;width:1px;height:1px;";document.body.appendChild(f);}var doc=f.contentDocument||f.contentWindow.document;var html="<html><head><meta charset=UTF-8><title>خبرې</title></head><body dir=rtl>";for(var i=0;i<AppState.messages.length;i++){var m=AppState.messages[i];html+="<p><b>"+(m.who==="user"?"زه":"BEYOND X")+":</b> "+String(m.text||"").replace(/</g,"&lt;")+"</p>";}html+="</body></html>";doc.open();doc.write(html);doc.close();try{f.contentWindow.print();}catch(e){showToast("چاپ ونشو");}}
+function a11yFontRow(prof){if(!prof||typeof setText!=="function")return;var fs=document.createElement("div");fs.textContent="د لیکلو اندازه";var fr=document.createElement("input");fr.type="range";fr.min=12;fr.max=22;fr.step=1;fr.value=(typeof themePrefs!=="undefined"&&themePrefs.fontPx)||16;fr.addEventListener("input",function(){if(typeof setFontPx==="function")setFontPx(Number(fr.value));});fs.appendChild(fr);prof.appendChild(fs);}
+function a11yUiScaleApply(){if(typeof document==="undefined"||!document.body||!document.body.classList)return;var n=(typeof themePrefs!=="undefined"&&themePrefs.fontPx)||16;document.body.classList.toggle("ui-txt-sm",n<=13);document.body.classList.toggle("ui-txt-lg",n>=19);}
+if(typeof setFontPx==="function"){var _p4SFP=setFontPx;setFontPx=function(n){_p4SFP(n);a11yUiScaleApply();};}
+if(typeof document!=="undefined"&&document.head&&!document.getElementById("a11yUiStyle")){var s=document.createElement("style");s.id="a11yUiStyle";s.textContent="body.ui-txt-sm button,body.ui-txt-sm .msg{font-size:13px}body.ui-txt-lg button,body.ui-txt-lg .msg{font-size:18px}";document.head.appendChild(s);}
+a11yUiScaleApply();
+if(typeof buildSettings3==="function"){var _p4BS3=buildSettings3;buildSettings3=function(prof){_p4BS3(prof);a11yFontRow(prof);};}
