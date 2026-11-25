@@ -1,6 +1,6 @@
 var IMAGES_KEY = "beyondx-images-v1";
 var imagesLib = { items: [] };
-var NOUP = "پورته کول په دې وسیله کې نشته.";
+var NOUP = "پورته کول نشته.";
 function saveImages() {
     try {
         if (typeof localStorage === "undefined") return;
@@ -26,7 +26,7 @@ function imagesAddHistory(r) {
 }
 function showImagesHistory() {
     while (imagesHistoryEl.firstChild) imagesHistoryEl.removeChild(imagesHistoryEl.firstChild);
-    if (imagesLib.items.length === 0) { imagesHistoryEl.appendChild(imagesEl("div", "لا دې کوم انځور نه دی جوړ کړی.")); return; }
+    if (imagesLib.items.length === 0) { imagesHistoryEl.appendChild(imagesEl("div", "هېڅ انځور نشته.")); return; }
     imagesLib.items.forEach(function (it) {
         var d = imagesEl("div", it.prompt);
         d.addEventListener("click", function () { showHistoryImage(it); });
@@ -35,7 +35,7 @@ function showImagesHistory() {
 }
 function showHistoryImage(it) {
     imagesClear();
-    if (!it.data) { imagesAdd("دا انځور خوندي شوی نه دی — کله چې جوړ شو، ښکته یې کړه."); return; }
+    if (!it.data) { imagesAdd("دا انځور خوندي شوی نه دی."); return; }
     var img = document.createElement("img");
     img.src = it.data;
     img.style.maxWidth = "100%";
@@ -47,8 +47,8 @@ function imagesPanelError(e) {
     var m = e.message || "";
     if (m.indexOf("Failed: ") === 0) imagesAdd("انځور جوړ نه شو — " + m.slice(8));
     else if (m === "RateLimit") imagesAdd("ډېرې غوښتنې وشوې — لږ وروسته بیا هڅه وکړه");
-    else if (m === "TooBig") imagesAdd("انځور ډېر لوی دی — تر ۲ میګابایټ پورې.");
-    else imagesAdd("انټرنیټ نشته یا ځواب ونه رسېد — بیا هڅه وکړه");
+    else if (m === "TooBig") imagesAdd("انځور ډېر لوی دی.");
+    else imagesAdd("انټرنیټ نشته — بیا هڅه وکړه");
 }
 function imagesScaleSize(w, h) { var s = 1024 / Math.max(w, h); if (s >= 1) return { w: w, h: h }; return { w: Math.round(w * s), h: Math.round(h * s) }; }
 function imagesTooBig(b64) { return b64.length > 2800000; }
@@ -71,11 +71,12 @@ function imagesDownscaleTo(dataUrl, done) {
         ctx.drawImage(im, 0, 0, s.w, s.h);
         done(cv.toDataURL("image/jpeg", 0.8).split(",")[1] || "");
     };
-    im.onerror = function () { done(""); };
+    im.onerror = function () { done("CORRUPT"); };
     im.src = dataUrl;
 }
 function imagesDownscale(dataUrl) {
     imagesDownscaleTo(dataUrl, function (b64) {
+        if (b64 === "CORRUPT") { imagesAdd("دا انځور خراب دی"); if (typeof recordError === "function") recordError("corrupt-image", 0); return; }
         if (!b64) { imagesAdd(NOUP); return; }
         if (imagesTooBig(b64)) { imagesPanelError(new Error("TooBig")); return; }
         imagesAnalyze(b64, "image/jpeg", "");
