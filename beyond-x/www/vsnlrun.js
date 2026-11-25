@@ -16,7 +16,7 @@ function vsShowPending() {
     if (!vsPending || !vsNlPrevEl) return;
     while (vsNlPrevEl.firstChild) vsNlPrevEl.removeChild(vsNlPrevEl.firstChild);
     var p = vsPending;
-    vsNlPrevEl.appendChild(vsEl("div", "پایلې: " + vsNlSummary(p) + (p.notes.length ? " (" + p.notes.join("، ") + ")" : "")));
+    vsNlPrevEl.appendChild(vsEl("div", "پایلې: " + vsNlSummary(p) + (p.notes.length ? " (" + p.notes.join(String.fromCharCode(1548) + " ") + ")" : "")));
     vsNlPrevEl.appendChild(vsBtn("تایید", vsApplyPending));
     vsNlPrevEl.appendChild(vsBtn("لغوه", vsCancelPending));
     vsRender(vsPendingProject());
