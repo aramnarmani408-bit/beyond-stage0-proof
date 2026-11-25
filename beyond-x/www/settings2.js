@@ -16,7 +16,7 @@ var SET_CACHE_KEYS=["beyondx-images-v1","beyondx-books-v1","beyondx-games-v1","b
 function settingsCacheSizes(){var t=0,p=[];SET_CACHE_KEYS.forEach(function(k){try{var v=localStorage.getItem(k);if(v){t+=v.length;p.push(k.replace("beyondx-","").replace("-v1","")+" "+Math.round(v.length/1024)+"KB");}}catch(e){}});return{total:t,text:p.length?p.join(" • ")+" • ټول "+Math.round(t/1024)+"KB":"خالي دی"};}
 function settingsClearCache(){var n=0;SET_CACHE_KEYS.forEach(function(k){try{if(localStorage.getItem(k)){localStorage.removeItem(k);n++;}}catch(e){}});return n;}
 function settingsFeedback(){var u=0,d=0;try{JSON.parse(localStorage.getItem("beyondx-feedback-v1")||"[]").forEach(function(f){if(f.g)u++;else d++;});}catch(e){}return{up:u,down:d,text:u+d===0?"لا نظر نشته":"👍 "+pashtoDigits(u)+" • 👎 "+pashtoDigits(d)};}
-function settingsUsageText(){if(typeof gatewayUsage==="undefined"||!gatewayUsage)return"—";return pashtoDigits(gatewayUsage.used_ip||0)+"/۳۰";}
+function settingsUsageText(){if(typeof gatewayUsage==="undefined"||!gatewayUsage)return"—";var t=pashtoDigits(gatewayUsage.used_ip||0)+"/۳۰";if(typeof gwCountText==="function"){var g=gwCountText();if(g)t+=" • "+g;}return t;}
 function settingsPerms(){return Promise.all(["microphone","camera","notifications"].map(function(n){return mobilePerm(n);})).then(function(s){var o={microphone:s[0],camera:s[1],notifications:s[2]};["usage-stats","accessibility","screen-capture"].forEach(function(c){o[c]=mobileStatus(c);});return o;});}
 var setUsageRow=null;
 function settingsRefresh(){if(setUsageRow)setUsageRow.textContent="نننۍ کارونه: "+settingsUsageText();}
