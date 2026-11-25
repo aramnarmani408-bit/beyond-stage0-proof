@@ -1,8 +1,6 @@
 // Files build 2 (1/2) — the pending LIST: pick (images + text),
 // per-file name + type + size + status, duplicates, cancel,
-// progress, retry. The send half is attach3.js — the two files
-// together are the build-2 module (one file cannot pass the
-// push limit). No new fetch.
+// progress, retry. The send half is attach3.js. No new fetch.
 var attach2List=[],attach2Cx=false,attach2Busy=false,attach2LQ="",attach2El=null,attach2Pr=null;
 var ATTACH2_TEXT_RAW_MAX=8000,ATTACH2_TEXT_SEND_MAX=1800;
 function attachSanitize(n){var s="",x=n||"";for(var i=0;i<x.length;i++){var c=x.charCodeAt(i);if(c===47||c===92||c<32||c===127)continue;s+=x[i];}if(s.length>40)s=s.slice(0,39)+"…";return s||"فایل";}
@@ -14,6 +12,6 @@ function attach2Remove(f){var i=attach2List.indexOf(f);if(i!==-1)attach2List.spl
 function attach2CancelAll(){if(attach2Busy){attach2Cx=true;return;}attach2List.length=0;attach2Render();}
 function attach2Progress(c,t){if(attach2Pr)attach2Pr.textContent="لېږل کېږي "+pashtoDigits(c)+"/"+pashtoDigits(t);}
 function attach2Read(f,m,cb){var r=new FileReader();r._f=f;r.onload=function(){cb(this._f,this.result);};if(m)r.readAsDataURL(f);else r.readAsText(f);}
-function attachPickMany(fs){if(!fs||!fs.length)return;if(typeof FileReader==="undefined"){showToast(NOUP);return;}for(var i=0;i<fs.length;i++){var f=fs[i];if(!f)continue;if(f.type&&f.type.indexOf("image/")===0)attach2Read(f,1,function(ff,u){imagesDownscaleTo(u,function(b){if(!b){showToast("انځور ونه لوستل شو — بل انځور هڅه وکړه");return;}if(imagesTooBig(b)){showToast("انځور ډېر لوی دی — تر ۲ میګابایټ پورې.");return;}attach2AddFile({kind:"image",b64:b,name:ff.name||"",size:ff.size||0});});});else if((f.type&&f.type.indexOf("text/")===0)||/\.(txt|md|text)$/i.test(f.name||""))attach2Read(f,0,function(ff,t){t=t||"";if(t.length>ATTACH2_TEXT_RAW_MAX){showToast("فایل ډېر لوی دی");return;}attach2AddFile({kind:"text",text:t,name:ff.name||"",size:ff.size||t.length});});else showToast("یوازې انځورونه او متن فایلونه");}}
+function attachPickMany(fs){if(!fs||!fs.length)return;if(typeof FileReader==="undefined"){showToast(NOUP);return;}for(var i=0;i<fs.length;i++){var f=fs[i];if(!f)continue;if((f.type&&f.type.indexOf("application/zip")===0)||/\.zip$/i.test(f.name||"")){showToast("ZIP نه خلاصېږي — فایلونه یو یو ضمیمه کړه");continue;}if(f.type&&f.type.indexOf("image/")===0)attach2Read(f,1,function(ff,u){imagesDownscaleTo(u,function(b){if(!b){showToast("انځور ونه لوستل شو");return;}if(imagesTooBig(b)){showToast("انځور ډېر لوی دی ("+Math.round((ff.size||0)/1024)+" KB) — تر ۲ میګابایټ پورې.");return;}attach2AddFile({kind:"image",b64:b,name:ff.name||"",size:ff.size||0});});});else if((f.type&&f.type.indexOf("text/")===0)||/\.(txt|md|text)$/i.test(f.name||""))attach2Read(f,0,function(ff,t){t=t||"";if(t.length>ATTACH2_TEXT_RAW_MAX){showToast("فایل ډېر لوی دی ("+Math.round(t.length/1024)+" KB).");return;}attach2AddFile({kind:"text",text:t,name:ff.name||"",size:ff.size||t.length});});else showToast("یوازې انځورونه او متن فایلونه");}}
 if(typeof handleRequest==="function"){var _a2Prev=handleRequest;handleRequest=function(q){if(attach2List.length){attach2SendAll(q);return;}if(attachPending){attachSend(q);return;}_a2Prev(q);};}
 attach2BuildList();
