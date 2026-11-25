@@ -39,7 +39,7 @@ async function askBeyond(question) {
     if (typeof customCommand === "function" && customCommand(question)) return;
     if (isIdentityQuestion(question)) {
         setAction("ځواب ورکوم");
-        addMessage("زه BEYOND X یم، د BEYOND AI جوړ کړی هوښیار مرستیال یم.", "ai");
+        addMessage("زه BEYOND X یم، د ارمان جوړ کړی هوښیار مرستیال یم.", "ai");
         // REQ-ANSWER-007: the identity answer counts as the first answer.
         maybeWow();
         if (typeof laeMarkAnswered === "function") laeMarkAnswered();
