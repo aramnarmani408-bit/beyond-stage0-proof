@@ -1,8 +1,8 @@
 // #170 Ornate book viewer (1/2) — chapters, verbatim render, search,
 // bookmarks, book-page turning, open-from-books. Quran / Hadith /
 // books are read in a decorated book page, never as a plain chat
-// bubble. Text is VERBATIM via textContent. OWED (Stage 3 Phase 2):
-// Hifz facilities + Fiqh content. No new fetch. Local-first.
+// bubble. Text is VERBATIM via textContent. Built (Stage 3 Phase 2):
+// Hifz + Fiqh (deferred hifz1/2.js + fiqh1/2/3.js). No new fetch.
 var ORNATE_KEY = "beyondx-ornate-v1";
 var ornateCur = null, ornateChaps = [], ornateIdx = 0;
 function ornateKindOf(t) { t = String(t || ""); if (t.indexOf("قرآن") !== -1) return "quran"; if (t.indexOf("حدیث") !== -1 || t.indexOf("بخاري") !== -1 || t.indexOf("مسلم") !== -1) return "hadith"; return "book"; }
