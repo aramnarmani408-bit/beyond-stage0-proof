@@ -32,6 +32,7 @@ async function booksSearch() {
     });
 }
 async function booksOpen(ia, file, title, author) {
+    var h = document.getElementById("hifzCtl"); if (h) h.style.display = "none";
     buildBooksPanel();
     showPanel("books");
     try {
