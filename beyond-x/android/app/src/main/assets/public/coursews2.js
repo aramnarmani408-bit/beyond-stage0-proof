@@ -26,6 +26,7 @@ function cwRender() {
     cwViewEl.appendChild(wsBtn("بل", function () { var n = cwNextIdx(c, c.cur || 0); if (n !== -1) { c.cur = n; cwSave(st); cwRender(); } }));
     cwViewEl.appendChild(wsBtn("بشپړ کړه", function () { cwMarkLesson(c, c.cur || 0, true); cwSave(st); cwRender(); showToast("درس بشپړ شو"); }));
     cwViewEl.appendChild(wsBtn("درس وګوره", function () { buildLessonPanel(); fillLessonPanel({ steps: cwLessonSteps(l) }); showPanel("lesson"); }));
+    if (l.quiz && l.quiz.length) cwViewEl.appendChild(wsBtn("پوښتنه پیل کړه", function () { if (typeof phys11StartQuiz === "function") phys11StartQuiz(l); else if (typeof showToast === "function") showToast("پوښتنه اوس نه شي پیلېدای — بیا هڅه وکړه"); }));
   }
 }
 function buildCourseWsPanel() {
@@ -47,3 +48,4 @@ function buildCourseWsPanel() {
 function showCourseWsPanel(show) { wsShow(cwPanelEl, show); }
 function ppOpenCourseWs() { buildCourseWsPanel(); cwRender(); showPanel("coursews"); }
 function ppAddCourseWsBtn() { var a = document.getElementById("inputArea"); if (!a || document.getElementById("ppCourseWsBtn")) return; var b = bEl("button", "ppCourseWsBtn", "📚 کورس"); b.addEventListener("click", ppOpenCourseWs); a.appendChild(b); }
+function ppAddPhys11Btn() { var a = document.getElementById("inputArea"); if (!a || document.getElementById("ppPhys11Btn")) return; var b = bEl("button", "ppPhys11Btn", "⚛️ فزیک ۱۱"); b.addEventListener("click", function () { if (typeof phys11Open === "function") phys11Open(); }); a.appendChild(b); }
