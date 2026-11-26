@@ -1,7 +1,7 @@
 // #167 Document workspace.
 var DOC_KEY = "beyondx-docs-v1", DOC_MAX = 20, DOC_MAX_BYTES = 100000;
-var docPanelEl = null, docTE = null, docBE = null, docPE = null, docLE = null, docCur = null;
-function docNew(t, b) { return { id: "d" + Date.now() + Math.floor(Math.random() * 1000), title: String(t || "").slice(0, 200), body: String(b || ""), updated: Date.now() }; }
+var docPanelEl = null, docTE = null, docBE = null, docPE = null, docLE = null, docCur = null, docSeq = 0;
+function docNew(t, b) { return { id: "d" + Date.now() + Math.floor(Math.random() * 1000) + "-" + (docSeq++), title: String(t || "").slice(0, 200), body: String(b || ""), updated: Date.now() }; }
 function docValidate(d) { return !!d && typeof d.title === "string" && d.title.trim().length > 0 && d.title.length <= 200 && typeof d.body === "string" && d.body.length <= DOC_MAX_BYTES; }
 function docExportText(d) { return (d.title || "") + "\n\n" + (d.body || ""); }
 function docListTitles(ds) { return (ds || []).map(function (d) { return d.title || "بې سرلیک"; }); }
