@@ -1,9 +1,11 @@
 // #174 Course workspace (3/3) — mutations, fill + registry. Reuses
 // lessonws.js: "له درس څخه کورس جوړ کړه" wraps lessonSteps via
 // cwFromLessonSteps; fillCourseWsPanel accepts {lessons:[...]} (the
-// future book-to-course step hands it a parsed course), a lesson
-// {steps:[...]}, or an answer string split by cwSplitLessons.
-// No new fetch. Local-first (cwLoad / cwSave).
+// book-to-course step hands it a parsed course — JD14 Proof 1 does
+// exactly that: coursephys11..15.js hand it the Senf Physics 11
+// Chapter 1 course, quiz on lesson 9), a lesson {steps:[...]}, or an
+// answer string split by cwSplitLessons. A lesson's quiz array rides
+// through cwAddLesson. No new fetch. Local-first (cwLoad / cwSave).
 function cwPushCourse(st, c) { st.courses.unshift(c); if (st.courses.length > CW_MAX_COURSES) st.courses.length = CW_MAX_COURSES; st.cur = 0; }
 function cwAddCourse() { var st = cwGetState(); cwPushCourse(st, cwNewCourse(cwTitleEl ? cwTitleEl.value : "")); cwSave(st); cwRender(); showToast("کورس جوړ شو"); }
 function cwAddLessonToCur() { var st = cwGetState(); var c = cwCurCourse(st); if (!c) { showToast("لومړی یو کورس جوړ کړه"); return; } var ok = cwAddLesson(c, cwLessonTitleEl ? cwLessonTitleEl.value : "", cwLessonTextEl ? cwLessonTextEl.value : ""); if (!ok) { showToast("د درس نوم ولیکئ"); return; } cwSave(st); cwRender(); showToast("درس زیات شو"); }
@@ -15,7 +17,7 @@ function fillCourseWsPanel(content) {
     if (content) { var ls = cwSplitLessons(content); if (ls.length) { var c = cwNewCourse("د ځواب کورس"); c.lessons = ls; cwPushCourse(st, c); } }
   } else if (content && Array.isArray(content.lessons) && content.lessons.length) {
     var c2 = cwNewCourse(content.title || "نوی کورس");
-    for (var i = 0; i < content.lessons.length; i++) { var l = content.lessons[i] || {}; cwAddLesson(c2, l.title || "درس", l.text || ""); }
+    for (var i = 0; i < content.lessons.length; i++) { var l = content.lessons[i] || {}; cwAddLesson(c2, l.title || "درس", l.text || "", l.quiz); }
     cwPushCourse(st, c2);
   } else if (content && Array.isArray(content.steps) && content.steps.length) {
     var c3 = cwFromLessonSteps(content.steps, content.title);
@@ -32,3 +34,4 @@ var _cwBuild = universeBuild; universeBuild = function (t) { if (t === "coursews
 var _cwFill = universeFill; universeFill = function (t, a) { if (t === "coursews") { fillCourseWsPanel(a || ""); return; } _cwFill(t, a); };
 var _cwShowUni = showUniversePanel; showUniversePanel = function (n) { _cwShowUni(n); wsShow(cwPanelEl, n === "coursews"); };
 if (typeof setTimeout === "function") setTimeout(ppAddCourseWsBtn, 800);
+if (typeof setTimeout === "function") setTimeout(ppAddPhys11Btn, 800);
