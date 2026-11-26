@@ -1,8 +1,4 @@
-// #170 Ornate book viewer (2/2) — panel + open + registry. Decorated
-// book page: double gold frame, serif body, ornament divider.
-// Registry wraps are guarded (universe.js loads later), so
-// ornateRegister() retries on a timer + on first open. Hifz + Fiqh
-// are OWED (Stage 3 Phase 2).
+// #170 Ornate book viewer (2/2). Hifz + Fiqh built (Stage 3 Phase 2).
 var ornatePanelEl = null, ornateTitleEl = null, ornateBodyEl = null;
 var ornatePageEl = null, ornateChapEl = null, ornateResEl = null;
 var ornateSearchEl = null, ornateMarkBtn = null;
@@ -46,7 +42,10 @@ function buildOrnatePanel() {
   p.appendChild(booksBtn("لټون", ornateSearch));
   ornateResEl = booksEl("div", "");
   p.appendChild(ornateResEl);
-  p.appendChild(booksEl("div", "حفظ او فقه لا نشته."));
+  var r = booksEl("div", "");
+  r.appendChild(booksBtn("🕌 حفظ", function () { if (typeof hifzOpen === "function") hifzOpen(); }));
+  r.appendChild(booksBtn("📜 فقه", function () { if (typeof fiqhOpen === "function") fiqhOpen(); }));
+  p.appendChild(r);
   document.getElementById("main").appendChild(p);
   ornatePanelEl = p;
   return p;
