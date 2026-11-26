@@ -33,3 +33,23 @@ if (typeof ppInfraRows === "function") {
   var _lzPIR = ppInfraRows;
   ppInfraRows = function (prof) { _lzPIR(prof); lazySecRow(prof); lazyDbRow(prof); };
 }
+// --- stubs: Hifz + Fiqh (Stage 3 Phase 2). Same pattern as
+// phys11Open in lazyload.js — the real functions live deferred.
+function hifzOpen() {
+  lazyLoad("hifz").then(function () {
+    if (typeof hifzOpen === "function" && !hifzOpen._lazyStub) hifzOpen();
+  }, function () {
+    if (typeof showToast === "function") showToast("حفظ برخه و نه شوې — بیا هڅه وکړه");
+  });
+  return false;
+}
+hifzOpen._lazyStub = true;
+function fiqhOpen() {
+  lazyLoad("fiqh").then(function () {
+    if (typeof fiqhOpen === "function" && !fiqhOpen._lazyStub) fiqhOpen();
+  }, function () {
+    if (typeof showToast === "function") showToast("فقه برخه و نه شوې — بیا هڅه وکړه");
+  });
+  return false;
+}
+fiqhOpen._lazyStub = true;
