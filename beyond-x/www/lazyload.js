@@ -1,17 +1,19 @@
 // BEYOND X part #208: lazy loader — rarely-used modules load on
 // demand instead of at first paint, so the Galaxy A10 first paint
-// carries less parser-blocking JS. Deferred groups (13 files):
+// carries less parser-blocking JS. Deferred groups (18 files):
 //   sectest  (sectest.js + sectest2.js) — security self-test, Settings row tap
 //   dbtest   (dbtest.js + dbtest2.js + dbtest3.js) — storage self-test, Settings row tap
 //   photows  (photows.js + photows2.js) — profile photo, after login
 //   avatar3d (avatar3d.js) — 3D avatar, right after first paint
 //   phys11   (coursephys11..15.js) — Grade 11 Physics Ch.1 living course
 //     (JD14 Proof 1), ⚛️ فزیک ۱۱ button tap
+//   hifz     (hifz1.js + hifz2.js) — Quran memorization, 🕌 حفظ button tap
+//   fiqh     (fiqh1.js + fiqh2.js + fiqh3.js) — Bahishti Zewar, 📜 فقه tap
 // design3d stays first-paint: design3dui.js calls d3Supported / d3Init /
 // d3Render synchronously with no guards, so no stub can satisfy the
 // first 3D tap honestly. The other groups stay first-paint too — they
 // install load-time wraps or build first-paint UI (see
-// lazyload-assessment.md). Merge: index.html drops the 13 deferred
+// lazyload-assessment.md). Merge: index.html drops the 18 deferred
 // <script> tags and gains these two after acc3.js, before init.js;
 // MODULES 134 -> 128, init header 134/134 -> 128/128.
 var LAZY_GROUPS = {
@@ -19,9 +21,11 @@ var LAZY_GROUPS = {
   dbtest: ["dbtest.js", "dbtest2.js", "dbtest3.js"],
   photows: ["photows.js", "photows2.js"],
   avatar3d: ["avatar3d.js"],
-  phys11: ["coursephys11.js", "coursephys12.js", "coursephys13.js", "coursephys14.js", "coursephys15.js"]
+  phys11: ["coursephys11.js", "coursephys12.js", "coursephys13.js", "coursephys14.js", "coursephys15.js"],
+  hifz: ["hifz1.js", "hifz2.js"],
+  fiqh: ["fiqh1.js", "fiqh2.js", "fiqh3.js"]
 };
-var LAZY_FILES = ["sectest.js", "sectest2.js", "dbtest.js", "dbtest2.js", "dbtest3.js", "photows.js", "photows2.js", "avatar3d.js", "coursephys11.js", "coursephys12.js", "coursephys13.js", "coursephys14.js", "coursephys15.js"];
+var LAZY_FILES = ["sectest.js", "sectest2.js", "dbtest.js", "dbtest2.js", "dbtest3.js", "photows.js", "photows2.js", "avatar3d.js", "coursephys11.js", "coursephys12.js", "coursephys13.js", "coursephys14.js", "coursephys15.js", "hifz1.js", "hifz2.js", "fiqh1.js", "fiqh2.js", "fiqh3.js"];
 var lazyState = {};
 var lazyPromises = {};
 function lazyIsLoaded(group) { return lazyState[group] === true; }
