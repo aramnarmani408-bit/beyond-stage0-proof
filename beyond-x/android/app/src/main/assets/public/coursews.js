@@ -1,11 +1,14 @@
 // #174 Course workspace (1/2) — pure logic + store. A course is an
 // ordered list of lessons; each lesson = {title, text, steps, done}.
+// A lesson may also carry quiz: [{q, c, a, w}] (JD14 Proof 1 — the
+// physics course quiz rides this field; cwRender shows its button).
 // Built on lessonws.js: cwFromLessonSteps wraps the current single
 // lesson (lessonSteps) as lesson 1 of a new course, and cwLessonSteps
 // hands a course lesson back to fillLessonPanel. Local-first: one
-// localStorage key. No new fetch. The book-to-course parse
-// (JD14 Proof 1) is NOT built here — cwSplitLessons only splits an
-// answer text on numbered headings; a real book parse is owed.
+// localStorage key. No new fetch. The book-to-course parse (JD14
+// Proof 1) IS built now — coursephys11..15.js (deferred, phys11
+// group): the Senf Grade 11 Physics Chapter 1 course, handed to
+// fillCourseWsPanel as {lessons:[...]} with the quiz on lesson 9.
 var CW_KEY = "beyondx-course-v1";
 var CW_MAX_LESSONS = 20;
 var CW_MAX_COURSES = 5;
@@ -14,8 +17,8 @@ function cwPct(done, total) { if (!total || total <= 0) return 0; var p = Math.r
 function cwNewCourse(title) { var t = String(title || "").trim().slice(0, 80) || "نوی کورس"; return { title: t, lessons: [], cur: 0, at: Date.now() }; }
 function cwCourseDone(c) { var n = 0; var ls = (c && c.lessons) || []; for (var i = 0; i < ls.length; i++) if (ls[i].done) n++; return n; }
 function cwCourseProgress(c) { var ls = (c && c.lessons) || []; var d = cwCourseDone(c); return { done: d, total: ls.length, pct: cwPct(d, ls.length) }; }
-function cwNormLesson(title, text) { var t = String(title || "").trim().slice(0, 80) || "درس"; var x = String(text || "").slice(0, 2000); return { title: t, text: x, steps: [{ title: t, text: x }], done: false }; }
-function cwAddLesson(c, title, text) { if (!c || !Array.isArray(c.lessons)) return false; if (c.lessons.length >= CW_MAX_LESSONS) return false; var t = String(title || "").trim(); if (!t) return false; c.lessons.push(cwNormLesson(t, text)); return true; }
+function cwNormLesson(title, text, quiz) { var t = String(title || "").trim().slice(0, 80) || "درس"; var x = String(text || "").slice(0, 2000); var l = { title: t, text: x, steps: [{ title: t, text: x }], done: false }; if (Array.isArray(quiz) && quiz.length) l.quiz = quiz; return l; }
+function cwAddLesson(c, title, text, quiz) { if (!c || !Array.isArray(c.lessons)) return false; if (c.lessons.length >= CW_MAX_LESSONS) return false; var t = String(title || "").trim(); if (!t) return false; c.lessons.push(cwNormLesson(t, text, quiz)); return true; }
 function cwMarkLesson(c, idx, done) { var ls = (c && c.lessons) || []; if (idx < 0 || idx >= ls.length) return false; ls[idx].done = done !== false; return true; }
 function cwNextIdx(c, idx) { var ls = (c && c.lessons) || []; return idx + 1 < ls.length ? idx + 1 : -1; }
 function cwPrevIdx(c, idx) { return idx - 1 >= 0 ? idx - 1 : -1; }
